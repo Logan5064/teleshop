@@ -13,14 +13,9 @@ const shops = new Map<string, any>([
   }]
 ])
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
-
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
+    const params = await context.params
     const shopId = params.id
     console.log(`🔍 Загрузка данных магазина: ${shopId}`)
 

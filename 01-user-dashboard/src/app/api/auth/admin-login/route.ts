@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     }
 
           // Отправляем запрос на backend
-      const backendResponse = await fetch(`${API_CONFIG.BACKEND_URL}/auth/admin-login`, {
+      const backendResponse = await fetch(`${API_CONFIG.BASE_URL}/auth/admin-login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

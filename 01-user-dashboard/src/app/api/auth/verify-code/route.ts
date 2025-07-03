@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import { API_CONFIG } from '@/lib/config';
-const PYTHON_API_BASE = API_CONFIG.PYTHON_API_BASE;
+const BASE_URL = API_CONFIG.BASE_URL;
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
     // Проксируем запрос к Python backend
-    const response = await fetch(`${PYTHON_API_BASE}/auth/login`, {
+    const response = await fetch(`${BASE_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

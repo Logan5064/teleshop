@@ -3,14 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 // Временное хранилище дизайнов (то же что в /api/designs/route.ts)
 const designs = new Map<string, any>()
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
-
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
+    const params = await context.params
     const shopId = params.id
 
     console.log(`🔍 Загрузка дизайна для магазина: ${shopId}`)

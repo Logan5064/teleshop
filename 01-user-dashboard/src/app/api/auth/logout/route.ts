@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { API_CONFIG } from '@/lib/config'
 
 export async function POST(request: NextRequest) {
   try {
@@ -7,9 +8,9 @@ export async function POST(request: NextRequest) {
     if (authorization && authorization.startsWith('Bearer ')) {
       const token = authorization.slice(7)
 
-              // Отправляем запрос на backend для инвалидации токена
-        try {
-          await fetch(`${API_CONFIG.BACKEND_API_URL}/auth/logout`, {
+      // Отправляем запрос на backend для инвалидации токена
+      try {
+        await fetch(`${API_CONFIG.BASE_URL}/auth/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

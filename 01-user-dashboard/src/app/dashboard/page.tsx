@@ -175,10 +175,11 @@ export default function DashboardPage() {
                 glow={action.glow}
                 cornerButton={
                   <CornerButton
-                    icon={action.buttonIcon}
-                    color={action.buttonColor}
                     onClick={action.action}
-                  />
+                    variant={action.buttonColor === 'orange' ? 'primary' : 'secondary'}
+                  >
+                    <action.buttonIcon size={16} />
+                  </CornerButton>
                 }
                 className="h-full"
               >

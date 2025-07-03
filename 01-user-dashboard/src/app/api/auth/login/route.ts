@@ -34,10 +34,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log(`🌐 REAL AUTH | Code: ${code} | Отправляем на backend: ${API_CONFIG.BACKEND_URL}`)
+    console.log(`🌐 REAL AUTH | Code: ${code} | Отправляем на backend: ${API_CONFIG.BASE_URL}`)
 
     // Реальный запрос к backend API main_secure.py
-    const backendResponse = await fetch(`${API_CONFIG.BACKEND_URL}/auth/login`, {
+    const backendResponse = await fetch(`${API_CONFIG.BASE_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
