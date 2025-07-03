@@ -3,6 +3,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Tab } from '@headlessui/react';
+import type { 
+  ProductAttribute, 
+  WeightUnit, 
+  DimensionUnit, 
+  FileSizeUnit, 
+  ServiceDurationUnit, 
+  ProductCondition, 
+  SpicinesLevel,
+  ProductForm 
+} from '@/types/product';
 import ProductModules from './modules/ProductModules';
 import { ProductTypeModulesV2 } from './modules/ProductTypeModulesV2';
 import { BasicInfoPanel } from './panels/BasicInfoPanel';
@@ -24,6 +34,65 @@ import {
   Squares2X2Icon
 } from '@heroicons/react/24/outline';
 
+// Расширенный интерфейс для формы с дополнительными полями
+interface ExtendedProductForm extends ProductForm {
+  productType: string;
+  sku: string;
+  brand: string;
+  modules: {
+    clothingSizes: boolean;
+    shoeSizes: boolean;
+    weight: boolean;
+    dimensions: boolean;
+    colors: boolean;
+    materials: boolean;
+    condition: boolean;
+    warranty: boolean;
+    fileSize: boolean;
+    fileFormat: boolean;
+    accessDuration: boolean;
+    calories: boolean;
+    spiciness: boolean;
+    cookingTime: boolean;
+    serviceDuration: boolean;
+    serviceLocation: boolean;
+    eventDate: boolean;
+    eventTime: boolean;
+    ageRestrictions: boolean;
+    subscriptionType: boolean;
+    autoRenewal: boolean;
+  };
+  hasVariations: boolean;
+  variations: Array<{
+    id: string;
+    combination: Array<{ attributeId: string; valueId: string; }>;
+    sku: string;
+    price: string;
+    oldPrice: string;
+    quantity: string;
+    weight: string;
+    images: string[];
+    isActive: boolean;
+  }>;
+  selectedCharacteristics: Record<string, string>;
+  characteristics: string;
+  clothingSizes: string[];
+  shoeSizes: number[];
+  color: string;
+  unit: string;
+  stockType: string;
+  downloadLink: string;
+  systemRequirements: string;
+  allergens: string[];
+  portionWeight: string;
+  requirements: string;
+  included: string;
+  venue: string;
+  duration: string;
+  ageRestrictions: string;
+  subscriptionFeatures: string[];
+}
+
 interface AddProductFormProps {
   onSave: (productData: any) => void;
   onCancel: () => void;
@@ -32,19 +101,66 @@ interface AddProductFormProps {
 export default function AddProductFormV2({ onSave, onCancel }: AddProductFormProps) {
   const [activeTab, setActiveTab] = useState(0);
   
-  // Состояние формы товара
-  const [productForm, setProductForm] = useState({
-    // Тип товара
-    productType: 'physical',
-    
+  // Состояние формы товара - соответствует интерфейсу ProductForm
+  const [productForm, setProductForm] = useState<ExtendedProductForm>({
     // Основная информация
     name: '',
     description: '',
+    price: 0,
+    oldPrice: 0,
+    currency: 'RUB',
+    category: '',
+    tags: [] as string[],
     images: [] as string[],
     
-    // Модули для физических товаров
+    // Характеристики  
+    attributes: [] as ProductAttribute[],
+    
+    // Физические товары
+    weight: 0,
+    weightUnit: 'kg' as WeightUnit,
+    dimensions: {
+      length: 0,
+      width: 0, 
+      height: 0,
+      unit: 'cm' as DimensionUnit
+    },
+    condition: 'new' as ProductCondition,
+    warrantyMonths: 0,
+    material: '',
+    
+    // Цифровые товары
+    fileSize: 0,
+    fileSizeUnit: 'MB' as FileSizeUnit,
+    fileFormat: '',
+    accessDuration: 0,
+    
+    // Еда
+    calories: 0,
+    spiciness: 'mild' as SpicinesLevel,
+    cookingTime: 0,
+    ingredients: [] as string[],
+    
+    // Услуги
+    serviceDuration: 0,
+    serviceDurationUnit: 'minutes' as ServiceDurationUnit,
+    
+    // Статус
+    isActive: true,
+    isDigital: false,
+    hasVariants: false,
+    stockQuantity: 0,
+    inStock: true,
+    isNew: false,
+    isPopular: false,
+    isOnOrder: false,
+    quantity: 0,
+    
+    // Дополнительные поля (не в ProductForm, но используются в компоненте)
+    productType: 'physical',
+    sku: '',
+    brand: '',
     modules: {
-      // Физические товары
       clothingSizes: false,
       shoeSizes: false,
       weight: false,
@@ -53,40 +169,21 @@ export default function AddProductFormV2({ onSave, onCancel }: AddProductFormPro
       materials: false,
       condition: false,
       warranty: false,
-      // Цифровые товары
       fileSize: false,
       fileFormat: false,
       accessDuration: false,
-      // Еда и напитки
       calories: false,
       spiciness: false,
       cookingTime: false,
-      // Услуги
       serviceDuration: false,
       serviceLocation: false,
-      // Билеты/События
       eventDate: false,
       eventTime: false,
       ageRestrictions: false,
-      // Подписки
       subscriptionType: false,
       autoRenewal: false
     },
-    
-    // Дополнительные поля модулей
-    weightUnit: 'kg',
-    dimensionUnit: 'cm',
-    condition: 'new',
-    warrantyMonths: '',
-    
-    // Вариации товара
     hasVariations: false,
-    attributes: [] as Array<{
-      id: string;
-      name: string;
-      isFromModule?: boolean;
-      values: Array<{ id: string; name: string; }>;
-    }>,
     variations: [] as Array<{
       id: string;
       combination: Array<{ attributeId: string; valueId: string; }>;
@@ -98,57 +195,22 @@ export default function AddProductFormV2({ onSave, onCancel }: AddProductFormPro
       images: string[];
       isActive: boolean;
     }>,
-    
-    // Выбранные характеристики товара (из справочника)
-    selectedCharacteristics: {} as Record<string, string>, // characteristicId -> valueId
-    
-    // Характеристики
+    selectedCharacteristics: {} as Record<string, string>,
     characteristics: '',
-    dimensions: { width: '', length: '', height: '' },
     clothingSizes: [] as string[],
     shoeSizes: [] as number[],
-    weight: '',
     color: '',
-    
-    // Цены и количество
-    price: '',
-    oldPrice: '',
-    quantity: '',
     unit: 'штука',
-    
-    // Статусы
-    isNew: false,
-    isPopular: false,
-    isOnOrder: false,
-    inStock: true,
     stockType: 'limited',
-    
-    // Цифровые товары
     downloadLink: '',
-    fileSize: '',
-    fileSizeUnit: 'GB',
     systemRequirements: '',
-    
-    // Еда и напитки
-    ingredients: '',
     allergens: [] as string[],
-    calories: '',
     portionWeight: '',
-    spiciness: 0,
-    cookingTime: '',
-    
-    // Услуги
-    serviceDuration: '',
-    serviceDurationUnit: 'minutes',
     requirements: '',
     included: '',
-    
-    // Билеты и события
     venue: '',
     duration: '',
     ageRestrictions: '',
-    
-    // Подписки
     subscriptionFeatures: [] as string[]
   });
 
@@ -224,6 +286,50 @@ export default function AddProductFormV2({ onSave, onCancel }: AddProductFormPro
 
   // Функции для работы с вариациями
   const generateId = () => Math.random().toString(36).substr(2, 9);
+
+  // Адаптер для совместимости с ProductFormUpdater
+  const productFormUpdater = (updater: (prev: ProductForm) => ProductForm) => {
+    setProductForm(prevExtended => {
+      const baseForm: ProductForm = {
+        name: prevExtended.name,
+        description: prevExtended.description,
+        price: prevExtended.price,
+        oldPrice: prevExtended.oldPrice,
+        currency: prevExtended.currency,
+        category: prevExtended.category,
+        tags: prevExtended.tags,
+        images: prevExtended.images,
+        attributes: prevExtended.attributes,
+        weight: prevExtended.weight,
+        weightUnit: prevExtended.weightUnit,
+        dimensions: prevExtended.dimensions,
+        condition: prevExtended.condition,
+        warrantyMonths: prevExtended.warrantyMonths,
+        material: prevExtended.material,
+        fileSize: prevExtended.fileSize,
+        fileSizeUnit: prevExtended.fileSizeUnit,
+        fileFormat: prevExtended.fileFormat,
+        accessDuration: prevExtended.accessDuration,
+        calories: prevExtended.calories,
+        spiciness: prevExtended.spiciness,
+        cookingTime: prevExtended.cookingTime,
+        ingredients: prevExtended.ingredients,
+        serviceDuration: prevExtended.serviceDuration,
+        serviceDurationUnit: prevExtended.serviceDurationUnit,
+        isActive: prevExtended.isActive,
+        isDigital: prevExtended.isDigital,
+        hasVariants: prevExtended.hasVariants,
+        stockQuantity: prevExtended.stockQuantity,
+        inStock: prevExtended.inStock,
+        isNew: prevExtended.isNew,
+        isPopular: prevExtended.isPopular,
+        isOnOrder: prevExtended.isOnOrder,
+        quantity: prevExtended.quantity
+      };
+      const updatedBase = updater(baseForm);
+      return { ...prevExtended, ...updatedBase };
+    });
+  };
 
   const handleSave = () => {
     onSave(productForm);
@@ -365,7 +471,7 @@ export default function AddProductFormV2({ onSave, onCancel }: AddProductFormPro
               <Tab.Panel>
                 <CharacteristicsPanel 
                   productForm={productForm}
-                  setProductForm={setProductForm}
+                  setProductForm={productFormUpdater}
                   characteristicsLibrary={characteristicsLibrary}
                   setCharacteristicsLibrary={setCharacteristicsLibrary}
                   generateId={generateId}
@@ -376,7 +482,7 @@ export default function AddProductFormV2({ onSave, onCancel }: AddProductFormPro
               <Tab.Panel>
                 <PricingPanel 
                   productForm={productForm}
-                  setProductForm={setProductForm}
+                  setProductForm={productFormUpdater}
                 />
               </Tab.Panel>
 
@@ -384,7 +490,114 @@ export default function AddProductFormV2({ onSave, onCancel }: AddProductFormPro
               <Tab.Panel>
                 <StatusPanel 
                   productForm={productForm}
+                  setProductForm={productFormUpdater}
+                />
+              </Tab.Panel>
+            </Tab.Panels>
+          </Tab.Group>
+        </div>
+      </motion.div>
+    </div>
+  );
+} 
+
+                    productForm.productType === type.id 
+                      ? '' 
+                      : 'text-gray-900'
+                  }`}>
+                    {type.name}
+                  </h4>
+                  <p className={`text-xs mt-1 ${
+                    productForm.productType === type.id 
+                      ? 'opacity-80' 
+                      : 'text-gray-500'
+                  }`}>
+                    {type.description}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="p-6">
+          <Tab.Group selectedIndex={activeTab} onChange={setActiveTab}>
+            <Tab.List className="flex space-x-1 bg-gray-100 p-2 rounded-xl mb-6">
+              {[
+                { name: 'Основное', icon: InformationCircleIcon },
+                { name: 'Базовые свойства', icon: CogIcon },
+                { name: 'Кастомные свойства', icon: Squares2X2Icon },
+                { name: 'Цены', icon: CurrencyDollarIcon },
+                { name: 'Статусы', icon: TagIcon }
+              ].map((tab, index) => (
+                <Tab
+                  key={tab.name}
+                  className={({ selected }) =>
+                    `flex-1 flex items-center justify-center space-x-2 py-3 px-4 text-sm font-medium rounded-lg transition-all ${
+                      selected
+                        ? 'bg-white text-blue-600 shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }`
+                  }
+                >
+                  <tab.icon className="w-4 h-4" />
+                  <span>{tab.name}</span>
+                </Tab>
+              ))}
+            </Tab.List>
+
+            <Tab.Panels className="min-h-[500px]">
+              {/* Основная информация */}
+              <Tab.Panel>
+                <BasicInfoPanel 
+                  productForm={productForm}
                   setProductForm={setProductForm}
+                />
+              </Tab.Panel>
+
+              {/* Базовые свойства */}
+              <Tab.Panel className="space-y-6 pb-8">
+                {/* Физические товары */}
+                {productForm.productType === 'physical' && (
+                  <ProductModules 
+                    productForm={productForm}
+                    setProductForm={setProductForm}
+                    generateId={generateId}
+                  />
+                )}
+
+                {/* Модули настроек для всех типов товаров */}
+                <ProductTypeModulesV2 
+                  productForm={productForm}
+                  setProductForm={setProductForm}
+                  generateId={generateId}
+                />
+              </Tab.Panel>
+
+              {/* Кастомные свойства */}
+              <Tab.Panel>
+                <CharacteristicsPanel 
+                  productForm={productForm}
+                  setProductForm={productFormUpdater}
+                  characteristicsLibrary={characteristicsLibrary}
+                  setCharacteristicsLibrary={setCharacteristicsLibrary}
+                  generateId={generateId}
+                />
+              </Tab.Panel>
+
+              {/* Цены */}
+              <Tab.Panel>
+                <PricingPanel 
+                  productForm={productForm}
+                  setProductForm={productFormUpdater}
+                />
+              </Tab.Panel>
+
+              {/* Статусы */}
+              <Tab.Panel>
+                <StatusPanel 
+                  productForm={productForm}
+                  setProductForm={productFormUpdater}
                 />
               </Tab.Panel>
             </Tab.Panels>

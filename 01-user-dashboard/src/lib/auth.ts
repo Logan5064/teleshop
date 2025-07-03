@@ -26,8 +26,12 @@ export const logout = async (): Promise<void> => {
 // Get user data
 export const getUserData = async (): Promise<any> => {
   try {
-    const result = await authApi.checkAuth();
-    return result.user || null;
+    const authResult = await authApi.checkAuth();
+    if (!authResult.authenticated) {
+      return null;
+    }
+    const user = await authApi.getCurrentUser();
+    return user || null;
   } catch (error) {
     console.error('Get user data error:', error);
     return null;
@@ -49,6 +53,10 @@ export const getAuthToken = (): string | null => {
   try {
     return localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
   } catch (error) {
+    return null;
+  }
+};
+
     return null;
   }
 };

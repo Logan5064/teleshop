@@ -13,7 +13,7 @@ export const PricingPanel = ({ productForm, setProductForm }: PricingPanelProps)
           <input
             type="number"
             value={productForm.price}
-            onChange={(e) => setProductForm(prev => ({ ...prev, price: e.target.value }))}
+            onChange={(e) => setProductForm(prev => ({ ...prev, price: Number(Number(e.target.value) || 0) || 0 }))}
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800"
             placeholder="0"
           />
@@ -23,7 +23,7 @@ export const PricingPanel = ({ productForm, setProductForm }: PricingPanelProps)
           <input
             type="number"
             value={productForm.oldPrice}
-            onChange={(e) => setProductForm(prev => ({ ...prev, oldPrice: e.target.value }))}
+            onChange={(e) => setProductForm(prev => ({ ...prev, oldPrice: Number(Number(e.target.value) || 0) || 0 }))}
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800"
             placeholder="0"
           />
@@ -33,7 +33,7 @@ export const PricingPanel = ({ productForm, setProductForm }: PricingPanelProps)
           <input
             type="number"
             value={productForm.quantity}
-            onChange={(e) => setProductForm(prev => ({ ...prev, quantity: e.target.value }))}
+            onChange={(e) => setProductForm(prev => ({ ...prev, quantity: Number(Number(e.target.value) || 0) || 0 }))}
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-800"
             placeholder="0"
           />
@@ -42,3 +42,4 @@ export const PricingPanel = ({ productForm, setProductForm }: PricingPanelProps)
     </div>
   );
 }; 
+

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -21,7 +21,7 @@ import { logout, getUserData } from '@/lib/auth'
 
 const navigation = [
   { name: 'Дашборд', href: '/', icon: HomeIcon },
-  { name: 'Конструктор', href: '/constructor', icon: WrenchScrewdriverIcon, external: false },
+  { name: 'Конструктор', href: 'http://localhost:3001/constructor', icon: WrenchScrewdriverIcon, external: true },
   { name: 'Категории', href: '/categories', icon: RectangleGroupIcon },
   { name: 'Товары', href: '/products', icon: CubeIcon },
   { name: 'Заказы', href: '/orders', icon: ClipboardDocumentListIcon },
@@ -32,13 +32,25 @@ const navigation = [
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userData = await getUserData();
+        setUser(userData);
+      } catch (error) {
+        console.error('Error loading user:', error);
+        setUser(null);
+      }
+    };
+    loadUser();
+  }, []);
 
   const handleLogout = () => {
     logout()
   }
-
-  const user = getUserData()
 
   return (
     <>
@@ -173,6 +185,19 @@ export default function Sidebar() {
                   <p className="text-xs text-gray-600 font-medium">
                     @{user?.username || user?.telegram_id || 'admin'}
                   </p>
+                </div>
+                <div className="ml-2">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+} 
+
                 </div>
                 <div className="ml-2">
                   <div className="w-2 h-2 bg-gray-400 rounded-full"></div>

@@ -10,7 +10,14 @@ export const API_CONFIG = {
     ? `http://${prodHost}:3001`
     : process.env.NEXT_PUBLIC_CONSTRUCTOR_URL || 'http://localhost:3001',
   TIMEOUT: 30000,
-  RETRY_ATTEMPTS: 3
+  RETRY_ATTEMPTS: 3,
+  // Локальные туннели используются только в dev режиме
+  IS_TUNNELED: isProd 
+    ? false 
+    : process.env.NEXT_PUBLIC_IS_TUNNELED === 'true',
+  TUNNEL_URL: isProd 
+    ? undefined 
+    : process.env.NEXT_PUBLIC_TUNNEL_URL || undefined
 };
 
 export const FEATURES = {
@@ -30,6 +37,13 @@ export const TELEGRAM_CONFIG = {
 
 export const UI_CONFIG = {
   THEME: 'light',
+  PRIMARY_COLOR: '#3B82F6',
+  SECONDARY_COLOR: '#6B7280',
+  SUCCESS_COLOR: '#10B981',
+  ERROR_COLOR: '#EF4444',
+  WARNING_COLOR: '#F59E0B'
+};
+
   PRIMARY_COLOR: '#3B82F6',
   SECONDARY_COLOR: '#6B7280',
   SUCCESS_COLOR: '#10B981',

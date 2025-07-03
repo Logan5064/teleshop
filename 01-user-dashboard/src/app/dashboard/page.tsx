@@ -72,7 +72,7 @@ export default function DashboardPage() {
       icon: Palette,
       buttonIcon: ExternalLink,
       buttonColor: 'purple' as const,
-              action: () => window.open('/constructor', '_self')
+      action: () => window.open('http://localhost:3001/constructor', '_blank')
     },
     {
       id: 'designs',
@@ -81,7 +81,7 @@ export default function DashboardPage() {
       icon: Palette,
       buttonIcon: Settings,
       buttonColor: 'indigo' as const,
-      action: () => window.open('/blocks-library', '_self')
+      action: () => window.open('/design-showcase', '_self')
     },
     {
       id: 'analytics',

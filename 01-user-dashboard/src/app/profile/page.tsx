@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '@/components/Sidebar';
 import { logout, getUserData } from '@/lib/auth';
@@ -20,7 +20,20 @@ import {
 
 export default function ProfilePage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const user = getUserData();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const userData = await getUserData();
+        setUser(userData);
+      } catch (error) {
+        console.error('Error loading user:', error);
+        setUser(null);
+      }
+    };
+    loadUser();
+  }, []);
 
   // Статистика пользователя
   const userStats = [
@@ -356,6 +369,20 @@ export default function ProfilePage() {
                         onClick={handleDeleteAccount}
                         className="flex-1 py-2 px-4 bg-red-600 hover:bg-red-700 rounded-lg text-white font-medium transition-colors"
                       >
+                        Удалить
+                      </button>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+} 
+
                         Удалить
                       </button>
                     </div>
