@@ -34,6 +34,13 @@ export default function TopPanel({
 }: TopPanelProps) {
   const [isIntegrating, setIsIntegrating] = useState(false)
 
+  // Функция для получения имени пользователя
+  const getUserDisplayName = () => {
+    if (currentUser?.username) return currentUser.username
+    if (currentUser?.telegram_id) return `User ${currentUser.telegram_id}`
+    return 'Пользователь'
+  }
+
   const handleSendToPlatform = async () => {
     if (blocks.length === 0) {
       alert('⚠️ Нельзя отправить пустой дизайн. Добавьте хотя бы один блок.')
@@ -57,17 +64,16 @@ export default function TopPanel({
           primary: '#007bff',
           secondary: '#6c757d'
         },
-        name: `Дизайн ${constructorUtils.getUserDisplayName()} ${new Date().toLocaleString()}`
+        name: `Дизайн ${getUserDisplayName()} ${new Date().toLocaleString()}`
       }
 
       console.log('🚀 Отправляем дизайн в основную платформу...', designData)
       const result = await teleShopAPI.saveDesign(designData)
       
-      alert(`✅ Дизайн успешно отправлен в основную платформу!\n\nID: ${result.design_id}\nБлоков: ${blocks.length}\nПользователь: ${constructorUtils.getUserDisplayName()}`)
+      alert(`✅ Дизайн успешно отправлен в основную платформу!\n\nID: ${result.design_id}\nБлоков: ${blocks.length}\nПользователь: ${getUserDisplayName()}`)
       
-      // Открываем предпросмотр в новой вкладке
-      const previewUrl = teleShopAPI.getShopPreviewUrl('1')
-      window.open(previewUrl, '_blank')
+      // Открываем основную платформу в новой вкладке
+      window.open('http://localhost:3000', '_blank')
       
     } catch (error) {
       console.error('❌ Ошибка интеграции:', error)
@@ -96,7 +102,7 @@ export default function TopPanel({
               </span>
             </div>
             <span className="text-sm text-blue-700 font-medium">
-              {constructorUtils.getUserDisplayName()}
+              {getUserDisplayName()}
             </span>
           </div>
         )}
