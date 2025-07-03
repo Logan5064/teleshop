@@ -39,13 +39,12 @@ module.exports = {
     {
       name: 'teleshop-backend',
       cwd: './05-server-launchers/main',
-      script: 'python3',
-      args: 'main_secure_fixed.py',
+      script: 'main_secure_fixed.py',
+      interpreter: 'python3',
       instances: 1,
       autorestart: true,
       watch: false,
       max_memory_restart: '512M',
-      interpreter: 'python3',
       env: {
         PYTHONPATH: '.',
         PYTHON_ENV: 'production'
@@ -58,13 +57,12 @@ module.exports = {
     {
       name: 'teleshop-auth-bot',
       cwd: './auth-bot',
-      script: 'python3',
-      args: 'simple_auth_bot.py',
+      script: 'simple_auth_bot.py',
+      interpreter: 'python3',
       instances: 1,
       autorestart: true,
       watch: false,
       max_memory_restart: '256M',
-      interpreter: 'python3',
       env: {
         PYTHONPATH: '.',
         PYTHON_ENV: 'production'
