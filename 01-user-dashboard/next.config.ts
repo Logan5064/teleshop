@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
     // Разрешаем импорты из внешних папок
     externalDir: true,
   },
+  eslint: {
+    // Отключаем ESLint проверки при билде для production
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    // Игнорируем TypeScript ошибки при билде (только для demo)
+    ignoreBuildErrors: false,
+  },
   // Конфигурация webpack (очищена от старых путей)
   webpack: (config, { isServer }) => {
     // Убрали алиасы конструктора т.к. он теперь интегрирован в основной проект

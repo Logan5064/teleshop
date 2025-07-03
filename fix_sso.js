@@ -1,12 +1,14 @@
-// SSO Integration utilities for TeleShop Constructor
+const fs = require('fs');
+
+const content = `// SSO Integration utilities for TeleShop Constructor
 import { API_CONFIG } from './config';
 
 export const constructorUtils = {
   // Open constructor in new window
   openConstructor: (shopId?: string) => {
     const url = shopId 
-      ? `${API_CONFIG.CONSTRUCTOR_URL}/constructor?shopId=${shopId}`
-      : `${API_CONFIG.CONSTRUCTOR_URL}/constructor`;
+      ? \`\${API_CONFIG.CONSTRUCTOR_URL}/constructor?shopId=\${shopId}\`
+      : \`\${API_CONFIG.CONSTRUCTOR_URL}/constructor\`;
     
     window.open(url, '_blank', 'width=1200,height=800');
   },
@@ -14,8 +16,8 @@ export const constructorUtils = {
   // Get constructor URL
   getConstructorUrl: (shopId?: string) => {
     return shopId 
-      ? `${API_CONFIG.CONSTRUCTOR_URL}/constructor?shopId=${shopId}`
-      : `${API_CONFIG.CONSTRUCTOR_URL}/constructor`;
+      ? \`\${API_CONFIG.CONSTRUCTOR_URL}/constructor?shopId=\${shopId}\`
+      : \`\${API_CONFIG.CONSTRUCTOR_URL}/constructor\`;
   },
 
   // Share auth between apps
@@ -71,3 +73,7 @@ export const ConstructorAuth = {
     window.location.reload();
   }
 };
+`;
+
+fs.writeFileSync('ssoIntegration.ts', content);
+console.log('✅ Fixed ssoIntegration.ts'); 

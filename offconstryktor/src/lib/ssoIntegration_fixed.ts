@@ -70,4 +70,4 @@ export const ConstructorAuth = {
     // For demo, just reload the page
     window.location.reload();
   }
-};
+}; 
