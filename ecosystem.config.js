@@ -40,7 +40,7 @@ module.exports = {
       name: 'teleshop-backend',
       cwd: './05-server-launchers/main',
       script: 'python3',
-      args: 'simple_backend.py',
+      args: 'main_secure_fixed.py',
       instances: 1,
       autorestart: true,
       watch: false,
