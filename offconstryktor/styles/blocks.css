@@ -1,0 +1,448 @@
+/* Стили блоков TeleShop Constructor */
+
+/* Базовые блоки */
+.banner-block {
+  @apply relative overflow-hidden rounded-lg;
+}
+
+.banner-content {
+  @apply relative z-10 p-8 text-center;
+}
+
+.banner-title {
+  @apply text-2xl md:text-3xl font-bold mb-4;
+}
+
+.banner-subtitle {
+  @apply text-lg mb-6 opacity-90;
+}
+
+.banner-button {
+  @apply inline-block px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105;
+}
+
+.button-block {
+  @apply inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 hover:scale-105;
+}
+
+.button-block.size-small {
+  @apply px-3 py-2 text-sm;
+}
+
+.button-block.size-medium {
+  @apply px-4 py-2;
+}
+
+.button-block.size-large {
+  @apply px-6 py-3 text-lg;
+}
+
+.text-block {
+  @apply prose max-w-none;
+}
+
+/* Заголовки */
+.header-block {
+  @apply bg-white border-b border-gray-200;
+}
+
+.header-content {
+  @apply ts-container flex items-center justify-between py-4;
+}
+
+.header-logo {
+  @apply flex items-center gap-3;
+}
+
+.header-title {
+  @apply text-xl font-bold text-gray-900;
+}
+
+.header-nav {
+  @apply hidden md:flex items-center gap-6;
+}
+
+.header-nav-item {
+  @apply text-gray-600 hover:text-gray-900 transition-colors duration-200;
+}
+
+.header-actions {
+  @apply flex items-center gap-3;
+}
+
+.header-search {
+  @apply hidden md:block;
+}
+
+.header-cart {
+  @apply relative p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200;
+}
+
+.header-cart-badge {
+  @apply absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center;
+}
+
+/* E-commerce блоки */
+.products-block {
+  @apply space-y-6;
+}
+
+.products-header {
+  @apply flex items-center justify-between mb-6;
+}
+
+.products-title {
+  @apply ts-title-section;
+}
+
+.products-grid {
+  @apply grid gap-6;
+}
+
+.products-grid.cols-1 {
+  @apply grid-cols-1;
+}
+
+.products-grid.cols-2 {
+  @apply grid-cols-1 sm:grid-cols-2;
+}
+
+.products-grid.cols-3 {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.products-grid.cols-4 {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+}
+
+.product-card {
+  @apply ts-card-hover overflow-hidden;
+}
+
+.product-image {
+  @apply w-full h-48 bg-gray-100 overflow-hidden;
+}
+
+.product-image img {
+  @apply w-full h-full object-cover;
+}
+
+.product-info {
+  @apply p-4;
+}
+
+.product-name {
+  @apply font-semibold text-gray-900 mb-2;
+}
+
+.product-price {
+  @apply text-lg font-bold text-blue-600 mb-3;
+}
+
+.product-original-price {
+  @apply text-sm text-gray-500 line-through ml-2;
+}
+
+.product-rating {
+  @apply flex items-center gap-1 mb-3;
+}
+
+.product-features {
+  @apply space-y-1 mb-4;
+}
+
+.product-feature {
+  @apply text-sm text-gray-600 flex items-center gap-2;
+}
+
+.product-actions {
+  @apply flex gap-2;
+}
+
+.add-to-cart-btn {
+  @apply flex-1 ts-btn-primary;
+}
+
+.cart-block {
+  @apply ts-card;
+}
+
+.cart-header {
+  @apply flex items-center justify-between mb-4 pb-4 border-b border-gray-200;
+}
+
+.cart-items {
+  @apply space-y-4 mb-6;
+}
+
+.cart-item {
+  @apply flex items-center gap-4 p-3 bg-gray-50 rounded-lg;
+}
+
+.cart-item-image {
+  @apply w-16 h-16 bg-gray-200 rounded-lg overflow-hidden;
+}
+
+.cart-item-info {
+  @apply flex-1;
+}
+
+.cart-item-name {
+  @apply font-medium text-gray-900;
+}
+
+.cart-item-price {
+  @apply text-blue-600 font-semibold;
+}
+
+.cart-total {
+  @apply flex items-center justify-between text-lg font-bold p-4 bg-gray-50 rounded-lg mb-4;
+}
+
+.checkout-btn {
+  @apply w-full ts-btn-primary;
+}
+
+/* Контентные блоки */
+.gallery-block {
+  @apply space-y-6;
+}
+
+.gallery-title {
+  @apply ts-title-section text-center mb-8;
+}
+
+.gallery-grid {
+  @apply grid gap-4;
+}
+
+.gallery-grid.cols-1 {
+  @apply grid-cols-1;
+}
+
+.gallery-grid.cols-2 {
+  @apply grid-cols-1 sm:grid-cols-2;
+}
+
+.gallery-grid.cols-3 {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.gallery-grid.cols-4 {
+  @apply grid-cols-2 sm:grid-cols-3 lg:grid-cols-4;
+}
+
+.gallery-item {
+  @apply relative overflow-hidden rounded-lg cursor-pointer;
+}
+
+.gallery-image {
+  @apply w-full aspect-square object-cover transition-transform duration-200;
+}
+
+.gallery-item:hover .gallery-image {
+  @apply scale-105;
+}
+
+.gallery-overlay {
+  @apply absolute inset-0 bg-black bg-opacity-0 transition-all duration-200 flex items-center justify-center;
+}
+
+.gallery-item:hover .gallery-overlay {
+  @apply bg-opacity-30;
+}
+
+.gallery-info {
+  @apply absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/70 to-transparent text-white transform translate-y-full transition-transform duration-200;
+}
+
+.gallery-item:hover .gallery-info {
+  @apply translate-y-0;
+}
+
+.video-block {
+  @apply space-y-4;
+}
+
+.video-title {
+  @apply ts-title-section mb-2;
+}
+
+.video-description {
+  @apply ts-text-body mb-6;
+}
+
+.video-container {
+  @apply relative overflow-hidden rounded-lg bg-gray-900;
+}
+
+.video-iframe {
+  @apply w-full h-0 pb-56;
+}
+
+.video-iframe iframe {
+  @apply absolute inset-0 w-full h-full;
+}
+
+.reviews-block {
+  @apply space-y-6;
+}
+
+.reviews-title {
+  @apply ts-title-section text-center mb-8;
+}
+
+.reviews-grid {
+  @apply grid gap-6;
+}
+
+.reviews-grid.layout-list {
+  @apply grid-cols-1;
+}
+
+.reviews-grid.layout-cards {
+  @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
+}
+
+.review-card {
+  @apply ts-card;
+}
+
+.review-header {
+  @apply flex items-center gap-3 mb-3;
+}
+
+.review-avatar {
+  @apply w-12 h-12 bg-gray-200 rounded-full overflow-hidden;
+}
+
+.review-info {
+  @apply flex-1;
+}
+
+.review-name {
+  @apply font-semibold text-gray-900;
+}
+
+.review-rating {
+  @apply flex items-center gap-1;
+}
+
+.review-comment {
+  @apply ts-text-body mb-3;
+}
+
+.review-meta {
+  @apply text-sm text-gray-500 flex items-center gap-4;
+}
+
+/* Формы */
+.form-block {
+  @apply ts-card max-w-2xl mx-auto;
+}
+
+.form-header {
+  @apply text-center mb-8;
+}
+
+.form-title {
+  @apply ts-title-section mb-2;
+}
+
+.form-subtitle {
+  @apply ts-text-body;
+}
+
+.form-fields {
+  @apply space-y-6;
+}
+
+.form-field {
+  @apply space-y-2;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700;
+}
+
+.form-input {
+  @apply ts-input;
+}
+
+.form-textarea {
+  @apply ts-input min-h-24 resize-y;
+}
+
+.form-select {
+  @apply ts-input;
+}
+
+.form-checkbox {
+  @apply h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded;
+}
+
+.form-submit {
+  @apply w-full ts-btn-primary mt-8;
+}
+
+.search-block {
+  @apply ts-card;
+}
+
+.search-input-group {
+  @apply relative;
+}
+
+.search-input {
+  @apply ts-input pl-10 pr-4;
+}
+
+.search-icon {
+  @apply absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400;
+}
+
+.search-filters {
+  @apply mt-4 flex flex-wrap gap-4;
+}
+
+.search-filter {
+  @apply ts-input;
+}
+
+/* Интерактивные блоки */
+.map-block {
+  @apply space-y-6;
+}
+
+.map-title {
+  @apply ts-title-section mb-4;
+}
+
+.map-container {
+  @apply relative overflow-hidden rounded-lg border border-gray-200;
+}
+
+.map-info {
+  @apply absolute top-4 left-4 right-4 ts-card max-w-sm;
+}
+
+.map-info-title {
+  @apply font-semibold text-gray-900 mb-2;
+}
+
+.map-info-details {
+  @apply space-y-1 text-sm text-gray-600;
+}
+
+/* Утилиты */
+.block-empty {
+  @apply flex items-center justify-center min-h-32 text-gray-500 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg;
+}
+
+.block-loading {
+  @apply animate-pulse bg-gray-200 rounded;
+}
+
+.block-error {
+  @apply bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg;
+} 

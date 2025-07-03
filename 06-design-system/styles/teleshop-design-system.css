@@ -1,0 +1,272 @@
+/*
+🎨 TeleShop Design System
+Базовые стили на основе дашборда
+*/
+
+/* ===== ЦВЕТОВАЯ ПАЛИТРА ===== */
+:root {
+  /* Основные цвета фона */
+  --ts-bg-primary: rgba(229, 231, 235, 0.6); /* bg-gray-200/60 */
+  --ts-bg-card: rgba(255, 255, 255, 0.95);   /* bg-white/95 */
+  --ts-bg-secondary: rgba(243, 244, 246, 0.7); /* bg-gray-100/70 */
+  
+  /* Цвета границ */
+  --ts-border-light: rgba(209, 213, 219, 0.6); /* border-gray-300/60 */
+  --ts-border-hover: rgba(156, 163, 175, 0.7); /* border-gray-400/70 */
+  
+  /* Акцентные цвета */
+  --ts-blue: #3B82F6;
+  --ts-green: #10B981; 
+  --ts-purple: #8B5CF6;
+  --ts-orange: #F59E0B;
+  --ts-red: #EF4444;
+  
+  /* Цвета фона для иконок */
+  --ts-blue-bg: rgba(59, 130, 246, 0.1);
+  --ts-green-bg: rgba(16, 185, 129, 0.1);
+  --ts-purple-bg: rgba(139, 92, 246, 0.1);
+  --ts-orange-bg: rgba(245, 158, 11, 0.1);
+  
+  /* Границы для иконок */
+  --ts-blue-border: rgba(59, 130, 246, 0.3);
+  --ts-green-border: rgba(16, 185, 129, 0.3);
+  --ts-purple-border: rgba(139, 92, 246, 0.3);
+  --ts-orange-border: rgba(245, 158, 11, 0.3);
+  
+  /* Текст */
+  --ts-text-primary: #1F2937;   /* text-gray-800 */
+  --ts-text-secondary: #6B7280; /* text-gray-500 */
+  --ts-text-muted: #9CA3AF;     /* text-gray-400 */
+  
+  /* Кнопки */
+  --ts-btn-primary: #374151;    /* bg-gray-700 */
+  --ts-btn-primary-hover: #1F2937; /* hover:bg-gray-800 */
+}
+
+/* ===== БАЗОВЫЕ КЛАССЫ ===== */
+
+/* Основная разметка */
+.ts-layout {
+  @apply flex h-screen bg-gray-200/60;
+}
+
+.ts-main {
+  @apply flex-1 overflow-auto;
+}
+
+.ts-container {
+  @apply p-6 w-full;
+}
+
+/* ===== КАРТОЧКИ ===== */
+
+/* Статистические карточки */
+.ts-stats-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 w-full;
+}
+
+.ts-stats-card {
+  @apply bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/60 hover:border-gray-400/70 transition-all duration-300 shadow-sm hover:shadow-md;
+}
+
+.ts-stats-card-content {
+  @apply flex items-center justify-between;
+}
+
+.ts-stats-card-text {
+  @apply text-sm font-semibold text-gray-600 mb-2 tracking-wide;
+}
+
+.ts-stats-card-number {
+  @apply text-3xl font-semibold text-gray-800 tracking-tight;
+}
+
+.ts-stats-card-subtitle {
+  @apply text-xs text-gray-500 mt-2 font-medium;
+}
+
+.ts-stats-card-icon {
+  @apply w-14 h-14 rounded-2xl flex items-center justify-center;
+}
+
+/* Основные контентные карточки */
+.ts-content-card {
+  @apply bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/60 w-full shadow-sm;
+}
+
+.ts-content-header {
+  @apply flex items-center justify-between mb-8;
+}
+
+.ts-content-title {
+  @apply text-2xl font-semibold text-gray-800 tracking-tight;
+}
+
+/* ===== СПИСКИ ===== */
+
+/* Контейнер для списков */
+.ts-list {
+  @apply space-y-4;
+}
+
+/* Элементы списка */
+.ts-list-item {
+  @apply flex items-center justify-between p-6 bg-gray-100/70 rounded-2xl border border-gray-300/60 hover:border-gray-400/70 transition-all duration-200 backdrop-blur-sm;
+}
+
+.ts-list-item-content {
+  @apply flex items-center gap-4 flex-1;
+}
+
+.ts-list-item-status {
+  @apply relative flex-shrink-0;
+}
+
+.ts-list-item-status-active {
+  @apply w-3 h-3 rounded-full bg-emerald-500;
+}
+
+.ts-list-item-status-inactive {
+  @apply w-3 h-3 rounded-full bg-gray-400;
+}
+
+.ts-list-item-text {
+  @apply flex-1 min-w-0;
+}
+
+.ts-list-item-title {
+  @apply font-semibold text-gray-800 truncate text-lg tracking-tight;
+}
+
+.ts-list-item-subtitle {
+  @apply text-sm text-gray-600 font-medium;
+}
+
+.ts-list-item-description {
+  @apply text-xs text-gray-500 mt-1 truncate;
+}
+
+.ts-list-item-actions {
+  @apply flex items-center gap-2 flex-shrink-0 ml-4;
+}
+
+/* ===== КНОПКИ ===== */
+
+/* Основная кнопка */
+.ts-btn {
+  @apply inline-flex items-center gap-3 px-6 py-3 rounded-xl font-medium transition-all duration-200 shadow-sm hover:shadow-md;
+}
+
+.ts-btn-primary {
+  @apply bg-gray-700 text-white hover:bg-gray-800;
+}
+
+.ts-btn-secondary {
+  @apply bg-gray-100/70 text-gray-700 hover:bg-gray-200/80 border border-gray-300/60 hover:border-gray-400/70;
+}
+
+.ts-btn-success {
+  @apply bg-emerald-100/80 text-emerald-700 hover:bg-emerald-200/80 border border-emerald-300/60;
+}
+
+.ts-btn-danger {
+  @apply bg-red-100/80 text-red-700 hover:bg-red-200/80 border border-red-300/60;
+}
+
+.ts-btn-small {
+  @apply px-4 py-2 text-sm;
+}
+
+.ts-btn-icon {
+  @apply p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors;
+}
+
+/* ===== ПОЛЯ ВВОДА ===== */
+
+.ts-input {
+  @apply px-4 py-2 bg-gray-100/70 rounded-xl border border-gray-300/60 focus:border-gray-500 focus:ring-0 text-gray-800 placeholder-gray-500 text-sm transition-colors;
+}
+
+.ts-input-search {
+  @apply pl-10 pr-4 py-2 bg-gray-100/70 rounded-xl border border-gray-300/60 focus:border-gray-500 focus:ring-0 text-gray-800 placeholder-gray-500 text-sm;
+}
+
+/* ===== EMPTY STATE ===== */
+
+.ts-empty-state {
+  @apply text-center py-12;
+}
+
+.ts-empty-state-icon {
+  @apply w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4;
+}
+
+.ts-empty-state-title {
+  @apply text-lg font-semibold text-gray-800 mb-2;
+}
+
+.ts-empty-state-description {
+  @apply text-gray-600 mb-6;
+}
+
+/* ===== ЗАГОЛОВКИ ===== */
+
+.ts-page-header {
+  @apply mb-8;
+}
+
+.ts-page-title {
+  @apply text-4xl font-semibold text-gray-800 mb-3 tracking-tight;
+}
+
+.ts-page-subtitle {
+  @apply text-gray-600 text-lg font-medium;
+}
+
+/* ===== АНИМАЦИИ ===== */
+
+.ts-fade-in {
+  @apply transition-opacity duration-300;
+}
+
+.ts-slide-up {
+  @apply transition-transform duration-300;
+}
+
+.ts-hover-lift:hover {
+  @apply transform -translate-y-1;
+}
+
+/* ===== ИКОНКИ ЦВЕТНЫЕ ===== */
+
+.ts-icon-blue {
+  @apply bg-blue-100/80 border border-blue-300/50;
+}
+
+.ts-icon-green {
+  @apply bg-emerald-100/80 border border-emerald-300/50;
+}
+
+.ts-icon-purple {
+  @apply bg-violet-100/80 border border-violet-300/50;
+}
+
+.ts-icon-orange {
+  @apply bg-orange-100/80 border border-orange-300/50;
+}
+
+.ts-icon-blue .ts-icon-inner {
+  @apply text-blue-600;
+}
+
+.ts-icon-green .ts-icon-inner {
+  @apply text-emerald-600;
+}
+
+.ts-icon-purple .ts-icon-inner {
+  @apply text-violet-600;
+}
+
+.ts-icon-orange .ts-icon-inner {
+  @apply text-orange-600;
+} 

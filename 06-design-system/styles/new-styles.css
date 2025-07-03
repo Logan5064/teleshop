@@ -1,0 +1,270 @@
+/* =============================================== */
+/* TELESHOP DESIGN SYSTEM - STYLE RECIPES LIBRARY */
+/* =============================================== */
+
+:root {
+  --ts-shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --ts-shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --ts-shadow-neumorphic-light: -5px -5px 10px rgba(255, 255, 255, 0.7), 5px 5px 10px rgba(0, 0, 0, 0.1);
+  --ts-shadow-neumorphic-dark: inset 5px 5px 10px rgba(0, 0, 0, 0.1), inset -5px -5px 10px rgba(255, 255, 255, 0.7);
+  --ts-shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  --ts-shadow-brutal: 4px 4px 0px rgba(0, 0, 0, 1);
+  --ts-bg-neumorphic: #ecf0f3;
+  --ts-bg-glass: rgba(255, 255, 255, 0.25);
+  --ts-border-glass: rgba(255, 255, 255, 0.18);
+}
+
+@keyframes pulse {
+  0% { transform: scale(0); opacity: 0.5; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.ts-btn-flat {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  background: #3b82f6;
+  color: white;
+  transition: all 0.2s ease-out;
+}
+.ts-btn-flat:hover {
+  background: #2563eb;
+}
+
+.ts-btn-neumorphic {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  color: #374151;
+  background: var(--ts-bg-neumorphic);
+  box-shadow: var(--ts-shadow-neumorphic-light);
+  transition: all 0.3s ease-in-out;
+}
+.ts-btn-neumorphic:hover {
+  box-shadow: var(--ts-shadow-neumorphic-dark);
+  transform: translateY(1px);
+}
+
+.ts-btn-glass {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  color: white;
+  background: var(--ts-bg-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--ts-border-glass);
+  box-shadow: var(--ts-shadow-glass);
+  transition: all 0.3s ease-in-out;
+}
+
+.ts-btn-outline {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  color: #2563eb;
+  border: 2px solid #2563eb;
+  background: transparent;
+  transition: all 0.2s ease-out;
+}
+.ts-btn-outline:hover {
+  background: #2563eb;
+  color: white;
+}
+
+.ts-btn-brutalist {
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  border-radius: 0;
+  border: 4px solid black;
+  background: #fbbf24;
+  color: black;
+  text-transform: uppercase;
+  box-shadow: var(--ts-shadow-brutal);
+  transition: all 0.2s ease-out;
+}
+.ts-btn-brutalist:hover {
+  background: white;
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
+}
+
+.ts-btn-pulse {
+  position: relative;
+  overflow: hidden;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  background: #3b82f6;
+  color: white;
+}
+.ts-btn-pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  border-radius: 0.75rem;
+  animation: pulse 1.5s infinite;
+}
+
+.ts-btn-retro {
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+  color: black;
+  border: 2px solid black;
+  background: linear-gradient(45deg, #ff6b9d, #ffc837);
+  box-shadow: 4px 4px 0px #000000;
+  transition: all 0.15s ease-out;
+}
+.ts-btn-retro:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.ts-btn-soft {
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  border-radius: 1rem;
+  background: #dbeafe;
+  color: #1d4ed8;
+  box-shadow: var(--ts-shadow-soft);
+  transition: all 0.3s ease-out;
+}
+.ts-btn-soft:hover {
+  background: #bfdbfe;
+}
+
+.ts-btn-floating {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  background: var(--primary-gradient);
+  color: white;
+  transition: all 0.3s ease-out;
+}
+.ts-btn-floating:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: scale(1.1);
+}
+
+.ts-card-flat {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+}
+
+.ts-card-neumorphic {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background: var(--ts-bg-neumorphic);
+  box-shadow: var(--ts-shadow-neumorphic-light);
+  transition: all 0.3s ease-in-out;
+}
+
+.ts-card-glass {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background: var(--ts-bg-glass);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--ts-border-glass);
+  box-shadow: var(--ts-shadow-glass);
+}
+
+.ts-card-gradient-border {
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  background: white;
+  position: relative;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.ts-card-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  z-index: -1;
+  margin: -2px;
+}
+
+.ts-card-lift {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  transition: all 0.3s ease-out;
+}
+.ts-card-lift:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-0.5rem);
+}
+
+.ts-card-brutalist {
+  background: white;
+  border: 4px solid black;
+  padding: 1.5rem;
+  border-radius: 0;
+  box-shadow: var(--ts-shadow-brutal);
+}
+
+.ts-card-floating {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--ts-shadow-medium);
+  animation: float 3s ease-in-out infinite;
+  transition: all 0.5s ease-out;
+}
+
+.ts-input-glass {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  color: white;
+  border: 0;
+  background: var(--ts-bg-glass);
+  backdrop-filter: blur(10px);
+}
+
+.ts-input-neumorphic {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  color: #374151;
+  border: 0;
+  background: var(--ts-bg-neumorphic);
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.1), inset -3px -3px 6px rgba(255, 255, 255, 0.7);
+}
+
+.ts-input-brutalist {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0;
+  border: 4px solid black;
+  background: white;
+  color: black;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+}
+
+.ts-shadow-soft { box-shadow: var(--ts-shadow-soft); }
+.ts-shadow-medium { box-shadow: var(--ts-shadow-medium); }
+.ts-shadow-glass { box-shadow: var(--ts-shadow-glass); }
+.ts-shadow-brutal { box-shadow: var(--ts-shadow-brutal); }
+
+.ts-animate-bounce-in { animation: bounce-in 0.6s ease-out; }
+.ts-animate-float { animation: float 3s ease-in-out infinite; } 

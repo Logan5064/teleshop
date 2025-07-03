@@ -1,0 +1,244 @@
+#!/usr/bin/env python3
+"""
+🤖 Основной бот TeleShop Constructor для авторизации пользователей
+Генерирует временные коды для входа в систему
+"""
+
+import os
+import asyncio
+import logging
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+from sqlalchemy.ext.asyncio import AsyncSession
+from dotenv import load_dotenv
+
+# Импорты (исправленные пути)
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Определяем путь к конфигурации
+project_root = current_dir
+for _ in range(10):  # Ищем корень проекта
+    if os.path.exists(os.path.join(project_root, "main_launcher.py")):
+        break
+    project_root = os.path.dirname(project_root)
+
+config_path = os.path.join(project_root, "05-server-launchers", "config")
+
+# Загружаем конфигурацию из новой папки
+config_env_path = os.path.join(config_path, "shared", "config", "config.env")
+load_dotenv(config_env_path)
+
+# Добавляем путь к shared модулям (config содержит папку shared)
+sys.path.insert(0, config_path)
+
+from shared.auth.db_code_auth import DatabaseCodeAuth
+from shared.utils.database import AsyncSessionLocal
+
+# Настройка логирования
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Конфигурация
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+if not BOT_TOKEN:
+    raise ValueError("❌ TELEGRAM_BOT_TOKEN не найден в config.env")
+
+class TeleShopAuthBot:
+    """Основной бот для авторизации пользователей"""
+    
+    def __init__(self):
+        self.application = Application.builder().token(BOT_TOKEN).build()
+        self.setup_handlers()
+    
+    def setup_handlers(self):
+        """Настройка обработчиков команд"""
+        self.application.add_handler(CommandHandler("start", self.start_command))
+        self.application.add_handler(CommandHandler("login", self.login_command))
+        self.application.add_handler(CommandHandler("help", self.help_command))
+        self.application.add_handler(CallbackQueryHandler(self.button_callback))
+    
+    async def button_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обработчик нажатий на кнопки"""
+        query = update.callback_query
+        await query.answer()
+        
+        if query.data == "get_login_code":
+            # Вызываем функцию генерации кода
+            await self.login_command(update, context)
+        elif query.data == "help":
+            # Вызываем функцию помощи
+            await self.help_command(update, context)
+
+    async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обработчик команды /start"""
+        user = update.effective_user
+        
+        welcome_text = f"""
+🎉 **Добро пожаловать в TeleShop Constructor!**
+
+Привет, {user.first_name}! 👋
+
+TeleShop Constructor — это SaaS-платформа для создания Telegram магазинов с помощью drag & drop конструктора.
+
+**Что вы можете сделать:**
+• 🏪 Создать свой Telegram магазин за 5 минут
+• 🎨 Настроить дизайн с помощью конструктора
+• 🤖 Подключить своего бота к магазину
+• 📊 Отслеживать аналитику и заказы
+
+**Для входа в систему используйте команду /login**
+"""
+        
+        # Создаем клавиатуру (без localhost кнопки)
+        keyboard = [
+            [InlineKeyboardButton("🔑 Получить код для входа", callback_data="get_login_code")],
+            [InlineKeyboardButton("ℹ️ Помощь", callback_data="help")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        
+        await update.message.reply_text(
+            welcome_text, 
+            reply_markup=reply_markup,
+            parse_mode='Markdown'
+        )
+        
+        logger.info(f"👤 Пользователь {user.id} ({user.username}) запустил бота")
+    
+    async def login_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обработчик команды /login - генерация временного кода"""
+        # Определяем откуда пришел запрос (сообщение или callback)
+        if update.callback_query:
+            user = update.callback_query.from_user
+            send_method = update.callback_query.edit_message_text
+        else:
+            user = update.effective_user
+            send_method = update.message.reply_text
+        
+        try:
+            # Подготавливаем данные пользователя
+            telegram_data = {
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name
+            }
+            
+            # Создаем временный код в БД
+            async with AsyncSessionLocal() as db:
+                temp_code = await DatabaseCodeAuth.create_temp_code(
+                    telegram_id=str(user.id),
+                    telegram_data=telegram_data,
+                    db=db
+                )
+            
+            # Отправляем код пользователю
+            code_text = f"""
+🔑 **Ваш временный код для входа:**
+
+`{temp_code}`
+
+**Важно:**
+• Код действует **15 минут**
+• Используйте его на странице входа админ-панели
+• После входа сессия будет активна **24 часа**
+• Никому не передавайте этот код!
+
+_Код автоматически удалится после использования_
+"""
+            
+            await send_method(
+                code_text,
+                parse_mode='Markdown'
+            )
+            
+            logger.info(f"🔑 Сгенерирован код {temp_code} для пользователя {user.id}")
+            
+        except Exception as e:
+            logger.error(f"❌ Ошибка генерации кода для {user.id}: {e}")
+            error_text = "❌ Произошла ошибка при генерации кода. Попробуйте позже."
+            await send_method(error_text)
+    
+    async def help_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Обработчик команды /help"""
+        # Определяем откуда пришел запрос
+        if update.callback_query:
+            send_method = update.callback_query.edit_message_text
+        else:
+            send_method = update.message.reply_text
+            
+        help_text = """
+📖 **Помощь по TeleShop Constructor**
+
+**Команды:**
+• `/start` - Начать работу с ботом
+• `/login` - Получить код для входа в систему
+• `/help` - Показать эту справку
+
+**Как войти в систему:**
+1. Используйте команду `/login` или кнопку выше
+2. Скопируйте полученный код
+3. Перейдите на страницу входа в админ-панель
+4. Введите код на странице входа
+5. Готово! Вы в системе на 24 часа
+
+**Поддержка:**
+Если у вас есть вопросы, свяжитесь с нашей поддержкой.
+
+**О проекте:**
+TeleShop Constructor - это современная SaaS-платформа для создания Telegram магазинов без программирования.
+"""
+        
+        await send_method(help_text, parse_mode='Markdown')
+    
+    async def start_polling(self):
+        """Запуск бота в режиме polling"""
+        logger.info("🚀 Запуск TeleShop Auth Bot...")
+        logger.info(f"🤖 Bot Token: {BOT_TOKEN[:10]}...")
+        
+        try:
+            await self.application.initialize()
+            await self.application.start()
+            await self.application.updater.start_polling()
+            
+            logger.info("✅ Бот успешно запущен и ожидает сообщения")
+            
+            # Ожидаем бесконечно
+            await asyncio.Event().wait()
+            
+        except Exception as e:
+            logger.error(f"❌ Ошибка запуска бота: {e}")
+        finally:
+            await self.application.stop()
+    
+    async def stop(self):
+        """Остановка бота"""
+        logger.info("🛑 Остановка бота...")
+        await self.application.stop()
+
+# Глобальный экземпляр бота
+auth_bot = None
+
+async def start_auth_bot():
+    """Запуск основного бота для авторизации"""
+    global auth_bot
+    
+    if auth_bot is None:
+        auth_bot = TeleShopAuthBot()
+    
+    await auth_bot.start_polling()
+
+async def stop_auth_bot():
+    """Остановка основного бота"""
+    global auth_bot
+    
+    if auth_bot:
+        await auth_bot.stop()
+        auth_bot = None
+
+if __name__ == "__main__":
+    # Запуск бота напрямую
+    bot = TeleShopAuthBot()
+    asyncio.run(bot.start_polling()) 

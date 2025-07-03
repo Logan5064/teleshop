@@ -1,0 +1,454 @@
+/* 
+🎨 TELESHOP DESIGN SYSTEM
+Единая система дизайна для всех страниц проекта
+*/
+
+/* ===== ЦВЕТОВАЯ ПАЛИТРА ===== */
+:root {
+  /* Основные цвета */
+  --ts-orange-50: #fff7ed;
+  --ts-orange-100: #ffedd5;
+  --ts-orange-200: #fed7aa;
+  --ts-orange-300: #fdba74;
+  --ts-orange-400: #fb923c;
+  --ts-orange-500: #ff6b35; /* Primary */
+  --ts-orange-600: #ff8c42; /* Secondary */
+  --ts-orange-700: #c2410c;
+  --ts-orange-800: #9a3412;
+  --ts-orange-900: #7c2d12;
+
+  /* Нейтральные цвета */
+  --ts-gray-50: #f9fafb;
+  --ts-gray-100: #f3f4f6;
+  --ts-gray-200: #e5e7eb;
+  --ts-gray-300: #d1d5db;
+  --ts-gray-400: #9ca3af;
+  --ts-gray-500: #6b7280;
+  --ts-gray-600: #4b5563;
+  --ts-gray-700: #374151;
+  --ts-gray-800: #1f2937;
+  --ts-gray-900: #111827;
+
+  /* Темная тема */
+  --ts-dark-bg: #0c0c0d;
+  --ts-dark-surface: #1a1a1a;
+  --ts-dark-card: #2d2d2d;
+  --ts-dark-border: #404040;
+
+  /* Семантические цвета */
+  --ts-success: #10b981;
+  --ts-warning: #f59e0b;
+  --ts-error: #ef4444;
+  --ts-info: #3b82f6;
+
+  /* Градиенты */
+  --ts-gradient-primary: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  --ts-gradient-dark: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  --ts-gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+
+  /* Тени */
+  --ts-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --ts-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --ts-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --ts-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --ts-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --ts-shadow-orange: 0 20px 40px rgba(255, 107, 53, 0.2);
+  --ts-shadow-glow: 0 0 20px rgba(255, 107, 53, 0.3);
+
+  /* Радиусы скругления */
+  --ts-radius-sm: 0.375rem;
+  --ts-radius-md: 0.5rem;
+  --ts-radius-lg: 0.75rem;
+  --ts-radius-xl: 1rem;
+  --ts-radius-2xl: 1.5rem;
+  --ts-radius-full: 9999px;
+
+  /* Анимации */
+  --ts-transition-fast: 0.15s ease-out;
+  --ts-transition-normal: 0.3s ease-out;
+  --ts-transition-slow: 0.5s ease-out;
+}
+
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+.ts-gradient-primary {
+  background: var(--ts-gradient-primary);
+}
+
+.ts-gradient-dark {
+  background: var(--ts-gradient-dark);
+}
+
+.ts-gradient-glass {
+  background: var(--ts-gradient-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ===== КНОПКИ ===== */
+.ts-btn {
+  @apply inline-flex items-center justify-center px-4 py-2 font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2;
+  border-radius: var(--ts-radius-lg);
+}
+
+.ts-btn-primary {
+  @apply ts-btn text-white;
+  background: var(--ts-gradient-primary);
+  box-shadow: var(--ts-shadow-md);
+}
+
+.ts-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ts-shadow-orange);
+}
+
+.ts-btn-secondary {
+  @apply ts-btn bg-white text-gray-900 border border-gray-300;
+}
+
+.ts-btn-secondary:hover {
+  @apply bg-gray-50;
+  transform: translateY(-1px);
+}
+
+.ts-btn-ghost {
+  @apply ts-btn text-gray-600 hover:text-gray-900 hover:bg-gray-100;
+}
+
+/* Размеры кнопок */
+.ts-btn-sm {
+  @apply px-3 py-1.5 text-sm;
+}
+
+.ts-btn-lg {
+  @apply px-6 py-3 text-lg;
+}
+
+.ts-btn-xl {
+  @apply px-8 py-4 text-xl;
+}
+
+/* ===== КАРТОЧКИ ===== */
+.ts-card {
+  @apply bg-white border border-gray-200 shadow-sm;
+  border-radius: var(--ts-radius-2xl);
+  transition: all var(--ts-transition-normal);
+}
+
+.ts-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ts-shadow-xl);
+}
+
+.ts-card-dark {
+  @apply ts-card bg-gray-900 border-gray-700 text-white;
+}
+
+.ts-card-glass {
+  @apply ts-card;
+  background: var(--ts-gradient-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ts-card-glow {
+  box-shadow: var(--ts-shadow-glow);
+}
+
+/* ===== ФОРМЫ ===== */
+.ts-input {
+  @apply w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 focus:ring-2 focus:border-transparent focus:outline-none;
+  border-radius: var(--ts-radius-lg);
+  transition: all var(--ts-transition-fast);
+}
+
+.ts-input:focus {
+  --tw-ring-color: var(--ts-orange-500);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.ts-input-dark {
+  @apply ts-input bg-gray-800 border-gray-600 text-white placeholder-gray-400;
+}
+
+.ts-label {
+  @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+.ts-label-dark {
+  @apply ts-label text-gray-300;
+}
+
+/* ===== ИКОНКИ ===== */
+.ts-icon-container {
+  @apply flex items-center justify-center;
+  border-radius: var(--ts-radius-lg);
+}
+
+.ts-icon-primary {
+  @apply ts-icon-container text-white;
+  background: var(--ts-gradient-primary);
+}
+
+.ts-icon-secondary {
+  @apply ts-icon-container bg-gray-100 text-gray-600;
+}
+
+/* Размеры иконок */
+.ts-icon-sm {
+  @apply w-8 h-8 text-sm;
+}
+
+.ts-icon-md {
+  @apply w-10 h-10 text-base;
+}
+
+.ts-icon-lg {
+  @apply w-12 h-12 text-lg;
+}
+
+.ts-icon-xl {
+  @apply w-16 h-16 text-xl;
+}
+
+/* ===== АНИМАЦИИ ===== */
+.ts-hover-lift {
+  transition: all var(--ts-transition-normal);
+}
+
+.ts-hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+.ts-hover-glow {
+  transition: all var(--ts-transition-normal);
+}
+
+.ts-hover-glow:hover {
+  box-shadow: var(--ts-shadow-glow);
+}
+
+.ts-animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.ts-animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+.ts-animate-scale {
+  animation: scale 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes scale {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+/* ===== ЛЕЙАУТЫ ===== */
+.ts-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.ts-container-sm {
+  @apply max-w-md mx-auto px-4;
+}
+
+.ts-container-lg {
+  @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.ts-grid {
+  @apply grid gap-6;
+}
+
+.ts-grid-cols-1 {
+  @apply grid-cols-1;
+}
+
+.ts-grid-cols-2 {
+  @apply grid-cols-1 md:grid-cols-2;
+}
+
+.ts-grid-cols-3 {
+  @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
+}
+
+.ts-grid-cols-4 {
+  @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-4;
+}
+
+/* ===== ТИПОГРАФИКА ===== */
+.ts-heading-1 {
+  @apply text-4xl font-bold text-gray-900 tracking-tight;
+}
+
+.ts-heading-2 {
+  @apply text-3xl font-bold text-gray-900 tracking-tight;
+}
+
+.ts-heading-3 {
+  @apply text-2xl font-semibold text-gray-900;
+}
+
+.ts-heading-4 {
+  @apply text-xl font-semibold text-gray-900;
+}
+
+.ts-body-lg {
+  @apply text-lg text-gray-700 leading-relaxed;
+}
+
+.ts-body {
+  @apply text-base text-gray-600 leading-relaxed;
+}
+
+.ts-body-sm {
+  @apply text-sm text-gray-500;
+}
+
+.ts-text-primary {
+  color: var(--ts-orange-500);
+}
+
+.ts-text-secondary {
+  color: var(--ts-orange-600);
+}
+
+/* ===== СПЕЦИАЛЬНЫЕ ЭФФЕКТЫ ===== */
+.ts-glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ts-neumorphism {
+  background: #f0f0f0;
+  box-shadow: 
+    8px 8px 16px #d1d1d1,
+    -8px -8px 16px #ffffff;
+}
+
+.ts-gradient-text {
+  background: var(--ts-gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== УТИЛИТЫ ===== */
+.ts-scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.ts-scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.ts-backdrop-blur {
+  backdrop-filter: blur(8px);
+}
+
+/* ===== РЕСПОНСИВНОСТЬ ===== */
+@media (max-width: 768px) {
+  .ts-card {
+    border-radius: var(--ts-radius-xl);
+  }
+  
+  .ts-btn {
+    @apply px-4 py-3 text-base;
+  }
+  
+  .ts-input {
+    @apply py-4 text-base;
+  }
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+  .ts-auto-dark .ts-card {
+    @apply bg-gray-900 border-gray-700 text-white;
+  }
+  
+  .ts-auto-dark .ts-input {
+    @apply bg-gray-800 border-gray-600 text-white;
+  }
+  
+  .ts-auto-dark .ts-heading-1,
+  .ts-auto-dark .ts-heading-2,
+  .ts-auto-dark .ts-heading-3,
+  .ts-auto-dark .ts-heading-4 {
+    @apply text-white;
+  }
+}
+
+/* ===== КОМПОНЕНТЫ ИНТЕРФЕЙСА ===== */
+
+/* Лоадер */
+.ts-loader {
+  @apply inline-block w-6 h-6 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin;
+}
+
+/* Бейдж */
+.ts-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 text-xs font-medium rounded-full;
+}
+
+.ts-badge-primary {
+  @apply ts-badge bg-orange-100 text-orange-800;
+}
+
+.ts-badge-success {
+  @apply ts-badge bg-green-100 text-green-800;
+}
+
+.ts-badge-warning {
+  @apply ts-badge bg-yellow-100 text-yellow-800;
+}
+
+.ts-badge-error {
+  @apply ts-badge bg-red-100 text-red-800;
+}
+
+/* Алерт */
+.ts-alert {
+  @apply p-4 rounded-lg border-l-4;
+}
+
+.ts-alert-success {
+  @apply ts-alert bg-green-50 border-green-400 text-green-700;
+}
+
+.ts-alert-warning {
+  @apply ts-alert bg-yellow-50 border-yellow-400 text-yellow-700;
+}
+
+.ts-alert-error {
+  @apply ts-alert bg-red-50 border-red-400 text-red-700;
+}
+
+.ts-alert-info {
+  @apply ts-alert bg-blue-50 border-blue-400 text-blue-700;
+} 

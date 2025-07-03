@@ -1,0 +1,518 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================== */
+/* GLOBAL DESIGN TOKENS & BASE STYLES */
+/* =============================================== */
+
+:root {
+  /* Base Colors */
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  
+  /* Admin Color Palette Gradients */
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  --ts-gradient-info: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%); /* Added based on usage */
+
+  /* Shadows */
+  --ts-shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --ts-shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --ts-shadow-hard: 0 12px 36px rgba(0, 0, 0, 0.16);
+  --ts-shadow-neumorphic-light: -5px -5px 10px rgba(255, 255, 255, 0.7), 5px 5px 10px rgba(0, 0, 0, 0.1);
+  --ts-shadow-neumorphic-dark: inset 5px 5px 10px rgba(0, 0, 0, 0.1), inset -5px -5px 10px rgba(255, 255, 255, 0.7);
+  --ts-shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  --ts-shadow-brutal: 4px 4px 0px rgba(0, 0, 0, 1);
+
+  /* Border Radius */
+  --ts-radius-xs: 0.125rem; /* 2px */
+  --ts-radius-sm: 0.25rem;  /* 4px */
+  --ts-radius-md: 0.5rem;   /* 8px */
+  --ts-radius-lg: 1rem;     /* 16px */
+  --ts-radius-xl: 1.5rem;   /* 24px */
+  --ts-radius-2xl: 2rem;    /* 32px */
+  --ts-radius-full: 9999px;
+
+  /* Transitions */
+  --ts-transition-fast: all 0.15s ease-out;
+  --ts-transition-normal: all 0.3s ease-in-out;
+  --ts-transition-slow: all 0.5s ease-in-out;
+
+  /* Special backgrounds */
+  --ts-bg-neumorphic: #ecf0f3;
+  --ts-bg-glass: rgba(255, 255, 255, 0.25);
+  --ts-border-glass: rgba(255, 255, 255, 0.18);
+  --ts-bg-brutal: #000000;
+  --ts-text-brutal: #00ff00; /* Example for brutalist text */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+    
+    /* Dark mode adaptations for special backgrounds/shadows */
+    --ts-bg-neumorphic: #2c2f33;
+    --ts-shadow-neumorphic-light: -5px -5px 10px rgba(44, 47, 51, 0.7), 5px 5px 10px rgba(0, 0, 0, 0.3);
+    --ts-shadow-neumorphic-dark: inset 5px 5px 10px rgba(0, 0, 0, 0.3), inset -5px -5px 10px rgba(44, 47, 51, 0.7);
+    --ts-bg-glass: rgba(0, 0, 0, 0.25);
+    --ts-border-glass: rgba(255, 255, 255, 0.18);
+    --ts-bg-brutal: #ffffff; /* Brutalist background in dark mode */
+    --ts-text-brutal: #ff0000; /* Brutalist text in dark mode */
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* Custom Utilities Layer */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .clip-diamond {
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
+  .clip-hexagon {
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+  }
+}
+
+/* =============================================== */
+/* GLOBAL ANIMATIONS */
+/* =============================================== */
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+  20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 20px rgba(34, 211, 238, 0.8); }
+  to { box-shadow: 0 0 30px rgba(34, 211, 238, 1), 0 0 40px rgba(34, 211, 238, 0.8); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(0); opacity: 0.5; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Animation Utility Classes */
+.animate-fade-in { animation: fadeIn 0.5s ease-out; }
+.animate-slide-in { animation: slideIn 0.3s ease-out; }
+.animate-shake { animation: shake 0.8s ease-in-out; }
+.animate-glow { animation: glow 1.5s infinite alternate; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+.animate-pulse { animation: pulse 1.5s infinite; }
+.animate-bounce-in { animation: bounce-in 0.6s ease-out; }
+.animate-slide-up { animation: slide-up 0.5s ease-out; }
+
+/* =============================================== */
+/* SCROLLBAR STYLES */
+/* =============================================== */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-gradient); /* Uses CSS variable */
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%); /* Can be a variable too */
+}
+
+/* =============================================== */
+/* TELESHOP DESIGN SYSTEM - STYLE RECIPES LIBRARY */
+/* =============================================== */
+
+/* Layout Components */
+.ts-page-bg {
+  @apply bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 min-h-screen;
+}
+
+.ts-sidebar {
+  @apply bg-white/80 backdrop-blur-lg border-r border-gray-200/50 shadow-lg;
+}
+
+.ts-main-content {
+  @apply flex-1 p-6 overflow-y-auto bg-white/30 backdrop-blur-sm;
+}
+
+.ts-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Card Components */
+.ts-card {
+  @apply bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 hover:shadow-xl transition-all duration-300;
+}
+
+.ts-card-hover {
+  @apply hover:scale-[1.02] hover:bg-white/80;
+}
+
+.ts-card-secondary {
+  @apply bg-gray-50/80 backdrop-blur-sm rounded-xl border border-gray-200/50;
+}
+
+/* Card Style Recipes */
+.ts-card-flat {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+}
+
+.ts-card-neumorphic {
+  @apply p-6 rounded-xl;
+  background: var(--ts-bg-neumorphic);
+  box-shadow: var(--ts-shadow-neumorphic-light);
+  transition: var(--ts-transition-normal);
+}
+.ts-card-neumorphic:hover {
+  box-shadow: var(--ts-shadow-neumorphic-dark);
+}
+
+.ts-card-glass {
+  @apply p-6 rounded-xl;
+  background: var(--ts-bg-glass);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--ts-border-glass);
+  box-shadow: var(--ts-shadow-glass);
+}
+
+.ts-card-gradient-border {
+  @apply p-6 rounded-xl bg-white relative;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.ts-card-gradient-border::before {
+  content: '';
+  @apply absolute inset-0 rounded-xl;
+  background: linear-gradient(45deg, theme('colors.blue.500'), theme('colors.purple.600')); /* Using theme() for Tailwind colors */
+  z-index: -1;
+  margin: -2px;
+}
+
+.ts-card-lift {
+  @apply bg-white rounded-lg shadow-md transition-all duration-300 p-6;
+}
+.ts-card-lift:hover {
+  @apply shadow-xl transform -translate-y-2;
+}
+
+.ts-card-brutalist {
+  @apply bg-white border-4 border-black p-6 rounded-none;
+  box-shadow: var(--ts-shadow-brutal);
+}
+
+.ts-card-floating {
+  @apply bg-white rounded-2xl p-6 transition-all duration-500;
+  box-shadow: var(--ts-shadow-medium);
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Typography Components */
+.ts-title-main {
+  @apply text-3xl lg:text-4xl font-bold text-gray-900 tracking-tight;
+}
+
+.ts-title-section {
+  @apply text-2xl lg:text-3xl font-semibold text-gray-800 mb-6;
+}
+
+.ts-title-card {
+  @apply text-xl font-semibold text-gray-800 mb-4;
+}
+
+.ts-subtitle {
+  @apply text-lg font-medium text-gray-700 mb-3;
+}
+
+.ts-text-body {
+  @apply text-gray-600 leading-relaxed;
+}
+
+.ts-text-meta {
+  @apply text-sm text-gray-500;
+}
+
+/* Button Components */
+.ts-btn-primary {
+  @apply bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105 backdrop-blur-sm;
+}
+
+.ts-btn-secondary {
+  @apply bg-white/70 hover:bg-white/90 text-gray-700 hover:text-gray-900 font-medium px-6 py-3 rounded-xl shadow-md hover:shadow-lg border border-gray-200/50 transition-all duration-200 backdrop-blur-sm;
+}
+
+.ts-btn-success {
+  @apply bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105;
+}
+
+.ts-btn-danger {
+  @apply bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-medium px-6 py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105;
+}
+
+/* Button Style Recipes */
+.ts-btn-flat {
+  @apply px-6 py-3 font-medium rounded-lg transition-colors duration-200;
+  background: #3b82f6; /* Direct color, could be a variable */
+  color: white;
+}
+.ts-btn-flat:hover {
+  background: #2563eb; /* Direct color, could be a variable */
+}
+
+.ts-btn-neumorphic {
+  @apply px-6 py-3 font-medium rounded-xl text-gray-700;
+  background: var(--ts-bg-neumorphic);
+  box-shadow: var(--ts-shadow-neumorphic-light);
+  transition: var(--ts-transition-normal);
+}
+.ts-btn-neumorphic:hover {
+  box-shadow: var(--ts-shadow-neumorphic-dark);
+  transform: translateY(1px);
+}
+
+.ts-btn-glass {
+  @apply px-6 py-3 font-medium rounded-xl text-white;
+  background: var(--ts-bg-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--ts-border-glass);
+  box-shadow: var(--ts-shadow-glass);
+  transition: var(--ts-transition-normal);
+}
+.ts-btn-glass:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.ts-btn-outline {
+  @apply px-6 py-3 font-medium rounded-xl text-blue-600 border-2 border-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200;
+}
+
+.ts-btn-gradient-outline {
+  @apply px-6 py-3 font-medium rounded-xl relative overflow-hidden;
+  /* Text gradient */
+  background: linear-gradient(45deg, theme('colors.blue.500'), theme('colors.purple.600'));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text; /* Standard property */
+  color: transparent; /* Fallback for non-webkit */
+
+  /* Border gradient */
+  border: 2px solid transparent;
+  background-image: linear-gradient(45deg, theme('colors.blue.500'), theme('colors.purple.600'));
+  background-origin: border-box;
+  background-clip: padding-box, border-box; /* Apply gradient to border */
+  transition: var(--ts-transition-normal);
+}
+.ts-btn-gradient-outline:hover {
+  -webkit-text-fill-color: white;
+  color: white; /* For non-webkit */
+  background-image: linear-gradient(45deg, theme('colors.blue.600'), theme('colors.purple.700')); /* Hover gradient for border */
+  background-clip: padding-box, border-box;
+}
+
+.ts-btn-brutalist {
+  @apply px-6 py-3 font-bold rounded-none border-4 border-black bg-yellow-400 text-black hover:bg-white transition-colors duration-200;
+  box-shadow: var(--ts-shadow-brutal);
+  text-transform: uppercase;
+}
+.ts-btn-brutalist:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 1);
+}
+
+.ts-btn-pulse {
+  @apply relative overflow-hidden px-6 py-3 font-medium rounded-xl bg-blue-500 text-white;
+}
+.ts-btn-pulse::after {
+  content: '';
+  @apply absolute inset-0 bg-white opacity-0 rounded-xl;
+  animation: pulse 1.5s infinite;
+}
+
+.ts-btn-retro {
+  @apply px-6 py-3 font-bold rounded-lg text-black border-2 border-black;
+  background: linear-gradient(45deg, #ff6b9d, #ffc837);
+  box-shadow: 4px 4px 0px #000000;
+  transition: var(--ts-transition-fast);
+}
+.ts-btn-retro:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.ts-btn-soft {
+  @apply px-6 py-3 font-medium rounded-2xl bg-blue-100 text-blue-700 hover:bg-blue-200 transition-all duration-300;
+  box-shadow: var(--ts-shadow-soft);
+}
+
+.ts-btn-floating {
+  @apply w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110;
+  background: var(--primary-gradient);
+  color: white;
+}
+
+/* Icon Components */
+.ts-icon-container {
+  @apply w-10 h-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center shadow-sm border border-white/50;
+}
+
+.ts-icon-container-lg {
+  @apply w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center shadow-md border border-white/50;
+}
+
+.ts-avatar {
+  @apply w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-medium text-sm shadow-sm;
+}
+
+/* Form Components */
+.ts-input {
+  @apply w-full px-4 py-3 bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all duration-200 placeholder-gray-400;
+}
+
+.ts-select {
+  @apply w-full px-4 py-3 bg-white/70 backdrop-blur-sm border border-gray-200/50 rounded-xl focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all duration-200;
+}
+
+/* Input Style Recipes */
+.ts-input-glass {
+  @apply w-full px-4 py-3 rounded-xl text-white placeholder-white/70 border-0 focus:outline-none focus:ring-2 focus:ring-white/30;
+  background: var(--ts-bg-glass);
+  backdrop-filter: blur(10px);
+}
+
+.ts-input-neumorphic {
+  @apply w-full px-4 py-3 rounded-xl text-gray-700 border-0 focus:outline-none;
+  background: var(--ts-bg-neumorphic);
+  box-shadow: inset 3px 3px 6px rgba(0, 0, 0, 0.1), inset -3px -3px 6px rgba(255, 255, 255, 0.7);
+}
+
+.ts-input-brutalist {
+  @apply w-full px-4 py-3 rounded-none border-4 border-black bg-white text-black focus:outline-none focus:bg-yellow-100;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 1);
+}
+
+/* Navigation Components */
+.ts-nav-item {
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 cursor-pointer;
+}
+
+.ts-nav-item-active {
+  @apply bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md;
+}
+
+.ts-nav-item-inactive {
+  @apply text-gray-600 hover:text-gray-900 hover:bg-white/50;
+}
+
+/* Spacing Utilities */
+.ts-spacing-section {
+  @apply py-8 lg:py-12;
+}
+
+.ts-spacing-card {
+  @apply p-6 lg:p-8;
+}
+
+/* Grid Layouts */
+.ts-grid-stats {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
+}
+
+.ts-grid-main {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-6;
+}
+
+/* Status Indicators */
+.ts-status-active {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200;
+}
+
+.ts-status-inactive {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200;
+}
+
+/* Header Style Recipes */
+.ts-header-hero {
+  @apply py-16 px-6 text-center text-white rounded-2xl;
+  background: var(--primary-gradient);
+}
+
+.ts-header-minimal {
+  @apply py-8 px-6 text-center bg-gray-50 rounded-lg;
+}
+
+.ts-header-glass {
+  @apply py-12 px-6 text-center text-white rounded-2xl;
+  background: var(--ts-bg-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--ts-border-glass);
+}
+
+.ts-header-magazine {
+  @apply py-8 px-6 text-left bg-white border-l-4 border-red-500;
+}
+
+/* Utility Classes for Gradients (using variables) */
+.ts-gradient-primary { background: var(--primary-gradient); }
+.ts-gradient-secondary { background: var(--secondary-gradient); }
+.ts-gradient-success { background: var(--success-gradient); }
+.ts-gradient-warning { background: var(--warning-gradient); }
+.ts-gradient-info { background: var(--ts-gradient-info); }
+
+/* Utility Classes for Shadows (using variables) */
+.ts-shadow-soft { box-shadow: var(--ts-shadow-soft); }
+.ts-shadow-medium { box-shadow: var(--ts-shadow-medium); }
+.ts-shadow-glass { box-shadow: var(--ts-shadow-glass); }
+.ts-shadow-brutal { box-shadow: var(--ts-shadow-brutal); }

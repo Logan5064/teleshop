@@ -1,0 +1,81 @@
+/* Главный файл стилей TeleShop Constructor */
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Стили конструктора */
+@import './constructor.css';
+
+/* Стили блоков */
+@import './blocks.css';
+
+/* Анимации */
+@import './animations.css';
+
+/* TeleShop Design System */
+@layer base {
+  :root {
+    --ts-primary: 59 130 246;
+    --ts-secondary: 16 185 129;
+    --ts-accent: 245 158 11;
+    --ts-neutral: 107 114 128;
+    --ts-base-100: 255 255 255;
+    --ts-base-200: 249 250 251;
+    --ts-base-300: 243 244 246;
+    --ts-info: 59 130 246;
+    --ts-success: 16 185 129;
+    --ts-warning: 245 158 11;
+    --ts-error: 239 68 68;
+  }
+  
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: rgb(31 41 55);
+    background-color: rgb(249 250 251);
+  }
+}
+
+/* Глобальные классы TeleShop Design System */
+@layer components {
+  .ts-page-bg {
+    @apply min-h-screen bg-gray-50;
+  }
+  
+  .ts-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .ts-card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+  }
+  
+  .ts-card-hover {
+    @apply ts-card hover:shadow-md transition-shadow duration-200;
+  }
+  
+  .ts-btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200;
+  }
+  
+  .ts-btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium py-2 px-4 rounded-md transition-colors duration-200;
+  }
+  
+  .ts-input {
+    @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  }
+  
+  .ts-title-main {
+    @apply text-3xl font-bold text-gray-900;
+  }
+  
+  .ts-title-section {
+    @apply text-2xl font-semibold text-gray-900;
+  }
+  
+  .ts-text-body {
+    @apply text-gray-600 leading-relaxed;
+  }
+} 
