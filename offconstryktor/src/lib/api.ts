@@ -1,112 +1,65 @@
-import axios from 'axios';
-import type {
-  DashboardStats,
-  SalesChartData,
-  PopularProduct,
-  RecentOrder,
-  CustomerActivity,
-  Shop,
-  Product,
-  Order,
-  User,
-  ApiResponse
-} from '@/types';
+// Simple API for Constructor
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-// PostgreSQL API configuration
-const API_BASE_URL = 'http://localhost:8000';
-
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
+// TeleShop API
+export const teleShopAPI = {
+  getDesigns: async () => {
+    const response = await fetch(`${API_BASE}/designs`);
+    return response.json();
   },
-});
-
-// Добавляем токен авторизации к каждому запросу
-api.interceptors.request.use((config) => {
-  // Пробуем получить токен из localStorage, если не получается - из sessionStorage
-  let token = null;
-  try {
-    token = localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
-  } catch (e) {
-    console.warn('Storage access blocked, trying sessionStorage');
-    token = sessionStorage.getItem('auth_token');
-  }
   
-  if (token) {
-    // Добавляем Bearer префикс если его нет
-    const authHeader = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
-    config.headers.Authorization = authHeader;
+  saveDesign: async (design: any) => {
+    const response = await fetch(`${API_BASE}/designs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(design),
+    });
+    return response.json();
   }
-  return config;
-});
+};
 
-// Обрабатываем ошибки авторизации
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Удаляем токены из всех хранилищ
-      try {
-        localStorage.removeItem('auth_token');
-      } catch (e) {
-        console.warn('localStorage not available');
-      }
-      try {
-        sessionStorage.removeItem('auth_token');
-      } catch (e) {
-        console.warn('sessionStorage not available');
-      }
-      // Пусть middleware отвечает за все редиректы
-      console.log('401 error - clearing tokens, middleware will handle redirect')
-    }
-    return Promise.reject(error);
-  }
-);
-
-// Утилитарная функция для сохранения токена
-function saveToken(token: string) {
-  console.log('💾 SAVING TOKEN:', token.substring(0, 20) + '...');
+// Auth API
+export const authApi = {
+  login: async (credentials: { username: string; password: string }) => {
+    const response = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials),
+    });
+    return response.json();
+  },
   
-  // Пробуем сохранить в localStorage
-  try {
-    localStorage.setItem('auth_token', token);
-    console.log('✅ TOKEN SAVED TO localStorage');
-  } catch (e) {
-    console.warn('❌ localStorage blocked, trying sessionStorage');
-    try {
-      sessionStorage.setItem('auth_token', token);
-      console.log('✅ TOKEN SAVED TO sessionStorage');
-    } catch (e2) {
-      console.error('❌ Both localStorage and sessionStorage blocked!');
-      throw new Error('Storage не доступен в режиме инкогнито');
-    }
+  verify: async (token: string) => {
+    const response = await fetch(`${API_BASE}/auth/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
+    return response.json();
   }
-  
-  // ПРИНУДИТЕЛЬНО устанавливаем cookie через JavaScript
-  try {
-    const expires = new Date();
-    expires.setDate(expires.getDate() + 1); // 24 часа
-    document.cookie = `session_token=${token}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-    console.log('🍪 COOKIE FORCE SET via document.cookie');
-  } catch (e) {
-    console.warn('❌ Cookie setting failed:', e);
-  }
-}
+};
 
-// Утилитарная функция для получения токена
-function getToken(): string | null {
-  try {
-    return localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
-  } catch (e) {
-    console.warn('Storage access blocked');
-    try {
-      return sessionStorage.getItem('auth_token');
-    } catch (e2) {
-      return null;
-    }
+// Shops API
+export const shopsApi = {
+  getAll: async () => {
+    const response = await fetch(`${API_BASE}/shops`);
+    return response.json();
+  },
+  
+  getById: async (id: string) => {
+    const response = await fetch(`${API_BASE}/shops/${id}`);
+    return response.json();
+  },
+  
+  create: async (shopData: any) => {
+    const response = await fetch(`${API_BASE}/shops`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(shopData),
+    });
+    return response.json();
   }
-}
+};
 
 // Analytics API (PostgreSQL данные)
 export const analyticsApi = {
@@ -114,8 +67,8 @@ export const analyticsApi = {
     try {
       // Получаем данные из PostgreSQL
       const [designsRes, shopsRes] = await Promise.all([
-        api.get('/designs'),
-        api.get('/shops')
+        fetch(`${API_BASE}/designs`),
+        fetch(`${API_BASE}/shops`)
       ]);
 
       return {
@@ -178,38 +131,6 @@ export const analyticsApi = {
   }
 };
 
-// Shops API (PostgreSQL)
-export const shopsApi = {
-  getAll: async (): Promise<Shop[]> => {
-    try {
-      const response = await api.get<Shop[]>('/shops');
-      return response.data;
-    } catch (error) {
-      console.warn('Shops API недоступен, возвращаем пустой массив');
-      return [];
-    }
-  },
-
-  getById: async (id: number): Promise<Shop> => {
-    const response = await api.get<Shop>(`/shops/${id}`);
-    return response.data;
-  },
-
-  create: async (shop: Omit<Shop, 'id' | 'created_at' | 'updated_at'>): Promise<Shop> => {
-    const response = await api.post<Shop>('/shops', shop);
-    return response.data;
-  },
-
-  update: async (id: number, shop: Partial<Shop>): Promise<Shop> => {
-    const response = await api.put<Shop>(`/shops/${id}`, shop);
-    return response.data;
-  },
-
-  delete: async (id: number): Promise<void> => {
-    await api.delete(`/shops/${id}`);
-  },
-};
-
 // Products API (ВРЕМЕННО: заглушки, пока не реализованы в secure API)
 export const productsApi = {
   getAll: async (): Promise<Product[]> => {
@@ -265,8 +186,8 @@ export const usersApi = {
   getAll: async (): Promise<User[]> => {
     // Используем аналитический endpoint для получения пользователей ботов
     try {
-      const response = await api.get<User[]>('/secure/analytics/users');
-    return response.data;
+      const response = await fetch(`${API_BASE}/secure/analytics/users`);
+      return response.json();
     } catch (error) {
       // Если не работает, возвращаем пустой массив
       return Promise.resolve([]);
@@ -278,121 +199,38 @@ export const usersApi = {
   },
 };
 
-// Auth API (PostgreSQL авторизация через Telegram)
-export const authApi = {
-  login: async (code: string): Promise<{ success: boolean; message?: string; session_token?: string; user_id?: number }> => {
-    try {
-      const response = await api.post('/auth/login', { code }, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      console.log('✅ AUTH API RESPONSE:', response.data);
-      
-      if (response.data.success && response.data.session_token) {
-        // Сохраняем токен
-        saveToken(response.data.session_token);
-        return response.data;
-      }
-      
-      return response.data;
-    } catch (error: any) {
-      // Правильно обрабатываем ошибки FastAPI
-      let errorMessage = 'Ошибка авторизации';
-      
-      if (error.response?.data?.detail) {
-        const detail = error.response.data.detail;
-        
-        // Если detail это массив (валидационные ошибки)
-        if (Array.isArray(detail)) {
-          errorMessage = detail.map(err => err.msg || 'Ошибка валидации').join(', ');
-        } 
-        // Если detail это строка
-        else if (typeof detail === 'string') {
-          errorMessage = detail;
-        }
-        // Если detail это объект с msg
-        else if (detail.msg) {
-          errorMessage = detail.msg;
-        }
-      }
-      
-      return { 
-        success: false, 
-        message: errorMessage
-      };
-    }
-  },
-
-  logout: async (): Promise<{ success: boolean }> => {
-    try {
-      localStorage.removeItem('auth_token');
-    } catch (e) {
-      console.warn('localStorage not available');
-    }
-    try {
-      sessionStorage.removeItem('auth_token');
-    } catch (e) {
-      console.warn('sessionStorage not available');  
-    }
-    return { success: true };
-  },
-
-  checkAuth: async (): Promise<{ authenticated: boolean; user?: any }> => {
-    const token = getToken();
-    if (!token) {
-      return { authenticated: false };
-    }
-    
-    try {
-      // Проверяем токен через специальный endpoint /auth/check
-      const response = await api.get('/auth/check');
-      return { authenticated: true, user: response.data };
-    } catch (error) {
-      // Удаляем токены из всех хранилищ
-      try {
-        localStorage.removeItem('auth_token');
-      } catch (e) {
-        console.warn('localStorage not available');
-      }
-      try {
-        sessionStorage.removeItem('auth_token');
-      } catch (e) {
-        console.warn('sessionStorage not available');
-      }
-      return { authenticated: false };
-    }
-  },
-
-  getCurrentUser: async (): Promise<any> => {
-    // Пока нет отдельного endpoint для получения данных пользователя
-    return { id: 1, name: 'User' };
-  }
-};
-
 // Designs API (для конструктора)
 export const designsApi = {
   getAll: async (): Promise<any[]> => {
-    const response = await api.get('/designs');
-    return response.data;
+    const response = await fetch(`${API_BASE}/designs`);
+    return response.json();
   },
 
   getById: async (id: number): Promise<any> => {
-    const response = await api.get(`/designs/${id}`);
-    return response.data;
+    const response = await fetch(`${API_BASE}/designs/${id}`);
+    return response.json();
   },
 
   create: async (design: { name: string; description?: string; design_data: any }): Promise<any> => {
-    const response = await api.post('/designs', design);
-    return response.data;
+    const response = await fetch(`${API_BASE}/designs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(design),
+    });
+    return response.json();
   },
 
   update: async (id: number, design: { name?: string; description?: string; design_data?: any }): Promise<any> => {
-    const response = await api.put(`/designs/${id}`, design);
-    return response.data;
+    const response = await fetch(`${API_BASE}/designs/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(design),
+    });
+    return response.json();
   },
 
   delete: async (id: number): Promise<void> => {
-    await api.delete(`/designs/${id}`);
+    await fetch(`${API_BASE}/designs/${id}`, { method: 'DELETE' });
   }
 };
 
@@ -400,14 +238,14 @@ export const designsApi = {
 export const templatesApi = {
   getAll: async (category?: string): Promise<any[]> => {
     const params = category ? { category } : {};
-    const response = await api.get('/templates', { params });
-    return response.data;
+    const response = await fetch(`${API_BASE}/templates`, { params });
+    return response.json();
   },
 
   getById: async (id: number): Promise<any> => {
-    const response = await api.get(`/templates/${id}`);
-    return response.data;
+    const response = await fetch(`${API_BASE}/templates/${id}`);
+    return response.json();
   }
 };
 
-export default api; 
+export default API_BASE; 

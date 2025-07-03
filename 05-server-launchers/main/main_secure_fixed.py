@@ -66,8 +66,11 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "https://localhost:3000", 
-        "https://late-maps-smell.loca.lt",
         "http://localhost:3001",
+        "http://77.73.232.46:3000",
+        "http://77.73.232.46:3001",
+        "https://77.73.232.46:3000",
+        "https://77.73.232.46:3001",
         "*"
     ],
     allow_credentials=True,

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🤖 Simple TeleShop Auth Bot - Production версия для сервера
+🤖 TeleShop Auth Bot - Production Version
 """
 
 import logging
@@ -32,8 +32,8 @@ DB_CONFIG = {
     'password': 'u61e&ke&!Ty1'
 }
 
-# Production URL (определяем автоматически или используем переменную окружения)
-FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://77.73.232.46:3000')
+# Production URL
+FRONTEND_URL = "http://77.73.232.46:3000"
 
 def get_db_connection():
     """Простое подключение к PostgreSQL"""

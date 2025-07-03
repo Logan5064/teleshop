@@ -11,7 +11,9 @@ module.exports = {
       max_memory_restart: '1G',
       env: {
         NODE_ENV: 'production',
-        PORT: 3000
+        PORT: 3000,
+        NEXT_PUBLIC_API_URL: 'http://77.73.232.46:8000',
+        NEXT_PUBLIC_CONSTRUCTOR_URL: 'http://77.73.232.46:3001'
       },
       error_file: './logs/frontend-error.log',
       out_file: './logs/frontend-out.log',
@@ -29,7 +31,8 @@ module.exports = {
       max_memory_restart: '1G',
       env: {
         NODE_ENV: 'production',
-        PORT: 3001
+        PORT: 3001,
+        NEXT_PUBLIC_API_URL: 'http://77.73.232.46:8000'
       },
       error_file: './logs/constructor-error.log',
       out_file: './logs/constructor-out.log',
@@ -46,8 +49,9 @@ module.exports = {
       watch: false,
       max_memory_restart: '512M',
       env: {
-        PYTHONPATH: '.',
-        PYTHON_ENV: 'production'
+        PYTHONPATH: './05-server-launchers/main:./05-server-launchers/config',
+        FRONTEND_URL: 'http://77.73.232.46:3000',
+        CONSTRUCTOR_URL: 'http://77.73.232.46:3001'
       },
       error_file: './logs/backend-error.log',
       out_file: './logs/backend-out.log',
@@ -64,8 +68,7 @@ module.exports = {
       watch: false,
       max_memory_restart: '256M',
       env: {
-        PYTHONPATH: '.',
-        PYTHON_ENV: 'production'
+        FRONTEND_URL: 'http://77.73.232.46:3000'
       },
       error_file: './logs/auth-bot-error.log',
       out_file: './logs/auth-bot-out.log',
