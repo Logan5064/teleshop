@@ -30,12 +30,12 @@ export default function ConstructorPage() {
     onSave: async (data) => {
       try {
         // Импортируем API клиент и утилиты
-        const { constructorAPI } = await import('@/lib/api');
+        const { teleShopAPI } = await import('@/lib/api');
         const { constructorUtils } = await import('@/lib/ssoIntegration');
         
-        // Получаем данные пользователя
-        const userId = constructorUtils.getUserId();
-        const userName = constructorUtils.getUserDisplayName();
+        // Получаем данные пользователя (заглушки)
+        const userId = 'demo_user';
+        const userName = 'Demo User';
         
         // Формируем данные для сохранения
         const designData = {
@@ -50,7 +50,7 @@ export default function ConstructorPage() {
         };
         
         // Сохраняем в реальный API
-        const result = await constructorAPI.saveDesign(designData);
+        const result = await teleShopAPI.saveDesign(designData);
         console.log('✅ Автосохранение выполнено:', result);
         
       } catch (error) {
@@ -334,10 +334,9 @@ export default function ConstructorPage() {
           <button
             onClick={async () => {
               try {
-                const { constructorAPI } = await import('@/lib/api');
-                const { constructorUtils } = await import('@/lib/ssoIntegration');
+                const { teleShopAPI } = await import('@/lib/api');
                 
-                const userId = constructorUtils.getUserId();
+                const userId = 'demo_user';
                 const designData = {
                   shopId: `shop_${userId}_${Date.now()}`,
                   userId: userId,
@@ -346,8 +345,8 @@ export default function ConstructorPage() {
                   name: shopName
                 };
                 
-                const result = await constructorAPI.saveDesign(designData);
-                alert(`✅ Дизайн сохранен! ID: ${result.design_id}`);
+                const result = await teleShopAPI.saveDesign(designData);
+                alert(`✅ Дизайн сохранен! ID: ${result.design_id || 'demo'}`);
               } catch (error) {
                 alert(`❌ Ошибка сохранения: ${error}`);
               }

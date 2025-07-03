@@ -1,7 +1,14 @@
 // TeleShop Configuration
+const isProd = process.env.NODE_ENV === 'production';
+const prodHost = '77.73.232.46'; // Production server IP
+
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
-  CONSTRUCTOR_URL: process.env.NEXT_PUBLIC_CONSTRUCTOR_URL || 'http://localhost:3001',
+  BASE_URL: isProd 
+    ? `http://${prodHost}:8000`
+    : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+  CONSTRUCTOR_URL: isProd 
+    ? `http://${prodHost}:3001`
+    : process.env.NEXT_PUBLIC_CONSTRUCTOR_URL || 'http://localhost:3001',
   TIMEOUT: 30000,
   RETRY_ATTEMPTS: 3
 };
@@ -15,8 +22,10 @@ export const FEATURES = {
 };
 
 export const TELEGRAM_CONFIG = {
-  BOT_NAME: process.env.NEXT_PUBLIC_BOT_NAME || '@teleshop_constructor_bot',
-  WEBAPP_URL: process.env.NEXT_PUBLIC_WEBAPP_URL || 'https://t.me/teleshop_constructor_bot/app'
+  BOT_NAME: process.env.NEXT_PUBLIC_BOT_NAME || '@odnorazki_by_bot',
+  WEBAPP_URL: isProd 
+    ? `http://${prodHost}:3000`
+    : process.env.NEXT_PUBLIC_WEBAPP_URL || 'http://localhost:3000'
 };
 
 export const UI_CONFIG = {

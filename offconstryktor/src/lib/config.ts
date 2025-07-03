@@ -7,42 +7,51 @@
 export const isDevelopment = process.env.NODE_ENV === 'development';
 export const isProduction = process.env.NODE_ENV === 'production';
 
-// Tunnel URL support for public access
-const TUNNEL_URL = process.env.NEXT_PUBLIC_TUNNEL_URL;
+// Production server IP
+const PROD_HOST = '77.73.232.46';
 
 // API Configuration
 export const API_CONFIG = {
-  // Backend API (Python FastAPI) - ВСЕГДА localhost для server-side запросов
-  BACKEND_URL: isDevelopment ? 'http://localhost:8000' : '',
-  BACKEND_API_URL: isDevelopment ? 'http://localhost:8000/api' : '/api',
+  // Backend API (Python FastAPI)
+  BACKEND_URL: isProduction 
+    ? `http://${PROD_HOST}:8000`
+    : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+    
+  BACKEND_API_URL: isProduction 
+    ? `http://${PROD_HOST}:8000/secure`
+    : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
   
-  // Frontend URLs - используем туннель если доступен для внешнего доступа
-  FRONTEND_URL: TUNNEL_URL || (isDevelopment ? 'http://localhost:3000' : ''),
+  // Frontend URLs
+  FRONTEND_URL: isProduction 
+    ? `http://${PROD_HOST}:3000`
+    : process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000',
+    
+  CONSTRUCTOR_URL: isProduction 
+    ? `http://${PROD_HOST}:3001`
+    : process.env.NEXT_PUBLIC_CONSTRUCTOR_URL || 'http://localhost:3001',
   
-  // WebSocket URLs - используем туннель если доступен  
-  WS_URL: TUNNEL_URL ? TUNNEL_URL.replace('https:', 'wss:').replace('http:', 'ws:') : 
-          (isDevelopment ? 'ws://localhost:3000' : ''),
+  // WebSocket URLs  
+  WS_URL: isProduction 
+    ? `ws://${PROD_HOST}:3000`
+    : process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3000',
   
-  // Auth specific - ВСЕГДА localhost для API запросов
-  PYTHON_API_BASE: isDevelopment ? 'http://localhost:8000' : '',
-  
-  // Tunnel info
-  IS_TUNNELED: !!TUNNEL_URL,
-  TUNNEL_URL: TUNNEL_URL || null,
+  // Tunnel info (for development)
+  TUNNEL_URL: process.env.NEXT_PUBLIC_TUNNEL_URL || null,
+  IS_TUNNELED: !!process.env.NEXT_PUBLIC_TUNNEL_URL,
 } as const;
 
 // Application Ports (for development)
 export const PORTS = {
-  FRONTEND: 3000,          // ✅ Единый фронтенд (объединенный)
-  BACKEND: 8000,           // ✅ Python API
-  // REMOVED: CONSTRUCTOR: 3001  // ❌ Удален отдельный порт
+  FRONTEND: 3000,          
+  CONSTRUCTOR: 3001,       
+  BACKEND: 8000,           
 } as const;
 
 // Routes Configuration
 export const ROUTES = {
   // Main app routes
   DASHBOARD: '/',
-  CONSTRUCTOR: '/constructor',  // ✅ Встроенный роут
+  CONSTRUCTOR: '/constructor',  
   ANALYTICS: '/analytics',
   BOTS: '/bots',
   PRODUCTS: '/products',
@@ -59,12 +68,11 @@ export const ROUTES = {
 
 // Feature flags
 export const FEATURES = {
-  CONSTRUCTOR_INTEGRATED: true,    // ✅ Интегрированный конструктор
-  SEPARATE_CONSTRUCTOR: false,     // ❌ Отдельный конструктор отключен
+  CONSTRUCTOR_ENABLED: true,    
   DRAG_AND_DROP: true,
   AUTO_SAVE: true,
   TEMPLATES: true,
-  TUNNEL_MODE: API_CONFIG.IS_TUNNELED,  // ✅ Режим туннеля
+  PRODUCTION_MODE: isProduction,
 } as const;
 
 // Default exports for backward compatibility
