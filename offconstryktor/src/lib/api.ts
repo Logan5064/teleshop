@@ -1,4 +1,84 @@
 // Simple API for Constructor
+
+// Типы для исправления билда
+interface DashboardStats {
+  total_revenue: number;
+  total_orders: number;
+  total_customers: number;
+  conversion_rate: number;
+  revenue_change: number;
+  orders_change: number;
+  customers_change: number;
+  conversion_change: number;
+}
+
+interface SalesChartData {
+  date: string;
+  revenue: number;
+  orders: number;
+}
+
+interface PopularProduct {
+  id: number;
+  name: string;
+  total_orders: number;
+  total_revenue: number;
+  shop_name: string;
+}
+
+interface RecentOrder {
+  id: number;
+  customer_name: string;
+  product_name: string;
+  total_price: number;
+  status: string;
+  created_at: string;
+}
+
+interface CustomerActivity {
+  telegram_id: number;
+  customer_name: string;
+  total_orders: number;
+  total_spent: number;
+  last_order_date: string;
+}
+
+interface Product {
+  id: number;
+  name: string;
+  description?: string;
+  price: number;
+  image_url?: string;
+  is_available: boolean;
+  shop_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Order {
+  id: number;
+  customer_telegram_id: number;
+  customer_name?: string;
+  customer_username?: string;
+  shop_id: number;
+  product_id: number;
+  quantity: number;
+  total_price: number;
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  created_at: string;
+  updated_at: string;
+}
+
+interface User {
+  id: number;
+  telegram_id: number;
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // TeleShop API
@@ -237,8 +317,10 @@ export const designsApi = {
 // Templates API (для конструктора)
 export const templatesApi = {
   getAll: async (category?: string): Promise<any[]> => {
-    const params = category ? { category } : {};
-    const response = await fetch(`${API_BASE}/templates`, { params });
+    const url = category 
+      ? `${API_BASE}/templates?category=${encodeURIComponent(category)}`
+      : `${API_BASE}/templates`;
+    const response = await fetch(url);
     return response.json();
   },
 
