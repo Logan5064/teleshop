@@ -40,10 +40,10 @@ export default function ConstructorApp() {
         console.log('🔐 Initializing SSO for constructor...')
         const authState = await ConstructorAuth.initialize()
         
-        if (authState.authenticated && authState.success) {
-          setCurrentUser({ name: 'Constructor User', id: 'constructor_user' })
+        if (authState.isAuthenticated && authState.user) {
+          setCurrentUser(authState.user)
           setAuthError(null)
-          console.log('✅ SSO initialized successfully')
+          console.log('✅ SSO initialized successfully:', authState.user)
         } else {
           setAuthError('Не удалось авторизоваться')
         }
@@ -207,7 +207,7 @@ export default function ConstructorApp() {
   useEffect(() => {
     const autoSaveTimer = setTimeout(() => {
       if (blocks.length > 0 && currentUser) {
-        const saveKey = `teleshop_constructor_autosave_constructor_user`
+        const saveKey = `teleshop_constructor_autosave_${constructorUtils.getUserId()}`
         localStorage.setItem(saveKey, JSON.stringify(blocks))
         setLastSaved(new Date().toLocaleTimeString())
       }
@@ -313,7 +313,7 @@ export default function ConstructorApp() {
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Ошибка авторизации</h2>
           <p className="text-gray-600 mb-4">{authError}</p>
           <button
-            onClick={() => ConstructorAuth.login()}
+            onClick={() => ConstructorAuth.redirectToLogin()}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             Авторизоваться
@@ -338,7 +338,7 @@ export default function ConstructorApp() {
         onOpenTemplates={() => setIsTemplateModalOpen(true)}
         onSave={() => {
           if (currentUser) {
-            const saveKey = `teleshop_constructor_saved_constructor_user`
+            const saveKey = `teleshop_constructor_saved_${constructorUtils.getUserId()}`
             localStorage.setItem(saveKey, JSON.stringify(blocks))
             setLastSaved(new Date().toLocaleTimeString())
             alert('✅ Проект сохранен!')
