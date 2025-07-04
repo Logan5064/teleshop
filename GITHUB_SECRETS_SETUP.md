@@ -13,7 +13,7 @@
 
 #### HOST
 - **Name:** `HOST`
-- **Value:** `178.236.17.95`
+- **Value:** `178.236.17.93`
 
 #### USERNAME  
 - **Name:** `USERNAME`
@@ -40,7 +40,7 @@ krOlI4+qwwVlkTCheFZAAAAAE2d0eEBERVNLVE9QLTJCVExWNUQBAg==
 
 **Подключитесь к серверу:**
 ```bash
-ssh root@178.236.17.95
+ssh root@178.236.17.93
 ```
 
 **Добавьте ключ:**
@@ -54,7 +54,7 @@ chmod 600 ~/.ssh/authorized_keys
 ### 4. Проверьте настройки
 
 После добавления всех секретов должно быть:
-- ✅ HOST: `178.236.17.95`
+- ✅ HOST: `178.236.17.93`
 - ✅ USERNAME: `root`  
 - ✅ PORT: `22`
 - ✅ SSH_KEY: `-----BEGIN OPENSSH PRIVATE KEY----- ...`

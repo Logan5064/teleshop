@@ -2,7 +2,7 @@
 Write-Host "🔑 Тестирование SSH-соединения..." -ForegroundColor Green
 
 # Параметры подключения
-$SERVER = "178.236.17.95"
+$SERVER = "178.236.17.93"
 $USER = "root"
 $KEY_FILE = "teleshop-deploy-key"
 
@@ -31,5 +31,5 @@ try {
     Write-Host "❌ Ошибка подключения: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-Write-Host "🔧 Если соединение не удалось, добавьте публичный ключ на сервер:" -ForegroundColor Yellow
+Write-Host "Fix: Add public key to server:" -ForegroundColor Yellow
 Write-Host "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICtNDNV4RVrelqH2teVFNGwlkrOlI4+qwwVlkTCheFZA gtx@DESKTOP-2BTLV5D" -ForegroundColor Cyan 
