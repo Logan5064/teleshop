@@ -60,15 +60,16 @@ module.exports = {
     },
     {
       name: 'teleshop-auth-bot',
-      cwd: './auth-bot',
-      script: 'simple_auth_bot.py',
+      cwd: './05-server-launchers/bots',
+      script: 'auth_bot.py',
       interpreter: 'python3',
       instances: 1,
       autorestart: true,
       watch: false,
       max_memory_restart: '256M',
       env: {
-        FRONTEND_URL: 'http://77.73.232.46:3000'
+        FRONTEND_URL: 'http://77.73.232.46:3000',
+        PYTHONPATH: '/var/www/teleshop/05-server-launchers/config'
       },
       error_file: './logs/auth-bot-error.log',
       out_file: './logs/auth-bot-out.log',
