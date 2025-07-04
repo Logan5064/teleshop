@@ -16,21 +16,35 @@ from dotenv import load_dotenv
 import sys
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Определяем путь к конфигурации
+# Определяем путь к конфигурации более надежно
 project_root = current_dir
-for _ in range(10):  # Ищем корень проекта
+while project_root != os.path.dirname(project_root):  # До корня диска
     if os.path.exists(os.path.join(project_root, "main_launcher.py")):
         break
     project_root = os.path.dirname(project_root)
+else:
+    # Если main_launcher.py не найден, используем текущую структуру папок
+    project_root = os.path.dirname(os.path.dirname(current_dir))
 
 config_path = os.path.join(project_root, "05-server-launchers", "config")
-
-# Загружаем конфигурацию из новой папки
 config_env_path = os.path.join(config_path, "shared", "config", "config.env")
+
+# Проверяем существование конфигурационных файлов
+if not os.path.exists(config_env_path):
+    logger.warning(f"⚠️ Конфигурационный файл не найден: {config_env_path}")
+    # Попробуем альтернативный путь
+    alt_config_path = os.path.join(config_path, "shared", "config", "auth_config.env")
+    if os.path.exists(alt_config_path):
+        config_env_path = alt_config_path
+        logger.info(f"✅ Использую альтернативный конфиг: {alt_config_path}")
+
 load_dotenv(config_env_path)
 
-# Добавляем путь к shared модулям (config содержит папку shared)
-sys.path.insert(0, config_path)
+# Добавляем путь к shared модулям
+if os.path.exists(config_path):
+    sys.path.insert(0, config_path)
+else:
+    logger.warning(f"⚠️ Путь к shared модулям не найден: {config_path}")
 
 from shared.auth.db_code_auth import DatabaseCodeAuth
 from shared.utils.database import AsyncSessionLocal
@@ -43,9 +57,12 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Конфигурация
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-if not BOT_TOKEN:
-    raise ValueError("❌ TELEGRAM_BOT_TOKEN не найден в config.env")
+BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") or os.getenv("PLATFORM_BOT_TOKEN") or "7503005367:AAF2rrpRUr0TXSKWJZsnlPwtuU-RidYLYos"
+
+if not BOT_TOKEN or BOT_TOKEN == "your-bot-token-here":
+    logger.error("❌ TELEGRAM_BOT_TOKEN не найден в конфигурации")
+    logger.error("💡 Использую токен по умолчанию")
+    BOT_TOKEN = "7503005367:AAF2rrpRUr0TXSKWJZsnlPwtuU-RidYLYos"
 
 class TeleShopAuthBot:
     """Основной бот для авторизации пользователей"""
@@ -193,52 +210,61 @@ TeleShop Constructor - это современная SaaS-платформа д�
         
         await send_method(help_text, parse_mode='Markdown')
     
-    async def start_polling(self):
+    def start_polling(self):
         """Запуск бота в режиме polling"""
         logger.info("🚀 Запуск TeleShop Auth Bot...")
-        logger.info(f"🤖 Bot Token: {BOT_TOKEN[:10]}...")
+        logger.info("✅ Bot token загружен")
         
         try:
-            await self.application.initialize()
-            await self.application.start()
-            await self.application.updater.start_polling()
-            
             logger.info("✅ Бот успешно запущен и ожидает сообщения")
             
-            # Ожидаем бесконечно
-            await asyncio.Event().wait()
+            # run_polling блокирует выполнение и управляет event loop
+            self.application.run_polling(
+                poll_interval=1.0,
+                timeout=10,
+                drop_pending_updates=True
+            )
             
         except Exception as e:
             logger.error(f"❌ Ошибка запуска бота: {e}")
-        finally:
-            await self.application.stop()
+            raise
     
-    async def stop(self):
+    def stop(self):
         """Остановка бота"""
         logger.info("🛑 Остановка бота...")
-        await self.application.stop()
+        if self.application:
+            self.application.stop()
 
 # Глобальный экземпляр бота
 auth_bot = None
 
-async def start_auth_bot():
+def start_auth_bot():
     """Запуск основного бота для авторизации"""
     global auth_bot
     
     if auth_bot is None:
         auth_bot = TeleShopAuthBot()
     
-    await auth_bot.start_polling()
+    auth_bot.start_polling()
 
-async def stop_auth_bot():
+def stop_auth_bot():
     """Остановка основного бота"""
     global auth_bot
     
     if auth_bot:
-        await auth_bot.stop()
+        auth_bot.stop()
         auth_bot = None
 
 if __name__ == "__main__":
-    # Запуск бота напрямую
     bot = TeleShopAuthBot()
-    asyncio.run(bot.start_polling()) 
+    
+    try:
+        # Запускаем бота - run_polling сам управляет event loop
+        bot.start_polling()
+        
+    except KeyboardInterrupt:
+        logger.info("👋 Бот остановлен пользователем (Ctrl+C)")
+    except Exception as e:
+        logger.error(f"❌ Фатальная ошибка при запуске: {e}")
+    finally:
+        logger.info("🏁 Бот завершил работу") 
