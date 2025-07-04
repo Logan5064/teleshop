@@ -18,16 +18,16 @@ const nextConfig: NextConfig = {
     // Убрали алиасы конструктора т.к. он теперь интегрирован в основной проект
     return config
   },
-  // Прокси для конструктора
+  // Прокси для конструктора (обновлено для продакшн)
   async rewrites() {
     return [
       {
         source: '/constructor/:path*',
-        destination: 'http://localhost:3001/:path*',
+        destination: 'http://77.73.232.46:3001/:path*',
       },
       {
         source: '/constructor',
-        destination: 'http://localhost:3001/constructor',
+        destination: 'http://77.73.232.46:3001/constructor',
       }
     ]
   },
@@ -44,7 +44,7 @@ const nextConfig: NextConfig = {
               style-src 'self' 'unsafe-inline';
               img-src 'self' data: blob: https:;
               font-src 'self' data:;
-              connect-src 'self' http://localhost:8000 http://localhost:3001 ws://localhost:3000 ws://localhost:3001;
+              connect-src 'self' http://77.73.232.46:8000 http://77.73.232.46:3001 ws://77.73.232.46:3000 ws://77.73.232.46:3001;
               frame-src 'self';
             `.replace(/\s{2,}/g, ' ').trim()
           }

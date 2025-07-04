@@ -17,7 +17,7 @@ export default function ShopPreviewPage() {
           <p className="text-gray-600 mb-6">Предварительный просмотр магазина</p>
           <div className="space-y-4">
             <button 
-              onClick={() => window.open(`http://localhost:3001/constructor`, '_blank')}
+              onClick={() => window.open(`http://77.73.232.46:3001/constructor`, '_blank')}
               className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Открыть конструктор
@@ -26,14 +26,6 @@ export default function ShopPreviewPage() {
               onClick={() => window.history.back()}
               className="w-full bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors"
             >
-              Назад
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-} 
               Назад
             </button>
           </div>

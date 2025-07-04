@@ -123,7 +123,7 @@ export function BotCard({ bot, onUpdate }: BotCardProps) {
                 <button
                   onClick={() => {
                     setShowMenu(false)
-                    window.open('http://localhost:3001/constructor', '_blank')
+                    window.open('http://77.73.232.46:3001/constructor', '_blank')
                   }}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                 >
