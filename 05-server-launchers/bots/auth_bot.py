@@ -17,17 +17,35 @@ import sys
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Определяем путь к конфигурации более надежно
+# Сначала пробуем найти через main_launcher.py
 project_root = current_dir
 while project_root != os.path.dirname(project_root):  # До корня диска
     if os.path.exists(os.path.join(project_root, "main_launcher.py")):
         break
     project_root = os.path.dirname(project_root)
 else:
-    # Если main_launcher.py не найден, используем текущую структуру папок
+    # Если main_launcher.py не найден, используем стандартную структуру папок
+    # current_dir = /var/www/teleshop/05-server-launchers/bots
+    # нужно получить /var/www/teleshop
     project_root = os.path.dirname(os.path.dirname(current_dir))
 
 config_path = os.path.join(project_root, "05-server-launchers", "config")
+
+# Альтернативный поиск если стандартная структура не найдена
+if not os.path.exists(config_path):
+    # Попробуем относительный путь
+    config_path = os.path.join(current_dir, "..", "config")
+    if not os.path.exists(config_path):
+        # Последняя попытка - абсолютный путь на сервере
+        config_path = "/var/www/teleshop/05-server-launchers/config"
 config_env_path = os.path.join(config_path, "shared", "config", "config.env")
+
+# Настройка логирования (СНАЧАЛА)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Проверяем существование конфигурационных файлов
 if not os.path.exists(config_env_path):
@@ -38,23 +56,18 @@ if not os.path.exists(config_env_path):
         config_env_path = alt_config_path
         logger.info(f"✅ Использую альтернативный конфиг: {alt_config_path}")
 
+logger.info(f"📁 Загружаю конфигурацию: {config_env_path}")
 load_dotenv(config_env_path)
 
 # Добавляем путь к shared модулям
 if os.path.exists(config_path):
     sys.path.insert(0, config_path)
+    logger.info(f"✅ Путь к shared модулям добавлен: {config_path}")
 else:
     logger.warning(f"⚠️ Путь к shared модулям не найден: {config_path}")
 
 from shared.auth.db_code_auth import DatabaseCodeAuth
 from shared.utils.database import AsyncSessionLocal
-
-# Настройка логирования
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 # Конфигурация
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN") or os.getenv("PLATFORM_BOT_TOKEN") or "7503005367:AAF2rrpRUr0TXSKWJZsnlPwtuU-RidYLYos"
@@ -210,6 +223,20 @@ TeleShop Constructor - это современная SaaS-платформа д�
         
         await send_method(help_text, parse_mode='Markdown')
     
+    async def test_db_connection(self):
+        """Тестирование подключения к БД"""
+        try:
+            async with AsyncSessionLocal() as db:
+                # Простой тест подключения
+                result = await db.execute("SELECT 1")
+                if result:
+                    logger.info("✅ Подключение к БД PostgreSQL работает")
+                    return True
+        except Exception as e:
+            logger.error(f"❌ Ошибка подключения к БД: {e}")
+            return False
+        return False
+
     def start_polling(self):
         """Запуск бота в режиме polling"""
         logger.info("🚀 Запуск TeleShop Auth Bot...")
