@@ -17,7 +17,7 @@ import {
   WrenchScrewdriverIcon,
   ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline';
-import { logout, getUserData } from '@/lib/auth'
+import { logout, getUserData } from '@/lib/auth';
 
 const navigation = [
   { name: 'Дашборд', href: '/', icon: HomeIcon },

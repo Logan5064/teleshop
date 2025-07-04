@@ -54,18 +54,3 @@ export const constructorUtils = {
     return 'Пользователь';
   }
 };
-
-  getUserDisplayName: () => {
-    // Try to get user data from auth
-    try {
-      const userData = localStorage.getItem('user_data');
-      if (userData) {
-        const user = JSON.parse(userData);
-        return user.first_name || user.username || 'Пользователь';
-      }
-    } catch (e) {
-      console.warn('Error getting user data:', e);
-    }
-    return 'Пользователь';
-  }
-};
