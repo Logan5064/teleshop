@@ -424,7 +424,7 @@ export default function Dashboard() {
                 
                 <div className="space-y-4">
                   <Link
-                    href="http://localhost:3001/constructor"
+                    href="http://77.73.232.46:3001/constructor"
                     target="_blank"
                     className="block p-6 bg-gray-700 text-white rounded-2xl hover:bg-gray-800 transition-all duration-200 group shadow-sm hover:shadow-md"
                   >
