@@ -56,7 +56,3 @@ export const getAuthToken = (): string | null => {
     return null;
   }
 };
-
-    return null;
-  }
-};

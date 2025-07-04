@@ -382,17 +382,3 @@ export default function ProfilePage() {
     </div>
   );
 } 
-
-                        Удалить
-                      </button>
-                    </div>
-                  </motion.div>
-                </div>
-              )}
-            </div>
-          </div>
-        </main>
-      </div>
-    </div>
-  );
-} 
