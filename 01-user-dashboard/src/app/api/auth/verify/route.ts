@@ -1,32 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-// Конфигурация API
-const API_BASE_URL = 'http://localhost:8000'
+import { API_CONFIG } from '@/lib/config'
 
 export async function GET(request: NextRequest) {
   try {
-    const authorization = request.headers.get('authorization')
+    // Получаем токен из cookies (сначала session_token, потом admin_token)
+    const sessionToken = request.cookies.get('session_token')?.value;
+    const adminToken = request.cookies.get('admin_token')?.value;
+    const token = sessionToken || adminToken;
     
-    if (!authorization || !authorization.startsWith('Bearer ')) {
+    if (!token) {
       return NextResponse.json(
         { detail: 'Токен авторизации отсутствует' },
         { status: 401 }
       )
     }
 
-    const token = authorization.slice(7) // Remove 'Bearer '
-
-    // Отправляем запрос на backend для проверки токена
-    const backendResponse = await fetch(`${API_BASE_URL}/auth/check`, {
+    // Отправляем запрос на backend для проверки токена через cookies
+    const backendResponse = await fetch(`${API_CONFIG.BASE_URL}/auth/check`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Cookie': `${sessionToken ? 'session_token' : 'admin_token'}=${token}`,
+        'Content-Type': 'application/json',
       },
     })
 
     if (!backendResponse.ok) {
       return NextResponse.json(
-        { detail: 'Токен недействителен' },
+        { detail: 'Сессия истекла или недействительна' },
         { status: 401 }
       )
     }
@@ -35,7 +35,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       valid: true,
-      user: data.user
+      authenticated: data.authenticated,
+      user_id: data.user_id,
+      telegram_id: data.telegram_id,
+      username: data.username,
+      message: data.message
     })
 
   } catch (error) {

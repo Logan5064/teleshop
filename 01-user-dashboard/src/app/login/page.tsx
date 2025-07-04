@@ -43,10 +43,26 @@ export default function LoginPage() {
 
   // Проверяем, авторизован ли пользователь
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      router.push('/');
-    }
+    const checkAuth = async () => {
+      try {
+        // Проверяем сессию на сервере через API
+        const response = await fetch('/api/auth/verify', {
+          method: 'GET',
+          credentials: 'include', // Включаем cookies
+        });
+        
+        if (response.ok) {
+          // Пользователь уже авторизован, перенаправляем
+          console.log('✅ Пользователь уже авторизован');
+          router.push('/');
+        }
+      } catch (error) {
+        // Ошибка проверки - остаемся на странице логина
+        console.log('🔍 Проверка авторизации: пользователь не авторизован');
+      }
+    };
+    
+    checkAuth();
   }, [router]);
 
   const handleTelegramLogin = async () => {
@@ -88,6 +104,39 @@ export default function LoginPage() {
     }
   };
 
+  const handleCodeLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // Используем правильный API endpoint
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: formData.code })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Авторизация успешна:', data.message);
+        
+        // Cookie автоматически устанавливается в API route
+        // Перенаправляем на главную страницу
+        router.push('/');
+      } else {
+        const error = await response.json();
+        alert(error.detail || error.message || 'Неверный код');
+      }
+    } catch (error) {
+      console.error('Code verification error:', error);
+      alert('Ошибка проверки кода');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleCredentialsLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -98,48 +147,25 @@ export default function LoginPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ 
+          username: formData.username, 
+          password: formData.password 
+        })
       });
 
       if (response.ok) {
-        const { token } = await response.json();
-        localStorage.setItem('auth_token', token);
-        router.push('/');
-      } else {
-        alert('Неверные учетные данные');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      alert('Ошибка авторизации');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCodeLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('/api/auth/verify-code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code: formData.code })
-      });
-
-      if (response.ok) {
-        const { token } = await response.json();
-        localStorage.setItem('auth_token', token);
+        const data = await response.json();
+        console.log('✅ Админская авторизация успешна:', data.message);
+        
+        // Cookie автоматически устанавливается в API route
         router.push('/');
       } else {
         const error = await response.json();
-        alert(error.message || 'Неверный код');
+        alert(error.detail || error.message || 'Неверные учетные данные');
       }
     } catch (error) {
-      console.error('Code verification error:', error);
-      alert('Ошибка проверки кода');
+      console.error('Admin login error:', error);
+      alert('Ошибка авторизации');
     } finally {
       setIsLoading(false);
     }
