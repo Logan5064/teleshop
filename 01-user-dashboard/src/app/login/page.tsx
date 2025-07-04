@@ -12,6 +12,24 @@ import {
   SparklesIcon
 } from '@heroicons/react/24/outline';
 
+// Декларация типов для Telegram WebApp API
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp?: {
+        initDataUnsafe?: {
+          user?: {
+            id: number;
+            username?: string;
+            first_name?: string;
+            last_name?: string;
+          };
+        };
+      };
+    };
+  }
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -34,9 +52,9 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       // Интеграция с Telegram WebApp API
-      if (window.Telegram?.WebApp) {
-        const tgData = window.Telegram.WebApp.initDataUnsafe;
-        if (tgData.user) {
+      if ((window as any).Telegram?.WebApp) {
+        const tgData = (window as any).Telegram.WebApp.initDataUnsafe;
+        if (tgData && tgData.user) {
           // Отправляем данные на сервер для авторизации
           const response = await fetch('/api/auth/login', {
             method: 'POST',
