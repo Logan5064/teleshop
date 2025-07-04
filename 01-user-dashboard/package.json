@@ -1,41 +1,41 @@
 {
   "name": "teleshop-admin",
   "version": "0.1.0",
+  "description": "TeleShop Admin Dashboard",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 0.0.0.0",
+    "dev": "next dev -p 3000 -H 0.0.0.0",
     "build": "next build",
-    "start": "next start -H 0.0.0.0",
-    "lint": "next lint"
+    "start": "next start -p 3000 -H 0.0.0.0",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@dnd-kit/core": "^6.3.1",
-    "@dnd-kit/sortable": "^10.0.0",
-    "@dnd-kit/utilities": "^3.2.2",
-    "@headlessui/react": "^2.2.4",
-    "@heroicons/react": "^2.2.0",
-    "axios": "^1.10.0",
-    "clsx": "^2.1.1",
-    "framer-motion": "^12.20.1",
-    "lucide-react": "^0.523.0",
     "next": "15.3.4",
-    "react": "^19.0.0",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^19.0.0",
-    "recharts": "^2.15.4",
-    "tailwind-merge": "^3.3.1"
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "framer-motion": "^12.20.1",
+    "@headlessui/react": "^2.0.0",
+    "@heroicons/react": "^2.0.0",
+    "@tailwindcss/typography": "^0.5.0",
+    "axios": "^1.6.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "autoprefixer": "^10.4.21",
-    "eslint": "^9",
+    "eslint": "^8.56.0",
     "eslint-config-next": "15.3.4",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.17",
-    "typescript": "^5"
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
