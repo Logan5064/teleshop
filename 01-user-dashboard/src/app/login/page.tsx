@@ -34,10 +34,11 @@ export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [loginMethod, setLoginMethod] = useState<'telegram' | 'credentials'>('telegram');
+  const [loginMethod, setLoginMethod] = useState<'code' | 'telegram' | 'credentials'>('code');
   const [formData, setFormData] = useState({
     username: '',
-    password: ''
+    password: '',
+    code: ''
   });
 
   // Проверяем, авторизован ли пользователь
@@ -115,6 +116,35 @@ export default function LoginPage() {
     }
   };
 
+  const handleCodeLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/verify-code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: formData.code })
+      });
+
+      if (response.ok) {
+        const { token } = await response.json();
+        localStorage.setItem('auth_token', token);
+        router.push('/');
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Неверный код');
+      }
+    } catch (error) {
+      console.error('Code verification error:', error);
+      alert('Ошибка проверки кода');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 flex items-center justify-center p-4">
       <motion.div
@@ -147,8 +177,18 @@ export default function LoginPage() {
           {/* Переключатель методов входа */}
           <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
             <button
+              onClick={() => setLoginMethod('code')}
+              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                loginMethod === 'code'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600'
+              }`}
+            >
+              Код
+            </button>
+            <button
               onClick={() => setLoginMethod('telegram')}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
+              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
                 loginMethod === 'telegram'
                   ? 'bg-white text-blue-600 shadow-sm'
                   : 'text-gray-600'
@@ -158,15 +198,73 @@ export default function LoginPage() {
             </button>
             <button
               onClick={() => setLoginMethod('credentials')}
-              className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
+              className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
                 loginMethod === 'credentials'
                   ? 'bg-white text-blue-600 shadow-sm'
                   : 'text-gray-600'
               }`}
             >
-              Логин/Пароль
+              Админ
             </button>
           </div>
+
+          {/* Форма входа по коду */}
+          {loginMethod === 'code' && (
+            <motion.form
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              onSubmit={handleCodeLogin}
+              className="space-y-6"
+            >
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Код авторизации</h3>
+                <p className="text-gray-600 text-sm mb-6">
+                  Получите код в боте @TeleShopBot<br />
+                  Напишите боту <strong>/login</strong>
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Код из бота (6 цифр)
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formData.code}
+                    onChange={(e) => setFormData({ ...formData, code: e.target.value.replace(/\D/g, '').slice(0, 6) })}
+                    className="w-full py-3 px-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all text-center text-2xl font-mono tracking-wider"
+                    placeholder="000000"
+                    maxLength={6}
+                    required
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Код действует 15 минут
+                </p>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading || formData.code.length !== 6}
+                className="w-full bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 px-6 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <>
+                    Войти
+                    <ArrowRightIcon className="w-5 h-5" />
+                  </>
+                )}
+              </button>
+            </motion.form>
+          )}
 
           {/* Форма Telegram входа */}
           {loginMethod === 'telegram' && (

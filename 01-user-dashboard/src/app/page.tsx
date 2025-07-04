@@ -172,12 +172,20 @@ export default function Dashboard() {
     // Проверяем авторизацию сразу в useEffect
     const checkAuthAndLoad = () => {
       try {
+        console.log('🔍 Checking auth state...')
+        
         // Проверяем доступность localStorage (может быть недоступен в SSR)
         const adminToken = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null
         const sessionToken = typeof window !== 'undefined' ? document.cookie.split('; ').find(row => row.startsWith('session_token='))?.split('=')[1] : null
         
+        console.log('🔍 Auth tokens:', { 
+          adminToken: adminToken ? adminToken.substring(0, 20) + '...' : 'NONE',
+          sessionToken: sessionToken ? sessionToken.substring(0, 20) + '...' : 'NONE'
+        })
+        
         // Очищаем некорректные admin токены
         if (adminToken && !adminToken.startsWith('admin_')) {
+          console.log('🧹 Cleaning invalid admin token')
           localStorage.removeItem('admin_token')
         }
         
@@ -185,6 +193,7 @@ export default function Dashboard() {
         const validSessionToken = sessionToken && sessionToken.length > 10
         
         if (!validAdminToken && !validSessionToken) {
+          console.log('❌ No valid tokens found - redirecting to login')
           // Если нет валидных токенов, НЕ загружаем данные и НЕ делаем API запросы
           setError('Для просмотра данных необходима авторизация')
           setBots([])
@@ -196,10 +205,17 @@ export default function Dashboard() {
             totalRevenue: 0
           })
           setIsLoading(false)
-          // Middleware сам сделает редирект
+          
+          // Принудительный редирект если middleware не сработал
+          setTimeout(() => {
+            console.log('🔄 Forcing redirect to login')
+            window.location.href = '/login'
+          }, 1000)
+          
           return
         }
         
+        console.log('✅ Valid tokens found - loading dashboard data')
         // Если есть валидные токены, загружаем данные
         loadDashboardData()
       } catch (err) {

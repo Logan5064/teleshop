@@ -72,6 +72,7 @@ export function middleware(request: NextRequest) {
   // Если пользователь не авторизован и пытается попасть на защищенный маршрут - редирект на логин
   if (!isAuthenticated && isProtectedRoute) {
     console.log('🛡️ MIDDLEWARE: UNAUTH USER ON PROTECTED -> redirect to /login')
+    console.log('🛡️ FORCING REDIRECT due to no auth tokens')
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(loginUrl)
