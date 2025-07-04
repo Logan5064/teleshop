@@ -31,27 +31,8 @@ const nextConfig: NextConfig = {
       }
     ]
   },
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Content-Security-Policy',
-            value: `
-              default-src 'self';
-              script-src 'self' 'unsafe-eval' 'unsafe-inline';
-              style-src 'self' 'unsafe-inline';
-              img-src 'self' data: blob: https:;
-              font-src 'self' data:;
-              connect-src 'self' http://77.73.232.46:8000 http://77.73.232.46:3001 ws://77.73.232.46:3000 ws://77.73.232.46:3001;
-              frame-src 'self';
-            `.replace(/\s{2,}/g, ' ').trim()
-          }
-        ]
-      }
-    ]
-  }
+  // Убираем строгие CSP правила для стабильности
+  output: 'standalone'
 };
 
 export default nextConfig;
