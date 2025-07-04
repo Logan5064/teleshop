@@ -21,7 +21,7 @@ import { logout, getUserData } from '@/lib/auth';
 
 const navigation = [
   { name: 'Дашборд', href: '/', icon: HomeIcon },
-  { name: 'Конструктор', href: 'http://77.73.232.46:3001/constructor', icon: WrenchScrewdriverIcon, external: true },
+  { name: 'Конструктор', href: 'http://178.236.17.93:3001/constructor', icon: WrenchScrewdriverIcon, external: true },
   { name: 'Категории', href: '/categories', icon: RectangleGroupIcon },
   { name: 'Товары', href: '/products', icon: CubeIcon },
   { name: 'Заказы', href: '/orders', icon: ClipboardDocumentListIcon },
