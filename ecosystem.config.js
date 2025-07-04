@@ -12,8 +12,8 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: 3000,
-        NEXT_PUBLIC_API_URL: 'http://77.73.232.46:8000',
-        NEXT_PUBLIC_CONSTRUCTOR_URL: 'http://77.73.232.46:3001'
+        NEXT_PUBLIC_API_URL: 'http://178.236.17.93:8000',
+        NEXT_PUBLIC_CONSTRUCTOR_URL: 'http://178.236.17.93:3001'
       },
       error_file: './logs/frontend-error.log',
       out_file: './logs/frontend-out.log',
@@ -32,7 +32,7 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: 3001,
-        NEXT_PUBLIC_API_URL: 'http://77.73.232.46:8000'
+        NEXT_PUBLIC_API_URL: 'http://178.236.17.93:8000'
       },
       error_file: './logs/constructor-error.log',
       out_file: './logs/constructor-out.log',
@@ -50,8 +50,8 @@ module.exports = {
       max_memory_restart: '512M',
       env: {
         PYTHONPATH: './05-server-launchers/main:./05-server-launchers/config',
-        FRONTEND_URL: 'http://77.73.232.46:3000',
-        CONSTRUCTOR_URL: 'http://77.73.232.46:3001'
+        FRONTEND_URL: 'http://178.236.17.93:3000',
+        CONSTRUCTOR_URL: 'http://178.236.17.93:3001'
       },
       error_file: './logs/backend-error.log',
       out_file: './logs/backend-out.log',
@@ -60,15 +60,15 @@ module.exports = {
     },
     {
       name: 'teleshop-auth-bot',
-      cwd: './auth-bot',
-      script: 'simple_auth_bot.py',
+      cwd: './05-server-launchers/bots',
+      script: 'auth_bot.py',
       interpreter: 'python3',
       instances: 1,
       autorestart: true,
       watch: false,
       max_memory_restart: '256M',
       env: {
-        FRONTEND_URL: 'http://77.73.232.46:3000'
+        FRONTEND_URL: 'http://178.236.17.93:3000'
       },
       error_file: './logs/auth-bot-error.log',
       out_file: './logs/auth-bot-out.log',
