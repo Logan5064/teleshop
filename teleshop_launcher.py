@@ -45,14 +45,14 @@ class TeleShopLauncher:
             "backend": {
                 "name": "🔧 Backend API",
                 "path": "/var/www/teleshop/05-server-launchers/main", 
-                "cmd": "python3 main_secure_fixed.py",
+                "cmd": "source venv/bin/activate && python test_backend.py",
                 "port": "8000",
                 "color": "#2ecc71"
             },
             "auth_bot": {
                 "name": "🤖 Auth Bot",
                 "path": "/var/www/teleshop/05-server-launchers/bots",
-                "cmd": "python3 auth_bot.py", 
+                "cmd": "python3 auth_bot_modern.py", 
                 "port": "Bot",
                 "color": "#f39c12"
             }
@@ -124,6 +124,18 @@ class TeleShopLauncher:
             width=20
         )
         self.stop_all_btn.pack(pady=5, padx=10)
+        
+        self.clear_ports_btn = tk.Button(
+            left_frame,
+            text="🧹 Очистить порты",
+            font=("Arial", 12, "bold"),
+            bg="#f39c12",
+            fg="white",
+            relief=tk.FLAT,
+            command=self.clear_ports,
+            width=20
+        )
+        self.clear_ports_btn.pack(pady=5, padx=10)
         
         # Разделитель
         separator = tk.Frame(left_frame, height=2, bg="#7f8c8d")
@@ -364,6 +376,57 @@ class TeleShopLauncher:
             self.stop_component(component_id)
             
         self.log("⏹️ Все компоненты остановлены")
+        
+    def clear_ports(self):
+        """Очистить все занятые порты"""
+        self.log("🧹 Начинаю очистку портов...")
+        
+        try:
+            # Остановим все наши процессы сначала
+            self.stop_all()
+            
+            # Команды для очистки портов
+            clear_commands = [
+                "pkill -f npm || true",
+                "pkill -f node || true", 
+                "pkill -f python3 || true",
+                "pkill -f next || true",
+                "pkill -f uvicorn || true"
+            ]
+            
+            for cmd in clear_commands:
+                full_command = f'ssh -i {self.ssh_key} {self.server} "{cmd}"'
+                self.log(f"🔧 Выполняю: {cmd}")
+                result = subprocess.run(full_command, shell=True, capture_output=True, text=True)
+                
+            # Убиваем процессы по портам
+            port_commands = [
+                "lsof -ti:3000 | xargs -r kill -9 || true",
+                "lsof -ti:3001 | xargs -r kill -9 || true", 
+                "lsof -ti:8000 | xargs -r kill -9 || true"
+            ]
+            
+            for cmd in port_commands:
+                full_command = f'ssh -i {self.ssh_key} {self.server} "{cmd}"'
+                self.log(f"🔧 Освобождаю порт: {cmd}")
+                result = subprocess.run(full_command, shell=True, capture_output=True, text=True)
+                
+            # Проверяем результат
+            check_cmd = f'ssh -i {self.ssh_key} {self.server} "netstat -tlnp | grep -E \':(3000|3001|8000)\'"'
+            result = subprocess.run(check_cmd, shell=True, capture_output=True, text=True)
+            
+            if result.returncode != 0 or not result.stdout.strip():
+                self.log("✅ Все порты успешно очищены!")
+                self.log("🟢 Порты 3000, 3001, 8000 свободны")
+                self.status_bar.config(text="🧹 Порты очищены - готов к запуску", fg="#2ecc71")
+            else:
+                self.log("⚠️ Некоторые порты могут быть еще заняты")
+                self.log(f"📋 Активные порты: {result.stdout.strip()}")
+                
+        except Exception as e:
+            self.log(f"❌ Ошибка очистки портов: {str(e)}")
+            
+        self.log("🧹 Очистка портов завершена")
         
     def on_closing(self):
         """Обработка закрытия окна"""
