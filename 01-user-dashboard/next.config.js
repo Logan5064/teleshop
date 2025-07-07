@@ -2,6 +2,7 @@
 const nextConfig = {
   experimental: {
     externalDir: true,
+    serverComponentsExternalPackages: ['pg']
   },
   eslint: {
     ignoreDuringBuilds: true,
@@ -10,6 +11,11 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   webpack: (config, { dev, isServer }) => {
+    if (!isServer) {
+      config.externals = config.externals || {};
+      config.externals.pg = 'commonjs pg';
+    }
+    
     if (!dev && !isServer) {
       config.optimization = {
         ...config.optimization,

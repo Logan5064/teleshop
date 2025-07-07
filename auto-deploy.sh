@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 🚀 Автоматический деплой TeleShop на сервер 178.236.17.93
-# Версия: 1.0
+# Версия: 1.1 (исправлены ошибки с модулями)
 # GitHub: https://github.com/Logan5064/teleshop
 
 set -e  # Остановка при любой ошибке
@@ -40,7 +40,7 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-log_info "🚀 Начинаем автоматический деплой TeleShop"
+log_info "🚀 Начинаем автоматический деплой TeleShop v1.1"
 log_info "📍 Сервер: 178.236.17.93"
 log_info "📋 GitHub: https://github.com/Logan5064/teleshop"
 
@@ -125,19 +125,31 @@ pip install python-telegram-bot nest_asyncio
 
 log_success "Backend зависимости установлены"
 
-# Создание таблиц в БД
+# Создание таблиц в БД - ИСПРАВЛЕННАЯ ВЕРСИЯ
 log_step "Создание таблиц в PostgreSQL"
-python3 -c "
+export PYTHONPATH="/opt/teleshop/05-server-launchers/main:/opt/teleshop/05-server-launchers/config"
+
+python3 << 'PYTHON_SCRIPT'
 import asyncio
 import sys
-sys.path.append('.')
+import os
+
+# Добавляем пути к модулям
+sys.path.insert(0, '/opt/teleshop/05-server-launchers/main')
+sys.path.insert(0, '/opt/teleshop/05-server-launchers/config')
+
 try:
-    from config.shared.utils.database import create_tables
+    from shared.utils.database import create_tables
+    print("✅ Модули импортированы успешно")
     asyncio.run(create_tables())
-    print('✅ Таблицы созданы успешно')
+    print("✅ Таблицы созданы успешно")
+except ImportError as e:
+    print(f"⚠️ Ошибка импорта модулей: {e}")
+    print("Продолжаем без создания таблиц (возможно уже существуют)")
 except Exception as e:
-    print(f'⚠️ Возможная ошибка создания таблиц: {e}')
-" || log_warning "Таблицы возможно уже существуют"
+    print(f"⚠️ Ошибка создания таблиц: {e}")
+    print("Продолжаем (таблицы возможно уже существуют)")
+PYTHON_SCRIPT
 
 # Шаг 9: Настройка Frontend (Next.js)
 log_step "Настройка Frontend (Next.js)"
@@ -165,7 +177,7 @@ module.exports = {
       interpreter: '/opt/teleshop/05-server-launchers/main/venv/bin/python',
       env: {
         NODE_ENV: 'production',
-        PYTHONPATH: '/opt/teleshop/05-server-launchers/main'
+        PYTHONPATH: '/opt/teleshop/05-server-launchers/main:/opt/teleshop/05-server-launchers/config'
       },
       restart_delay: 3000,
       max_restarts: 10,
@@ -204,7 +216,7 @@ log_step "Запуск TeleShop с PM2"
 pm2 start ecosystem.config.js
 
 # Ожидание запуска
-sleep 5
+sleep 10
 
 # Проверка статуса
 pm2 status
@@ -218,17 +230,18 @@ pm2 save
 log_step "Проверка работы сервисов"
 
 # Проверка Backend
+sleep 5
 if curl -s http://localhost:8000/ > /dev/null; then
     log_success "Backend доступен на порту 8000"
 else
-    log_warning "Backend может еще запускаться, проверьте через минуту"
+    log_warning "Backend может еще запускаться, проверьте через минуту: pm2 logs teleshop-backend"
 fi
 
 # Проверка Frontend
 if curl -s http://localhost:3000/ > /dev/null; then
     log_success "Frontend доступен на порту 3000"
 else
-    log_warning "Frontend может еще запускаться, проверьте через минуту"
+    log_warning "Frontend может еще запускаться, проверьте через минуту: pm2 logs teleshop-frontend"
 fi
 
 # Финальная информация
@@ -243,6 +256,8 @@ echo -e "📊 PostgreSQL: ${GREEN}Подключена (облако Beget)${NC}
 echo -e "\n${BLUE}🔧 Полезные команды PM2:${NC}"
 echo -e "pm2 status          - статус приложений"
 echo -e "pm2 logs            - просмотр логов"
+echo -e "pm2 logs teleshop-backend  - логи backend"
+echo -e "pm2 logs teleshop-frontend - логи frontend"
 echo -e "pm2 restart all     - перезапуск"
 echo -e "pm2 stop all        - остановка"
 echo -e "pm2 monit           - мониторинг"
@@ -255,4 +270,6 @@ echo -e "\n${GREEN}🚀 TeleShop готов к работе!${NC}"
 
 # Показать финальный статус
 echo -e "\n${YELLOW}Финальный статус PM2:${NC}"
-pm2 status 
+pm2 status
+
+log_info "Если есть ошибки, проверьте логи: pm2 logs" 
