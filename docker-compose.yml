@@ -25,6 +25,24 @@ services:
       retries: 3
       start_period: 40s
 
+  # Auth Bot для получения кодов авторизации
+  auth-bot:
+    build:
+      context: ./05-server-launchers
+      dockerfile: Dockerfile
+    container_name: teleshop-auth-bot
+    environment:
+      - NODE_ENV=production
+      - PYTHONPATH=/app/main:/app/config
+      - PYTHONUNBUFFERED=1
+    working_dir: /app/bots
+    command: ["python", "auth_bot.py"]
+    volumes:
+      - backend_logs:/app/logs
+    restart: unless-stopped
+    depends_on:
+      - backend
+
   # Frontend Next.js приложение  
   frontend:
     build:
@@ -38,6 +56,7 @@ services:
       - NEXT_TELEMETRY_DISABLED=1
     depends_on:
       - backend
+      - auth-bot
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
