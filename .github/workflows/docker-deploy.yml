@@ -18,10 +18,21 @@ jobs:
       with:
         host: 178.236.17.93
         username: root
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        password: ${{ secrets.SERVER_PASSWORD }}
         port: 22
         script: |
           echo "🎯 Starting TeleShop Docker deployment..."
+          
+          # Настраиваем SSH ключи если нужно
+          echo "🔑 Setting up SSH keys..."
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          
+          # Добавляем публичный ключ в authorized_keys
+          echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOo1oBaoRjjWOFnNZkCa8g45+BblBGxRuI8+wtFDp2EQ teleshop-beget-deploy" >> ~/.ssh/authorized_keys
+          chmod 600 ~/.ssh/authorized_keys
+          
+          echo "✅ SSH keys configured"
           
           # Переходим в рабочую папку или клонируем репозиторий
           if [ ! -d "/opt/teleshop" ]; then
