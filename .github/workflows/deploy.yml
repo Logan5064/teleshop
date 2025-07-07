@@ -1,0 +1,138 @@
+name: 🚀 Auto Deploy TeleShop
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📦 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🚀 Deploy to server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        script: |
+          echo "🚀 Starting TeleShop deployment..."
+          
+          # Переходим в папку проекта
+          cd /opt/teleshop || {
+            echo "❌ Project directory not found, cloning..."
+            cd /opt
+            git clone https://github.com/Logan5064/teleshop.git
+            cd teleshop
+          }
+          
+          # Обновляем код
+          echo "📥 Updating code from GitHub..."
+          git fetch origin
+          git reset --hard origin/main
+          git pull origin main
+          
+          # Остановка старых процессов
+          echo "⏹️ Stopping old processes..."
+          pm2 delete all || echo "No processes to stop"
+          
+          # Очистка портов
+          pkill -f ":8000" || echo "Port 8000 is free"
+          pkill -f ":3000" || echo "Port 3000 is free"
+          
+          # Backend setup
+          echo "🐍 Setting up Backend..."
+          cd /opt/teleshop/05-server-launchers/main
+          
+          # Активируем виртуальное окружение
+          source venv/bin/activate || {
+            echo "Creating new virtual environment..."
+            python3 -m venv venv
+            source venv/bin/activate
+          }
+          
+          # Устанавливаем зависимости
+          pip install --upgrade pip
+          pip install fastapi uvicorn sqlalchemy asyncpg psycopg2-binary
+          pip install python-multipart python-jose passlib bcrypt
+          pip install aiofiles python-dotenv aiogram
+          pip install python-telegram-bot nest_asyncio
+          
+          # Frontend setup
+          echo "⚛️ Setting up Frontend..."
+          cd /opt/teleshop/01-user-dashboard
+          
+          # Устанавливаем зависимости
+          npm install
+          
+          # Собираем проект
+          npm run build
+          
+          # Создаем PM2 конфигурацию
+          echo "⚙️ Creating PM2 config..."
+          cd /opt/teleshop
+          cat > ecosystem.config.js << 'EOF'
+          module.exports = {
+            apps: [
+              {
+                name: 'teleshop-backend',
+                script: 'python3',
+                args: ['-m', 'uvicorn', 'api_server:app', '--host', '0.0.0.0', '--port', '8000'],
+                cwd: '/opt/teleshop/05-server-launchers/main',
+                interpreter: '/opt/teleshop/05-server-launchers/main/venv/bin/python',
+                env: {
+                  NODE_ENV: 'production',
+                  PYTHONPATH: '/opt/teleshop/05-server-launchers/main:/opt/teleshop/05-server-launchers/config'
+                },
+                restart_delay: 3000,
+                max_restarts: 10
+              },
+              {
+                name: 'teleshop-frontend',
+                script: 'npm',
+                args: ['start'],
+                cwd: '/opt/teleshop/01-user-dashboard',
+                env: {
+                  NODE_ENV: 'production',
+                  PORT: 3000
+                },
+                restart_delay: 3000,
+                max_restarts: 10
+              }
+            ]
+          };
+          EOF
+          
+          # Запускаем приложения
+          echo "🚀 Starting applications..."
+          pm2 start ecosystem.config.js
+          
+          # Сохраняем конфигурацию PM2
+          pm2 save
+          
+          # Проверяем статус
+          sleep 10
+          pm2 status
+          
+          # Проверяем доступность
+          echo "🔍 Checking services..."
+          if curl -s http://localhost:8000/ > /dev/null; then
+            echo "✅ Backend is running"
+          else
+            echo "⚠️ Backend may still be starting"
+          fi
+          
+          if curl -s http://localhost:3000/ > /dev/null; then
+            echo "✅ Frontend is running"
+          else
+            echo "⚠️ Frontend may still be starting"
+          fi
+          
+          echo "🎉 Deployment completed!"
+          echo "🌐 Frontend: http://178.236.17.93:3000"
+          echo "🔧 Backend: http://178.236.17.93:8000" 
