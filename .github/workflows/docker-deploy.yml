@@ -18,7 +18,8 @@ jobs:
       with:
         host: 178.236.17.93
         username: root
-        password: ${{ secrets.SERVER_PASSWORD }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
         script: |
           echo "🎯 Starting TeleShop Docker deployment..."
           
