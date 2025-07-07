@@ -66,17 +66,12 @@ async def lifespan(app: FastAPI):
     
     # Инициализируем BotManager
     try:
-        db_session = None
-        async for session in get_db():
-            db_session = session
-            break
-        
-        if db_session:
+        # Используем прямое создание сессии вместо get_db()
+        from shared.utils.database import AsyncSessionLocal
+        async with AsyncSessionLocal() as db_session:
             bot_manager = BotManager(db_session)
             await bot_manager.load_active_bots()
             get_logger("main").info("✅ BotManager запущен и активные боты загружены")
-        else:
-            get_logger("main").error("❌ Не удалось получить сессию БД для BotManager")
             
     except Exception as e:
         get_logger("main").error(f"❌ Ошибка инициализации BotManager: {e}")

@@ -69,8 +69,7 @@ async def get_database():
         except Exception as e:
             await session.rollback()
             raise
-        finally:
-            await session.close()
+        # finally блок не нужен - async with автоматически закроет сессию
 
 # Алиас для FastAPI Depends
 async def get_db():
@@ -80,8 +79,7 @@ async def get_db():
         except Exception as e:
             await session.rollback()
             raise
-        finally:
-            await session.close()
+        # finally блок не нужен - async with автоматически закроет сессию
 
 # Функция для создания таблиц
 async def create_tables():

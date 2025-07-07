@@ -160,9 +160,12 @@ class TeleShopLauncher:
                     creationflags=subprocess.CREATE_NEW_CONSOLE if os.name == 'nt' else 0
                 )
             elif service == 'backend':
+                # Используем Python из виртуального окружения (абсолютный путь)
+                backend_dir = os.path.join(os.getcwd(), '05-server-launchers', 'main')
+                python_path = os.path.join(backend_dir, 'venv', 'Scripts', 'python.exe') if os.name == 'nt' else os.path.join(backend_dir, 'venv', 'bin', 'python')
                 self.processes[service] = subprocess.Popen(
-                    ['python', 'api_server.py'],
-                    cwd='05-server-launchers/main',
+                    [python_path, 'api_server.py'],
+                    cwd=backend_dir,
                     creationflags=subprocess.CREATE_NEW_CONSOLE if os.name == 'nt' else 0
                 )
             elif service == 'auth_bot':

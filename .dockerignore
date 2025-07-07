@@ -1,0 +1,46 @@
+# Исключаем устаревшие/ненужные папки
+06-design-system/
+auth-bot/
+TGShop/
+new-frontend/
+offconstryktor/
+Новая папка/
+
+# Git
+.git/
+.gitignore
+
+# Документация и скрипты  
+*.md
+*.sh
+*.ps1
+*.bat
+
+# IDE
+.vscode/
+.idea/
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.temp
+logs/
+
+# SSH ключи
+*-key
+*-key.pub
+
+# JavaScript файлы конфигурации (не Docker)
+ecosystem*.js
+package*.json
+database_*.js
+fix_*.js
+
+# Python временные файлы
+__pycache__/
+*.pyc
+venv/
+
+# Node.js
+node_modules/
+.next/ 

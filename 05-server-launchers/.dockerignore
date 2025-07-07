@@ -1,0 +1,32 @@
+# Виртуальные окружения
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE и редакторы
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS файлы  
+.DS_Store
+Thumbs.db
+
+# Логи
+*.log
+logs/
+
+# Временные файлы
+*.tmp
+*.temp
+
+# Git
+.git/
+.gitignore
+
+# Документация
+*.md 

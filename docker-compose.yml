@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # Backend FastAPI сервер
+  backend:
+    build:
+      context: ./05-server-launchers
+      dockerfile: Dockerfile
+    container_name: teleshop-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+      - PYTHONPATH=/app/main:/app/config
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - backend_logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend Next.js приложение  
+  frontend:
+    build:
+      context: ./01-user-dashboard
+      dockerfile: Dockerfile
+    container_name: teleshop-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+    depends_on:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  backend_logs:
+
+networks:
+  default:
+    name: teleshop-network 
