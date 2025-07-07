@@ -1,4 +1,4 @@
-name: 🚀 Auto Deploy TeleShop
+name: 🚀 Deploy TeleShop to Production
 
 on:
   push:
@@ -10,164 +10,140 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: 📦 Checkout code
-      uses: actions/checkout@v4
-    
-    - name: 🚀 Deploy to server
-      uses: appleboy/ssh-action@v1.0.0
+    - name: 🔑 Deploy to server
+      uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        port: 22
-        command_timeout: 30m
+        host: 178.236.17.93
+        username: root
+        password: ${{ secrets.SERVER_PASSWORD }}
         script: |
-          set -e
-          echo "🚀 Starting TeleShop deployment..."
+          echo "🎯 Starting TeleShop deployment..."
           
-          # Установка системных зависимостей
-          echo "📦 Installing system dependencies..."
-          apt update || echo "Update failed, continuing..."
-          apt install -y curl wget git build-essential python3 python3-pip python3-venv nodejs npm || echo "Some packages may already be installed"
+          # Переходим в рабочую папку или клонируем репозиторий
+          if [ ! -d "/opt/teleshop" ]; then
+            cd /opt
+            git clone https://github.com/GTXFerrari/sitetest.git teleshop
+          else
+            cd /opt/teleshop
+            git pull origin main
+          fi
           
-          # Установка PM2 если нет
+          cd /opt/teleshop
+          
+          # Обновляем систему и устанавливаем зависимости
+          apt-get update
+          
+          # Устанавливаем Node.js 18+ если еще не установлен
+          if ! command -v node &> /dev/null || [[ $(node -v | cut -d'v' -f2 | cut -d'.' -f1) -lt 18 ]]; then
+            echo "📦 Installing Node.js 18..."
+            curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+            apt-get install -y nodejs
+          fi
+          
+          # Устанавливаем Python 3.11+ если еще не установлен
+          if ! command -v python3.11 &> /dev/null; then
+            echo "🐍 Installing Python 3.11..."
+            apt-get install -y software-properties-common
+            add-apt-repository ppa:deadsnakes/ppa -y
+            apt-get update
+            apt-get install -y python3.11 python3.11-venv python3.11-dev python3-pip
+            ln -sf /usr/bin/python3.11 /usr/bin/python3
+          fi
+          
+          # Устанавливаем PM2 если еще не установлен
           if ! command -v pm2 &> /dev/null; then
-            echo "📦 Installing PM2..."
+            echo "⚡ Installing PM2..."
             npm install -g pm2
           fi
           
-          # Переходим в папку проекта
-          cd /opt/teleshop || {
-            echo "❌ Project directory not found, cloning..."
-            cd /opt
-            git clone https://github.com/Logan5064/teleshop.git
-            cd teleshop
-          }
+          # Устанавливаем PostgreSQL клиент
+          apt-get install -y postgresql-client
           
-          # Обновляем код
-          echo "📥 Updating code from GitHub..."
-          git fetch origin
-          git reset --hard origin/main
-          git pull origin main
+          echo "✅ System dependencies installed"
           
-          # Остановка старых процессов
-          echo "⏹️ Stopping old processes..."
-          pm2 delete all || echo "No processes to stop"
-          sleep 5
-          
-          # Очистка портов более мягко
-          echo "🧹 Cleaning ports..."
-          lsof -ti:8000 | xargs kill -9 || echo "Port 8000 is free"
-          lsof -ti:3000 | xargs kill -9 || echo "Port 3000 is free"
-          sleep 2
-          
-          # Backend setup
-          echo "🐍 Setting up Backend..."
+          # Настройка Backend
+          echo "🐍 Setting up Python backend..."
           cd /opt/teleshop/05-server-launchers/main
           
-          # Создаем виртуальное окружение если нет
-          if [ ! -d "venv" ]; then
-            echo "Creating new virtual environment..."
-            python3 -m venv venv
-          fi
-          
-          # Активируем виртуальное окружение
+          # Создаем виртуальное окружение
+          python3.11 -m venv venv
           source venv/bin/activate
           
           # Устанавливаем зависимости
-          echo "📦 Installing Python dependencies..."
-          pip install --upgrade pip --quiet
-          pip install --quiet fastapi uvicorn sqlalchemy asyncpg psycopg2-binary
-          pip install --quiet python-multipart python-jose passlib bcrypt
-          pip install --quiet aiofiles python-dotenv aiogram
-          pip install --quiet python-telegram-bot nest_asyncio
+          pip install --upgrade pip
+          pip install -r requirements.txt
           
-          # Frontend setup
-          echo "⚛️ Setting up Frontend..."
+          echo "✅ Backend ready"
+          
+          # Настройка Frontend
+          echo "⚛️ Setting up Next.js frontend..."
           cd /opt/teleshop/01-user-dashboard
           
           # Устанавливаем зависимости
-          echo "📦 Installing Node.js dependencies..."
-          npm install --silent
+          npm ci --legacy-peer-deps
           
-          # Собираем проект
-          echo "🔨 Building frontend..."
-          npm run build
+          # Сборка для production
+          NODE_ENV=production npm run build
+          
+          echo "✅ Frontend built"
           
           # Создаем PM2 конфигурацию
-          echo "⚙️ Creating PM2 config..."
           cd /opt/teleshop
           cat > ecosystem.config.js << 'EOF'
           module.exports = {
             apps: [
               {
                 name: 'teleshop-backend',
-                script: 'python3',
-                args: ['-m', 'uvicorn', 'api_server:app', '--host', '0.0.0.0', '--port', '8000'],
+                script: '/opt/teleshop/05-server-launchers/main/venv/bin/python',
+                args: '/opt/teleshop/05-server-launchers/main/api_server.py',
                 cwd: '/opt/teleshop/05-server-launchers/main',
-                interpreter: '/opt/teleshop/05-server-launchers/main/venv/bin/python',
+                interpreter: 'none',
                 env: {
                   NODE_ENV: 'production',
-                  PYTHONPATH: '/opt/teleshop/05-server-launchers/main:/opt/teleshop/05-server-launchers/config'
+                  PYTHONPATH: '/opt/teleshop/05-server-launchers/main'
                 },
-                restart_delay: 3000,
-                max_restarts: 10,
-                error_file: '/var/log/teleshop-backend-error.log',
-                out_file: '/var/log/teleshop-backend-out.log'
+                instances: 1,
+                exec_mode: 'fork',
+                watch: false,
+                max_memory_restart: '1G',
+                log_file: '/var/log/teleshop-backend.log',
+                error_file: '/var/log/teleshop-backend-error.log', 
+                out_file: '/var/log/teleshop-backend-out.log',
+                time: true,
+                restart_delay: 5000,
+                max_restarts: 10
               },
               {
                 name: 'teleshop-frontend',
                 script: 'npm',
-                args: ['start'],
+                args: 'start',
                 cwd: '/opt/teleshop/01-user-dashboard',
                 env: {
                   NODE_ENV: 'production',
                   PORT: 3000
                 },
-                restart_delay: 3000,
-                max_restarts: 10,
+                instances: 1,
+                exec_mode: 'fork',
+                watch: false,
+                max_memory_restart: '2G',
+                log_file: '/var/log/teleshop-frontend.log',
                 error_file: '/var/log/teleshop-frontend-error.log',
-                out_file: '/var/log/teleshop-frontend-out.log'
+                out_file: '/var/log/teleshop-frontend-out.log',
+                time: true
               }
             ]
           };
           EOF
           
-          # Настройка прав доступа
-          echo "🔐 Setting permissions..."
-          chmod +x /opt/teleshop/05-server-launchers/main/venv/bin/python
-          chown -R $USER:$USER /opt/teleshop || echo "Permission setting failed, continuing..."
-          
-          # Запускаем приложения
-          echo "🚀 Starting applications..."
+          # Останавливаем старые процессы и запускаем новые
+          pm2 delete all 2>/dev/null || true
           pm2 start ecosystem.config.js
-          
-          # Настраиваем автозапуск
-          pm2 startup systemd -u root --hp /root || echo "PM2 startup setup failed, continuing..."
           pm2 save
+          pm2 startup
           
-          # Ждем запуска
-          echo "⏳ Waiting for services to start..."
-          sleep 15
-          
-          # Проверяем статус
-          pm2 status
-          
-          # Проверяем доступность
-          echo "🔍 Checking services..."
-          if curl -s http://localhost:8000/ > /dev/null; then
-            echo "✅ Backend is running on port 8000"
-          else
-            echo "⚠️ Backend may still be starting, check: pm2 logs teleshop-backend"
-          fi
-          
-          if curl -s http://localhost:3000/ > /dev/null; then
-            echo "✅ Frontend is running on port 3000"
-          else
-            echo "⚠️ Frontend may still be starting, check: pm2 logs teleshop-frontend"
-          fi
-          
-          echo "🎉 Deployment completed!"
+          echo "🎉 TeleShop deployed successfully!"
           echo "🌐 Frontend: http://178.236.17.93:3000"
           echo "🔧 Backend: http://178.236.17.93:8000"
-          echo "📋 Check logs with: pm2 logs" 
+          
+          # Показываем статус
+          pm2 status 
