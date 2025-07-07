@@ -2,11 +2,7 @@
 
 import { BlockType, BlockDataType } from '@/types/blocks'
 
-type BlockDefaults = {
-  [K in BlockType]: Omit<Extract<BlockDataType, { type?: K }>, 'type'>;
-};
-
-export const blockDefaults: Partial<BlockDefaults> = {
+export const blockDefaults: Record<string, any> = {
   // Telegram блоки
   'telegram-banner': {
     title: 'Добро пожаловать!',
@@ -424,13 +420,11 @@ export const blockDefaults: Partial<BlockDefaults> = {
   }
 }
 
-export function getBlockDefaults(type: BlockType): BlockDataType {
+export function getBlockDefaults(type: BlockType): any {
   switch (type) {
     case 'telegram-banner':
       return {
-        type: 'banner',
         title: 'Новый баннер',
-        imageUrl: '/placeholder.jpg',
         subtitle: 'Подзаголовок баннера',
         buttonText: 'Подробнее',
         buttonUrl: '#'
@@ -438,16 +432,13 @@ export function getBlockDefaults(type: BlockType): BlockDataType {
     
     case 'telegram-categories':
       return {
-        type: 'categories',
         title: 'Категории',
         categories: []
       }
     
     case 'banner':
       return {
-        type: 'banner',
         title: 'Новый баннер',
-        imageUrl: '/placeholder.jpg',
         subtitle: 'Подзаголовок баннера',
         buttonText: 'Подробнее',
         buttonUrl: '#'
@@ -455,7 +446,6 @@ export function getBlockDefaults(type: BlockType): BlockDataType {
     
     case 'text':
       return {
-        type: 'text',
         content: 'Новый текстовый блок',
         align: 'left',
         style: 'normal'
@@ -463,7 +453,6 @@ export function getBlockDefaults(type: BlockType): BlockDataType {
     
     case 'button':
       return {
-        type: 'button',
         text: 'Нажмите',
         url: '#',
         style: 'primary'
@@ -471,7 +460,6 @@ export function getBlockDefaults(type: BlockType): BlockDataType {
     
     case 'image':
       return {
-        type: 'image',
         url: '/placeholder.jpg',
         alt: 'Изображение',
         fullWidth: false
@@ -479,13 +467,11 @@ export function getBlockDefaults(type: BlockType): BlockDataType {
     
     case 'spacer':
       return {
-        type: 'spacer',
         height: 32
       }
     
-    case 'product':
+    case 'telegram-product':
       return {
-        type: 'product',
         productId: '',
         showDescription: true,
         showPrice: true,

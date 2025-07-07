@@ -133,6 +133,11 @@ export const authApi = {
   getTelegramProfile: async (): Promise<TelegramProfile> => {
     const response = await api.get('/api/auth/telegram-profile');
     return response.data;
+  },
+
+  logout: async (): Promise<void> => {
+    const response = await api.post('/api/auth/logout');
+    return response.data;
   }
 };
 

@@ -1,19 +1,7 @@
 // Конфигурация категорий блоков TeleShop Constructor
 
 import React from 'react';
-import { BlockType, BlockCategory } from '@/types/blocks'
-
-export interface BlockCategory {
-  id: string;
-  name: string;
-  icon?: string;
-  blocks: Array<{
-    type: BlockType;
-    name: string;
-    icon?: string;
-    description?: string;
-  }>;
-}
+import { BlockType, BlockCategory, BlockInfo } from '@/types/blocks'
 
 // Категории блоков для селектора
 export const blockCategories: Record<string, BlockCategory> = {
@@ -24,13 +12,13 @@ export const blockCategories: Record<string, BlockCategory> = {
     blocks: [
       {
         type: 'telegram-banner',
-        name: 'Баннер',
+        title: 'Баннер',
         icon: '🎯',
         description: 'Баннер с кнопкой для Telegram'
       },
       {
         type: 'telegram-categories',
-        name: 'Категории',
+        title: 'Категории',
         icon: '📑',
         description: 'Список категорий для Telegram'
       }
@@ -80,13 +68,13 @@ export const blockCategories: Record<string, BlockCategory> = {
     blocks: [
       {
         type: 'product-grid',
-        name: 'Список товаров',
+        title: 'Список товаров',
         icon: '📋',
         description: 'Список товаров с фильтрами'
       },
       {
-        type: 'product',
-        name: 'Карточка товара',
+        type: 'telegram-product',
+        title: 'Карточка товара',
         icon: '🏷️',
         description: 'Детальная карточка товара'
       }
@@ -98,7 +86,7 @@ export const blockCategories: Record<string, BlockCategory> = {
     icon: '📄',
     blocks: [
       {
-        type: 'product',
+        type: 'telegram-product',
         title: 'Товар',
         description: 'Карточка товара с описанием',
         icon: '🛍️'
@@ -142,13 +130,13 @@ export const blockCategories: Record<string, BlockCategory> = {
     blocks: [
       {
         type: 'contact',
-        name: 'Контактная форма',
+        title: 'Контактная форма',
         icon: '✉️',
         description: 'Форма обратной связи'
       },
       {
         type: 'form',
-        name: 'Форма подписки',
+        title: 'Форма подписки',
         icon: '📨',
         description: 'Форма для сбора email-адресов'
       }
@@ -161,13 +149,13 @@ export const blockCategories: Record<string, BlockCategory> = {
     blocks: [
       {
         type: 'header',
-        name: 'Простая шапка',
+        title: 'Простая шапка',
         icon: '📰',
         description: 'Простая шапка с логотипом и меню'
       },
       {
         type: 'header',
-        name: 'Полная шапка',
+        title: 'Полная шапка',
         icon: '🗞️',
         description: 'Шапка с дополнительными элементами'
       }

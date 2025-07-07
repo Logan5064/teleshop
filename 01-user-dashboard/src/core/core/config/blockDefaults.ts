@@ -1,6 +1,6 @@
 // Настройки блоков по умолчанию TeleShop Constructor
 
-import { BlockType, BlockDefaults } from '@/types/blocks'
+import { BlockType } from '@/types/blocks'
 
 export const blockDefaults: Record<BlockType, Record<string, unknown>> = {
   // Telegram блоки
@@ -122,16 +122,6 @@ export const blockDefaults: Record<BlockType, Record<string, unknown>> = {
   spacer: {
     height: 40,
     backgroundColor: 'transparent'
-  },
-
-  product: {
-    name: 'Название товара',
-    price: '1 000 ₽',
-    description: 'Описание товара',
-    image: '',
-    inStock: true,
-    showAddToCart: true,
-    showQuickView: true
   },
 
   'product-grid': {

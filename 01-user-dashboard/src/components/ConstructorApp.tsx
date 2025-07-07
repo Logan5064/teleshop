@@ -136,6 +136,7 @@ export default function ConstructorApp() {
         lastSaved={lastSaved}
         saveStatus={saveStatus}
         blocksCount={blocks.length}
+        blocks={blocks}
         shopName={shopName}
         onShopNameChange={setShopName}
         onUndo={undo}

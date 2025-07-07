@@ -26,10 +26,6 @@ export const logout = async (): Promise<void> => {
 // Get user data
 export const getUserData = async (): Promise<any> => {
   try {
-    const authResult = await authApi.checkAuth();
-    if (!authResult.authenticated) {
-      return null;
-    }
     const user = await authApi.getCurrentUser();
     return user || null;
   } catch (error) {

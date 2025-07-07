@@ -11,6 +11,7 @@ export interface TopPanelProps {
   lastSaved: Date | undefined;
   saveStatus: 'idle' | 'saving' | 'saved' | 'error';
   blocksCount: number;
+  blocks?: any[];
   shopName: string;
   onShopNameChange: (name: string) => void;
   onUndo: () => void;
