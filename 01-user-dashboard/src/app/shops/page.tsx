@@ -15,8 +15,18 @@ import {
   XCircleIcon
 } from '@heroicons/react/24/outline';
 
+// Расширенный тип магазина для этой страницы
+interface ExtendedShop extends Shop {
+  is_active?: boolean;
+  owner?: {
+    first_name: string;
+    last_name: string;
+    username: string;
+  };
+}
+
 export default function ShopsPage() {
-  const [shops, setShops] = useState<Shop[]>([]);
+  const [shops, setShops] = useState<ExtendedShop[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,8 +34,8 @@ export default function ShopsPage() {
     const fetchShops = async () => {
       try {
         setIsLoading(true);
-        const data = await shopsApi.getAll();
-        setShops(data);
+        const response = await shopsApi.list();
+        setShops(response.data);
       } catch (err) {
         setError('Ошибка загрузки магазинов');
         console.error('Error fetching shops:', err);
@@ -48,12 +58,12 @@ export default function ShopsPage() {
     }
   };
 
-  const toggleStatus = async (shop: Shop) => {
+  const toggleStatus = async (shop: ExtendedShop) => {
     try {
-      const updatedShop = await shopsApi.update(shop.id, {
+      const response = await shopsApi.update(shop.id, {
         is_active: !shop.is_active
       });
-      setShops(shops.map(s => s.id === shop.id ? updatedShop : s));
+      setShops(shops.map(s => s.id === shop.id ? { ...s, is_active: !s.is_active } : s));
     } catch (err) {
       alert('Ошибка при изменении статуса');
     }

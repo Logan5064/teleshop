@@ -8,7 +8,7 @@ import {
   CogIcon,
   TrashIcon,
   CheckIcon,
-  ExternalLinkIcon,
+  ArrowTopRightOnSquareIcon,
   PlusIcon,
   UserIcon,
   EllipsisVerticalIcon
@@ -152,7 +152,7 @@ export function BotCard({ bot, onUpdate }: BotCardProps) {
                   }}
                   className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100/50 flex items-center gap-2 font-medium"
                 >
-                  <ExternalLinkIcon className="h-4 w-4" />
+                  <ArrowTopRightOnSquareIcon className="h-4 w-4" />
                   Конструктор
                 </button>
                 <hr className="my-1 border-gray-200" />

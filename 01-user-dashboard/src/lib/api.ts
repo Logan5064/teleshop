@@ -230,4 +230,8 @@ export const apiClient = {
   }
 };
 
+// Алиасы для обратной совместимости
+export const shopsApi = apiClient.shops;
+export const teleShopAPI = apiClient;
+
 export default apiClient; 

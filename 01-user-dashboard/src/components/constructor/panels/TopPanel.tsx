@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { teleShopAPI } from '@/lib/api'
-import { constructorUtils } from '@/lib/ssoIntegration'
 import { BiUndo, BiRedo, BiLayout } from 'react-icons/bi'
 
 export interface TopPanelProps {
@@ -24,6 +23,7 @@ export interface TopPanelProps {
   currentUser?: {
     telegram_id: string
     displayName?: string
+    username?: string
   }
 }
 
@@ -79,12 +79,12 @@ export default function TopPanel({
       }
 
       console.log('🚀 Отправляем дизайн в основную платформу...', designData)
-      const result = await teleShopAPI.saveDesign(designData)
       
-      alert(`✅ Дизайн успешно отправлен в основную платформу!\n\nID: ${result.design_id}\nБлоков: ${blocks.length}\nПользователь: ${getUserDisplayName()}`)
+      const result = await teleShopAPI.shop.constructor.saveTemplate(1, designData)
       
-      // Открываем основную платформу в новой вкладке
-      window.open('http://localhost:3000', '_blank')
+      alert(`✅ Дизайн успешно отправлен в основную платформу!\n\nБлоков: ${blocks.length}\nПользователь: ${getUserDisplayName()}`)
+      
+      window.open('http://178.236.17.93:3000', '_blank')
       
     } catch (error) {
       console.error('❌ Ошибка интеграции:', error)
