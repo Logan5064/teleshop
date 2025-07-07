@@ -22,13 +22,12 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@constructor/blocks": ["./konstruktor/frontend/src/blocks"],
-      "@constructor/components": ["./konstruktor/frontend/src/components/constructor"],
-      "@constructor/lib": ["./konstruktor/frontend/src/lib"],
-      "@constructor/templates": ["./konstruktor/frontend/src/templates"],
-      "@constructor/types": ["./konstruktor/frontend/src/types"]
+      "@core/*": ["./src/core/*"],
+      "@components/*": ["./src/components/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@shared/*": ["./src/shared/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "./konstruktor/frontend/src/**/*.ts", "./konstruktor/frontend/src/**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }

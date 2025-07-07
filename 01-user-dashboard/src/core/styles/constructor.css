@@ -1,0 +1,742 @@
+/* Стили конструктора TeleShop в стиле основного дашборда */
+
+.constructor-container {
+  @apply min-h-screen bg-gray-200/60;
+}
+
+/* Верхняя панель */
+.top-panel {
+  @apply bg-white/95 backdrop-blur-sm border-b border-gray-300/60 shadow-sm;
+  height: 80px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.top-panel-left {
+  @apply flex items-center gap-6;
+}
+
+.top-panel-logo {
+  @apply text-2xl font-bold text-gray-900 tracking-tight;
+}
+
+.top-panel-meta {
+  @apply text-sm text-gray-600 font-medium;
+}
+
+.top-panel-center {
+  @apply flex items-center gap-3;
+}
+
+.top-panel-right {
+  @apply flex items-center gap-4;
+}
+
+.top-panel-btn {
+  @apply inline-flex items-center gap-2 px-4 py-2 font-medium rounded-xl transition-all duration-200;
+}
+
+.top-panel-btn.primary {
+  @apply bg-gray-700 text-white hover:bg-gray-800 shadow-sm hover:shadow-md;
+}
+
+.top-panel-btn.secondary {
+  @apply bg-gray-100/70 hover:bg-gray-200/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 backdrop-blur-sm;
+}
+
+.top-panel-btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.autosave-indicator {
+  @apply text-sm text-gray-500 flex items-center gap-2 font-medium;
+}
+
+.autosave-indicator.saving {
+  @apply text-orange-600;
+}
+
+.autosave-indicator.saved {
+  @apply text-emerald-600;
+}
+
+/* Основной контейнер панелей */
+.constructor-panels {
+  display: flex;
+  height: calc(100vh - 80px);
+}
+
+/* Базовая панель */
+.constructor-panel {
+  @apply bg-white/95 backdrop-blur-sm border-gray-300/60 flex flex-col shadow-sm;
+}
+
+/* Левая панель - блоки */
+.blocks-panel {
+  @apply constructor-panel border-r;
+  width: 320px;
+  min-width: 320px;
+}
+
+.constructor-panel-header {
+  @apply p-6 border-b border-gray-300/60 bg-gray-50/80;
+}
+
+.panel-title {
+  @apply text-xl font-semibold text-gray-900 tracking-tight;
+}
+
+.constructor-panel-content {
+  @apply flex-1 overflow-y-auto p-6;
+}
+
+/* Категории блоков */
+.category-switcher {
+  @apply grid grid-cols-2 gap-3 mb-8;
+}
+
+.category-btn {
+  @apply p-4 text-center rounded-xl border border-gray-300/60 transition-all duration-200 cursor-pointer backdrop-blur-sm;
+}
+
+.category-btn.active {
+  @apply bg-gray-700 text-white border-gray-700 shadow-md;
+}
+
+.category-btn:not(.active) {
+  @apply bg-gray-100/70 hover:bg-gray-200/80 text-gray-700 hover:text-gray-900 hover:border-gray-400/70;
+}
+
+.category-icon {
+  @apply text-base flex items-center justify-center mb-2;
+}
+
+.category-name {
+  @apply text-sm font-medium;
+}
+
+/* Блоки */
+.block-category {
+  @apply mb-8;
+}
+
+.block-category-title {
+  @apply text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3;
+}
+
+.block-items {
+  @apply space-y-3;
+}
+
+.block-item {
+  @apply flex items-center gap-4 p-4 rounded-xl border border-gray-300/60 bg-white/70 hover:bg-gray-50/80 cursor-pointer transition-all duration-200 backdrop-blur-sm;
+}
+
+.block-item:hover {
+  @apply border-gray-400/70 shadow-sm;
+}
+
+.block-item-icon {
+  @apply w-12 h-12 bg-gray-200/80 rounded-xl flex items-center justify-center border border-gray-300/50 text-gray-600;
+}
+
+.block-item-info {
+  @apply flex-1;
+}
+
+.block-item-name {
+  @apply text-sm font-semibold text-gray-900 mb-1;
+}
+
+.block-item-desc {
+  @apply text-xs text-gray-600;
+}
+
+/* Центральная панель - предпросмотр */
+.preview-panel {
+  @apply flex-1 bg-white/70 backdrop-blur-sm border-l border-r border-gray-200/50 flex flex-col;
+  min-width: 0;
+}
+
+.preview-header {
+  @apply p-4 border-b border-gray-200/50 flex items-center justify-between;
+}
+
+.preview-modes {
+  @apply flex gap-2;
+}
+
+.preview-mode-btn {
+  @apply px-3 py-2 text-sm font-medium rounded-lg border transition-all duration-200 flex items-center;
+}
+
+.preview-mode-btn.active {
+  @apply bg-gray-700 text-white border-gray-700;
+}
+
+.preview-mode-btn:not(.active) {
+  @apply bg-white/80 text-gray-700 border-gray-200 hover:bg-gray-50;
+}
+
+.preview-meta {
+  @apply text-sm text-gray-500 font-medium;
+}
+
+.preview-canvas {
+  @apply flex-1 p-6 overflow-hidden;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.preview-device {
+  @apply mx-auto relative overflow-hidden;
+  transition: all 0.3s ease;
+  
+  /* iPhone рамка */
+  background: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  border-radius: 40px;
+  padding: 12px;
+  box-shadow: 
+    0 50px 100px -20px rgba(0, 0, 0, 0.25),
+    0 30px 60px -30px rgba(0, 0, 0, 0.3),
+    inset 0 -2px 6px 0 rgba(255, 255, 255, 0.1);
+}
+
+.preview-device::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 24px;
+  background: #1a1a1a;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.preview-device .volume-buttons {
+  position: absolute;
+  left: -2px;
+  top: 100px;
+  width: 4px;
+  height: 80px;
+}
+
+.preview-device .volume-buttons::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: #1a1a1a;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.preview-device .volume-buttons::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: #1a1a1a;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.preview-device .screen {
+  @apply bg-white rounded-3xl overflow-y-auto overflow-x-hidden;
+  height: 100%;
+  position: relative;
+}
+
+.preview-device .screen::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+.preview-device .screen:hover::-webkit-scrollbar {
+  width: 4px;
+}
+
+.preview-device .screen::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.preview-device .screen::-webkit-scrollbar-thumb {
+  @apply bg-gray-300/50 rounded-full;
+}
+
+.preview-device .screen:hover::-webkit-scrollbar-thumb {
+  @apply bg-gray-400/70;
+}
+
+/* Размеры устройств */
+.preview-device.mobile {
+  width: 375px;
+  height: 812px;
+}
+
+.preview-device.mobile .screen {
+  width: 351px;
+  height: 788px;
+}
+
+.preview-device.tablet {
+  width: 820px;
+  height: 1180px;
+}
+
+.preview-device.tablet .screen {
+  width: 796px;
+  height: 1156px;
+}
+
+.preview-device.dragging-active {
+  @apply ring-2 ring-blue-500 ring-offset-4;
+}
+
+.preview-device.dragging-active .screen {
+  @apply bg-gray-50;
+}
+
+/* Контейнер блоков */
+.blocks-container {
+  @apply min-h-full p-4 space-y-4;
+}
+
+/* Стили блоков */
+.ts-block-banner {
+  @apply bg-gray-100 p-8 rounded-xl;
+}
+
+.ts-block-text {
+  @apply prose max-w-none;
+}
+
+.ts-block-button {
+  @apply inline-flex items-center justify-center;
+}
+
+.ts-block-product {
+  @apply bg-white rounded-xl shadow-sm overflow-hidden;
+}
+
+.ts-block-spacer {
+  @apply py-4;
+}
+
+/* Активный блок */
+.blocks-list-item.active {
+  @apply bg-gray-50 border-gray-400;
+}
+
+.blocks-list-item.active .blocks-list-item-order {
+  @apply bg-gray-700 text-white;
+}
+
+/* Зона дропа */
+.drop-zone {
+  @apply h-2 my-2 rounded-full transition-all duration-200 opacity-0;
+}
+
+.drop-zone.visible {
+  @apply h-16 opacity-100;
+}
+
+.drop-zone.active {
+  @apply bg-blue-100 border-2 border-dashed border-blue-500;
+}
+
+.drop-zone-content {
+  @apply h-full flex items-center justify-center;
+}
+
+.drop-zone-icon {
+  @apply text-blue-500 text-xl;
+}
+
+.drop-zone-text {
+  @apply text-sm text-blue-600 font-medium ml-2;
+}
+
+@keyframes pulse-drop {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+/* Блок в превью */
+.preview-block {
+  @apply relative transition-all duration-200;
+}
+
+.preview-block:hover {
+  @apply ring-2 ring-blue-500 ring-offset-2;
+}
+
+.preview-block.selected {
+  @apply ring-2 ring-blue-600 ring-offset-2;
+}
+
+.preview-block.dragging {
+  @apply opacity-50;
+}
+
+.preview-block.drag-over {
+  @apply ring-2 ring-green-500 ring-offset-2;
+}
+
+.drag-handle {
+  @apply absolute top-2 left-2 w-6 h-6 bg-gray-700 text-white rounded-lg opacity-0 cursor-move flex items-center justify-center transition-opacity duration-200;
+}
+
+.preview-block:hover .drag-handle {
+  @apply opacity-100;
+}
+
+.drag-handle:active {
+  @apply bg-gray-800;
+}
+
+.block-controls {
+  @apply absolute top-2 right-2 flex gap-2 opacity-0 transition-opacity duration-200;
+}
+
+.preview-block:hover .block-controls {
+  @apply opacity-100;
+}
+
+.block-control-btn {
+  @apply w-6 h-6 bg-gray-700 text-white rounded-lg flex items-center justify-center transition-all duration-200;
+}
+
+.block-control-btn:hover {
+  @apply bg-gray-800;
+}
+
+/* Индикатор дропа */
+.drop-indicator {
+  @apply absolute left-0 right-0 h-1 bg-blue-500 transition-all duration-200;
+}
+
+/* Утилиты */
+.scale-102 {
+  transform: scale(1.02);
+}
+
+/* Правая панель - настройки */
+.settings-panel {
+  @apply constructor-panel border-l;
+  width: 360px;
+  min-width: 360px;
+}
+
+/* Пустое состояние настроек */
+.settings-empty {
+  @apply flex flex-col items-center justify-center h-full text-center p-8;
+}
+
+.settings-empty-icon {
+  @apply text-4xl text-gray-400 mb-4;
+}
+
+.settings-empty-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.settings-empty-desc {
+  @apply text-sm text-gray-600;
+}
+
+/* Секции настроек */
+.settings-section {
+  @apply mb-8;
+}
+
+.settings-section-title {
+  @apply text-sm font-medium text-gray-700 mb-4;
+}
+
+/* Информация о блоке */
+.block-info {
+  @apply mb-6;
+}
+
+.block-type {
+  @apply text-sm text-gray-600 mb-1;
+}
+
+.block-id {
+  @apply text-xs text-gray-500 font-mono;
+}
+
+/* Действия с блоком */
+.block-actions {
+  @apply flex gap-2 mb-6;
+}
+
+/* Поля настроек */
+.settings-field {
+  @apply mb-4;
+}
+
+.settings-label {
+  @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+.settings-input {
+  @apply w-full px-3 py-2 bg-white/70 border border-gray-300/60 rounded-lg text-sm transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+}
+
+.settings-textarea {
+  @apply settings-input resize-none min-h-[100px];
+}
+
+.settings-select {
+  @apply settings-input appearance-none bg-no-repeat bg-right pr-8;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-size: 1.5em 1.5em;
+}
+
+.settings-checkbox {
+  @apply h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-colors duration-200;
+}
+
+.settings-color {
+  @apply w-full h-10 rounded-lg cursor-pointer border border-gray-300/60 transition-all duration-200;
+}
+
+/* Список блоков */
+.blocks-list {
+  @apply space-y-2;
+}
+
+/* Элемент списка блоков */
+.blocks-list-item {
+  @apply flex items-center gap-3 p-3 rounded-xl border border-gray-300/60 bg-white/70 transition-all duration-200;
+}
+
+.blocks-list-item:hover {
+  @apply border-gray-400/70 shadow-sm;
+}
+
+.blocks-list-item.active {
+  @apply bg-gray-50 border-gray-400;
+}
+
+.blocks-list-item-content {
+  @apply flex-1;
+}
+
+.blocks-list-item-name {
+  @apply text-sm font-medium text-gray-900;
+}
+
+.blocks-list-item-order {
+  @apply w-6 h-6 bg-gray-200 rounded-lg flex items-center justify-center text-xs font-medium text-gray-700;
+}
+
+.blocks-list-item-controls {
+  @apply flex gap-2;
+}
+
+.block-move-btn {
+  @apply w-6 h-6 flex items-center justify-center rounded-lg border border-gray-300 text-gray-600 transition-all duration-200 hover:bg-gray-100;
+}
+
+.block-move-btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Модальное окно */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50;
+}
+
+.modal-content {
+  @apply bg-white rounded-2xl shadow-xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden;
+  min-height: 600px;
+}
+
+.modal-header {
+  @apply flex items-center justify-between p-6 border-b border-gray-200;
+}
+
+.modal-title {
+  @apply text-2xl font-semibold text-gray-900;
+}
+
+.modal-close {
+  @apply p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-all;
+}
+
+.modal-body {
+  @apply p-6 overflow-y-auto flex-1;
+}
+
+.modal-footer {
+  @apply flex items-center justify-end gap-4 p-6 border-t border-gray-200 bg-gray-50;
+}
+
+/* Категории шаблонов */
+.template-categories {
+  @apply flex gap-2 mb-8 overflow-x-auto pb-2;
+}
+
+.template-category-btn {
+  @apply px-4 py-2 text-sm font-medium rounded-xl whitespace-nowrap transition-all duration-200;
+}
+
+.template-category-btn:not(.active) {
+  @apply bg-gray-100/70 text-gray-700 hover:bg-gray-200/80;
+}
+
+.template-category-btn.active {
+  @apply bg-gray-700 text-white;
+}
+
+/* Сетка шаблонов */
+.template-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.template-card {
+  @apply bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer border border-gray-200;
+}
+
+.template-preview {
+  @apply aspect-[4/3] overflow-hidden bg-gray-100;
+}
+
+.template-preview img {
+  @apply w-full h-full object-cover;
+}
+
+.template-info {
+  @apply p-4;
+}
+
+.template-name {
+  @apply text-lg font-semibold text-gray-900 mb-1;
+}
+
+.template-desc {
+  @apply text-sm text-gray-600 mb-3;
+}
+
+.template-meta {
+  @apply flex items-center gap-4 text-sm text-gray-500;
+}
+
+.template-blocks-count {
+  @apply flex items-center gap-1;
+}
+
+/* Пустое состояние */
+.template-empty {
+  @apply flex flex-col items-center justify-center py-12 text-center;
+}
+
+.template-empty-icon {
+  @apply text-gray-400 mb-4;
+}
+
+.template-empty-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.template-empty-desc {
+  @apply text-sm text-gray-600;
+}
+
+/* Табы настроек */
+.settings-tabs {
+  @apply flex border-b border-gray-200 mb-6;
+}
+
+.settings-tab {
+  @apply px-4 py-2 text-sm font-medium border-b-2 transition-all duration-200 cursor-pointer;
+}
+
+.settings-tab:hover:not(.disabled) {
+  @apply text-gray-700 border-gray-300;
+}
+
+.settings-tab.active {
+  @apply text-blue-600 border-blue-600;
+}
+
+.settings-tab.disabled {
+  @apply text-gray-400 cursor-not-allowed;
+}
+
+.settings-tab-icon {
+  @apply mr-2;
+}
+
+.settings-tab-name {
+  @apply inline-block;
+}
+
+.settings-tab-count {
+  @apply ml-2 text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full;
+}
+
+.settings-tab.active .settings-tab-count {
+  @apply bg-blue-100 text-blue-600;
+}
+
+/* Содержимое табов */
+.tab-content {
+  @apply hidden;
+}
+
+.tab-content-header {
+  @apply mb-6;
+}
+
+.tab-content-title {
+  @apply text-lg font-semibold text-gray-900 mb-1;
+}
+
+.tab-content-subtitle {
+  @apply text-sm text-gray-600;
+}
+
+/* Форма настроек */
+.settings-form {
+  @apply space-y-6;
+}
+
+/* Пустое состояние */
+.empty-state {
+  @apply flex flex-col items-center justify-center text-center p-8;
+}
+
+.empty-state-icon {
+  @apply text-4xl text-gray-400 mb-4;
+}
+
+.empty-state-title {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.empty-state-desc {
+  @apply text-sm text-gray-600;
+}
+
+/* Активный элемент списка */
+.blocks-list-item.active {
+  @apply bg-gray-50 border-gray-400;
+}
+
+.blocks-list-item.active .blocks-list-item-order {
+  @apply bg-gray-700 text-white;
+} 

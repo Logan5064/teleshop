@@ -74,6 +74,7 @@ export interface Bot {
   bot_token: string
   bot_username?: string
   is_active: boolean
+  user_id: number
   created_at: string
   updated_at: string
 }

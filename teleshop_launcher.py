@@ -52,7 +52,7 @@ class TeleShopLauncher:
             "auth_bot": {
                 "name": "🤖 Auth Bot",
                 "path": "/var/www/teleshop/05-server-launchers/bots",
-                "cmd": "python3 auth_bot_modern.py", 
+                "cmd": "python3 auth_bot.py", 
                 "port": "Bot",
                 "color": "#f39c12"
             }

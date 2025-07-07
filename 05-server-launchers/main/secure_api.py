@@ -16,6 +16,7 @@ import random
 import string
 import logging
 import traceback
+import httpx
 
 # Импорты для авторизации (исправленные пути)
 import sys
@@ -36,7 +37,7 @@ sys.path.insert(0, bot_engine_path)
 from shared.auth.db_code_auth import get_current_user_by_session, DatabaseCodeAuth, get_auth_stats
 from shared.models.user import User
 from shared.models.shop import Shop
-from shared.models.auth_models import AuthCode, UserSession
+from shared.models.auth_models import AuthCode, UserSession, TelegramUserProfile
 from shared.schemas.user_schemas import User as UserSchema, UserCreate
 from shared.schemas.shop_schemas import ShopResponse, ShopCreate, ShopUpdate
 from shared.utils.database import get_db
@@ -185,6 +186,24 @@ async def get_admin_token(request: Request) -> str:
 
 # ===== БЕЗОПАСНЫЕ API ЭНДПОИНТЫ =====
 
+async def get_bot_info_from_telegram(bot_token: str) -> dict:
+    """Получить информацию о боте из Telegram API"""
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"https://api.telegram.org/bot{bot_token}/getMe")
+            data = response.json()
+            
+            if data.get("ok"):
+                bot_info = data["result"]
+                logger.info(f"✅ Получена информация о боте: @{bot_info.get('username', 'NO_USERNAME')}")
+                return bot_info
+            else:
+                logger.error(f"❌ Ошибка Telegram API: {data.get('description', 'Unknown error')}")
+                return None
+    except Exception as e:
+        logger.error(f"❌ Ошибка запроса к Telegram API: {e}")
+        return None
+
 @router.post("/secure/bots", response_model=BotResponse)
 async def create_bot_secure(
     bot_data: BotCreate,
@@ -199,6 +218,18 @@ async def create_bot_secure(
         log_request(request, user_info)
         
         logger.info(f"🤖 BOT CREATE ATTEMPT | User: {user_info} | Bot name: {bot_data.shop_name} | Token: {bot_data.bot_token[:20]}...")
+        
+        # 🔥 ПОЛУЧАЕМ ИНФОРМАЦИЮ О БОТЕ ИЗ TELEGRAM API
+        bot_info = await get_bot_info_from_telegram(bot_data.bot_token)
+        if not bot_info:
+            logger.warning(f"❌ BOT CREATE FAILED | User: {user_info} | Reason: Invalid bot token")
+            raise HTTPException(status_code=400, detail="Неверный токен бота или бот недоступен")
+        
+        # Автоматически получаем username и другую информацию
+        actual_bot_username = bot_info.get("username", "")
+        bot_first_name = bot_info.get("first_name", "")
+        
+        logger.info(f"🔍 BOT INFO | Username: @{actual_bot_username} | Name: {bot_first_name}")
         
         # Проверяем уникальность токена ТОЛЬКО у текущего пользователя
         result = await db.execute(
@@ -215,13 +246,13 @@ async def create_bot_secure(
             logger.warning(f"⚠️ BOT CREATE FAILED | User: {user_info} | Reason: Duplicate token | Existing bot ID: {existing_shop.id}")
             raise HTTPException(status_code=400, detail="У вас уже есть бот с таким токеном")
         
-        # Создаем новый магазин/бота в БД
+        # Создаем новый магазин/бота в БД с реальными данными из Telegram
         new_shop = Shop(
             user_id=current_user.id,
             name=bot_data.shop_name,
             description=bot_data.description,
             bot_token=bot_data.bot_token,
-            bot_username=bot_data.bot_username,
+            bot_username=actual_bot_username,  # Используем реальный username из Telegram
             is_bot_active=True
         )
         
@@ -229,7 +260,7 @@ async def create_bot_secure(
         await db.commit()
         await db.refresh(new_shop)
         
-        logger.info(f"✅ BOT CREATED SUCCESS | User: {user_info} | Bot ID: {new_shop.id} | Name: {new_shop.name}")
+        logger.info(f"✅ BOT CREATED SUCCESS | User: {user_info} | Bot ID: {new_shop.id} | Name: {new_shop.name} | Username: @{actual_bot_username}")
         
         return BotResponse(
             id=new_shop.id,
@@ -240,7 +271,7 @@ async def create_bot_secure(
             is_active=new_shop.is_bot_active,
             user_id=new_shop.user_id,
             created_at=new_shop.created_at,
-            updated_at=new_shop.updated_at
+            updated_at=new_shop.updated_at or new_shop.created_at  # Если updated_at None, используем created_at
         )
         
     except HTTPException as e:
@@ -257,12 +288,16 @@ async def get_user_bots(
     db: AsyncSession = Depends(get_db)
 ):
     """🔒 БЕЗОПАСНО: Получить ТОЛЬКО боты текущего пользователя"""
+    print(f"🔒 Пользователь {current_user.telegram_id} (ID: {current_user.id}) запросил своих ботов")
+    
     result = await db.execute(
         select(Shop).where(Shop.user_id == current_user.id)
     )
     user_shops = result.scalars().all()
     
-    print(f"🔒 Пользователь {current_user.telegram_id} запросил своих ботов: {len(user_shops)}")
+    print(f"🔒 Найдено ботов для пользователя {current_user.id}: {len(user_shops)}")
+    for shop in user_shops:
+        print(f"  - Бот ID:{shop.id}, Название:{shop.name}, Активен:{shop.is_bot_active}")
     
     return [
         BotResponse(
@@ -274,7 +309,7 @@ async def get_user_bots(
             is_active=shop.is_bot_active,
             user_id=shop.user_id,
             created_at=shop.created_at,
-            updated_at=shop.updated_at
+            updated_at=shop.updated_at or shop.created_at  # Если updated_at None, используем created_at
         )
         for shop in user_shops
     ]
@@ -309,7 +344,7 @@ async def get_user_bot(
         is_active=shop.is_bot_active,
         user_id=shop.user_id,
         created_at=shop.created_at,
-        updated_at=shop.updated_at
+        updated_at=shop.updated_at or shop.created_at  # Если updated_at None, используем created_at
     )
 
 @router.put("/secure/bots/{bot_id}", response_model=BotResponse)
@@ -333,16 +368,29 @@ async def update_user_bot(
     if not shop:
         raise HTTPException(status_code=404, detail="Бот не найден или у вас нет к нему доступа")
     
+    # 🔥 ПОЛУЧАЕМ ИНФОРМАЦИЮ О БОТЕ ИЗ TELEGRAM API при обновлении
+    bot_info = await get_bot_info_from_telegram(bot_data.bot_token)
+    if not bot_info:
+        user_info = f"ID:{current_user.id}|TG:{current_user.telegram_id}"
+        logger.warning(f"❌ BOT UPDATE FAILED | User: {user_info} | Reason: Invalid bot token")
+        raise HTTPException(status_code=400, detail="Неверный токен бота или бот недоступен")
+    
+    # Автоматически получаем username из Telegram
+    actual_bot_username = bot_info.get("username", "")
+    bot_first_name = bot_info.get("first_name", "")
+    
+    logger.info(f"🔍 BOT UPDATE INFO | Username: @{actual_bot_username} | Name: {bot_first_name}")
+    
     # Обновляем данные
     shop.name = bot_data.shop_name
     shop.description = bot_data.description
     shop.bot_token = bot_data.bot_token
-    shop.bot_username = bot_data.bot_username
+    shop.bot_username = actual_bot_username  # Используем реальный username из Telegram
     
     await db.commit()
     await db.refresh(shop)
     
-    print(f"🔒 Пользователь {current_user.telegram_id} обновил бота {bot_id}")
+    logger.info(f"✅ BOT UPDATED SUCCESS | User: {current_user.telegram_id} | Bot ID: {bot_id} | Username: @{actual_bot_username}")
     
     return BotResponse(
         id=shop.id,
@@ -353,7 +401,7 @@ async def update_user_bot(
         is_active=shop.is_bot_active,
         user_id=shop.user_id,
         created_at=shop.created_at,
-        updated_at=shop.updated_at
+        updated_at=shop.updated_at or shop.created_at  # Если updated_at None, используем created_at
     )
 
 @router.post("/secure/bots/{bot_id}/start")
@@ -378,7 +426,8 @@ async def start_user_bot(
     
     try:
         # 🔥 РЕАЛЬНО ЗАПУСКАЕМ БОТА в Telegram!
-        from bot_engine.api.bot_manager import bot_manager
+        from api_server import get_bot_manager
+        bot_manager = get_bot_manager()
         await bot_manager.start_bot(shop.bot_token, shop.id)
         
         # Активируем бота в БД только если реальный запуск успешен
@@ -415,8 +464,9 @@ async def stop_user_bot(
     
     try:
         # 🛑 РЕАЛЬНО ОСТАНАВЛИВАЕМ БОТА в Telegram!
-        from bot_engine.api.bot_manager import bot_manager
-        await bot_manager.stop_bot(shop.bot_token)
+        from api_server import get_bot_manager
+        bot_manager = get_bot_manager()
+        await bot_manager.stop_bot(shop.id)
         
         # Деактивируем бота в БД только если реальная остановка успешна
         shop.is_bot_active = False
@@ -456,8 +506,9 @@ async def delete_user_bot(
     try:
         # 🛑 СНАЧАЛА ОСТАНАВЛИВАЕМ БОТА если он активен
         if shop.is_bot_active:
-            from bot_engine.api.bot_manager import bot_manager
-            await bot_manager.stop_bot(shop.bot_token)
+            from api_server import get_bot_manager
+            bot_manager = get_bot_manager()
+            await bot_manager.stop_bot(shop.id)
             print(f"🛑 Бот {bot_id} остановлен перед удалением")
         
         # Удаляем бота из БД
@@ -833,6 +884,22 @@ class BotUserTrackingRequest(BaseModel):
     ip_address: Optional[str] = None
     user_agent: Optional[str] = None
 
+class BotSubscriberResponse(BaseModel):
+    """Пользователь бота (подписчик)"""
+    id: int
+    shop_id: int
+    telegram_user_id: str
+    username: Optional[str]
+    first_name: Optional[str]
+    last_name: Optional[str]
+    language_code: Optional[str]
+    is_active: bool
+    is_blocked: bool
+    last_interaction: Optional[datetime]
+    source: Optional[str]
+    first_seen: Optional[datetime]
+    updated_at: Optional[datetime]
+
 @router.post("/secure/analytics/track-user")
 async def track_bot_user(
     tracking_data: BotUserTrackingRequest,
@@ -954,6 +1021,73 @@ async def get_bot_users(
         except:
             print("Error getting bot users")
         raise HTTPException(status_code=500, detail="Ошибка получения пользователей")
+
+@router.get("/secure/bot-users", response_model=List[BotSubscriberResponse])
+async def get_bot_subscribers(
+    shop_id: int,
+    request: Request,
+    current_user: User = Depends(get_current_user_by_session),
+    db: AsyncSession = Depends(get_db)
+):
+    """👥 Получить подписчиков конкретного бота"""
+    try:
+        user_info = f"ID:{current_user.id}|TG:{current_user.telegram_id}"
+        log_request(request, user_info)
+        
+        # Проверяем что бот принадлежит текущему пользователю
+        shop_result = await db.execute(
+            select(Shop).where(
+                and_(Shop.id == shop_id, Shop.user_id == current_user.id)
+            )
+        )
+        shop = shop_result.scalar_one_or_none()
+        
+        if not shop:
+            raise HTTPException(
+                status_code=404,
+                detail="Бот не найден или не принадлежит текущему пользователю"
+            )
+        
+        # Получаем подписчиков бота из таблицы bot_subscribers
+        subscribers_query = text("""
+            SELECT id, shop_id, telegram_user_id, username, first_name, last_name,
+                   language_code, is_active, is_blocked, last_interaction, source, 
+                   first_seen, updated_at
+            FROM bot_subscribers 
+            WHERE shop_id = :shop_id
+            ORDER BY first_seen DESC
+        """)
+        
+        result = await db.execute(subscribers_query, {"shop_id": shop_id})
+        subscribers = result.fetchall()
+        
+        logger.info(f"📊 Найдено подписчиков для бота {shop_id}: {len(subscribers)}")
+        
+        return [
+            BotSubscriberResponse(
+                id=subscriber.id,
+                shop_id=subscriber.shop_id,
+                telegram_user_id=subscriber.telegram_user_id,
+                username=subscriber.username,
+                first_name=subscriber.first_name,
+                last_name=subscriber.last_name,
+                language_code=subscriber.language_code,
+                is_active=subscriber.is_active or False,
+                is_blocked=subscriber.is_blocked or False,
+                last_interaction=subscriber.last_interaction,
+                source=subscriber.source,
+                first_seen=subscriber.first_seen,
+                updated_at=subscriber.updated_at
+            )
+            for subscriber in subscribers
+        ]
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Ошибка получения подписчиков бота: {e}")
+        log_api_error("/secure/bot-users", e, user_info, request)
+        raise HTTPException(status_code=500, detail="Ошибка получения подписчиков бота")
 
 @router.post("/secure/analytics/geolocation")
 async def get_ip_geolocation(request: Request):
@@ -1117,3 +1251,341 @@ async def get_current_user(request: Request, db: AsyncSession = Depends(get_db))
         raise HTTPException(status_code=401, detail="Недействительный или истекший токен")
     
     return user 
+
+@router.get("/auth/me")
+async def get_current_user_data(
+    request: Request,
+    current_user: User = Depends(get_current_user_by_session),
+    db: AsyncSession = Depends(get_db)
+):
+    """Получить данные текущего пользователя"""
+    try:
+        user_info = f"ID:{current_user.id}|TG:{current_user.telegram_id}"
+        log_request(request, user_info)
+        
+        return {
+            "id": current_user.id,
+            "telegram_id": current_user.telegram_id,
+            "username": current_user.username,
+            "first_name": current_user.first_name,
+            "last_name": current_user.last_name,
+            "is_active": current_user.is_active,
+            "subscription_plan": current_user.subscription_plan,
+            "created_at": current_user.created_at
+        }
+    except Exception as e:
+        log_api_error("/auth/me", e, user_info, request)
+        raise HTTPException(status_code=500, detail="Ошибка при получении данных пользователя")
+
+@router.get("/auth/telegram-profile")
+async def get_telegram_profile(
+    request: Request,
+    current_user: User = Depends(get_current_user_by_session),
+    db: AsyncSession = Depends(get_db)
+):
+    """Получить Telegram профиль пользователя"""
+    try:
+        user_info = f"ID:{current_user.id}|TG:{current_user.telegram_id}"
+        log_request(request, user_info)
+        
+        # Получаем профиль из базы
+        result = await db.execute(
+            select(TelegramUserProfile).where(
+                TelegramUserProfile.user_id == current_user.id
+            )
+        )
+        profile = result.scalar_one_or_none()
+        
+        if not profile:
+            return None
+            
+        return {
+            "id": profile.id,
+            "user_id": profile.user_id,
+            "telegram_id": profile.telegram_id,
+            "username": profile.username,
+            "first_name": profile.first_name,
+            "last_name": profile.last_name,
+            "language_code": profile.language_code,
+            "is_premium": profile.is_premium,
+            "photo_url": profile.photo_url,
+            "bio": profile.bio,
+            "first_seen": profile.first_seen,
+            "last_seen": profile.last_seen,
+            "total_logins": profile.total_logins
+        }
+    except Exception as e:
+        log_api_error("/auth/telegram-profile", e, user_info, request)
+        raise HTTPException(status_code=500, detail="Ошибка при получении Telegram профиля")
+
+# ===== PRODUCTS API =====
+
+class ProductCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    price: float
+    category_id: int
+    shop_id: int
+    image_url: Optional[str] = None
+    is_active: bool = True
+
+class ProductResponse(BaseModel):
+    id: int
+    name: str
+    description: Optional[str]
+    price: float
+    category_id: int
+    shop_id: int
+    image_url: Optional[str]
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+@router.get("/secure/products", response_model=List[ProductResponse])
+async def get_shop_products(
+    shop_id: int,
+    request: Request,
+    current_user: User = Depends(get_current_user_by_session),
+    db: AsyncSession = Depends(get_db)
+):
+    """Получить все товары магазина (бота)"""
+    try:
+        log_request(request, f"user_id:{current_user.id}")
+        
+        # Проверяем что магазин принадлежит пользователю
+        shop_query = select(Shop).where(
+            and_(Shop.id == shop_id, Shop.user_id == current_user.id)
+        )
+        result = await db.execute(shop_query)
+        shop = result.scalar_one_or_none()
+        
+        if not shop:
+            raise HTTPException(
+                status_code=404,
+                detail="Магазин не найден или не принадлежит пользователю"
+            )
+        
+        # Возвращаем пустой список если таблица не существует или пуста
+        # В реальном приложении здесь был бы запрос к таблице products
+        logger.info(f"📦 Запрос товаров для магазина {shop_id} пользователя {current_user.id}")
+        
+        return []  # Пустой список пока таблица не наполнена
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_api_error("/secure/products", e, f"user_id:{current_user.id}", request)
+        raise HTTPException(status_code=500, detail="Ошибка получения товаров")
+
+@router.post("/secure/products", response_model=ProductResponse)
+async def create_product(
+    product_data: ProductCreate,
+    request: Request,
+    current_user: User = Depends(get_current_user_by_session),
+    db: AsyncSession = Depends(get_db)
+):
+    """Создать новый товар"""
+    try:
+        log_request(request, f"user_id:{current_user.id}")
+        
+        # Проверяем что магазин принадлежит пользователю
+        shop_query = select(Shop).where(
+            and_(Shop.id == product_data.shop_id, Shop.user_id == current_user.id)
+        )
+        result = await db.execute(shop_query)
+        shop = result.scalar_one_or_none()
+        
+        if not shop:
+            raise HTTPException(
+                status_code=404,
+                detail="Магазин не найден или не принадлежит пользователю"
+            )
+        
+        logger.info(f"📦 Создание товара для магазина {product_data.shop_id} пользователя {current_user.id}")
+        
+        # Здесь был бы код создания товара в БД
+        # Пока возвращаем фиктивный ответ
+        raise HTTPException(status_code=501, detail="Создание товаров временно недоступно")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_api_error("/secure/products", e, f"user_id:{current_user.id}", request)
+        raise HTTPException(status_code=500, detail="Ошибка создания товара")
+
+# ===== CATEGORIES API =====
+
+class CategoryCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    shop_id: int
+    is_active: bool = True
+
+class CategoryResponse(BaseModel):
+    id: int
+    name: str
+    description: Optional[str]
+    shop_id: int
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+@router.get("/secure/categories", response_model=List[CategoryResponse])
+async def get_shop_categories(
+    shop_id: int,
+    request: Request,
+    current_user: User = Depends(get_current_user_by_session),
+    db: AsyncSession = Depends(get_db)
+):
+    """Получить все категории магазина (бота)"""
+    try:
+        log_request(request, f"user_id:{current_user.id}")
+        
+        # Проверяем что магазин принадлежит пользователю
+        shop_query = select(Shop).where(
+            and_(Shop.id == shop_id, Shop.user_id == current_user.id)
+        )
+        result = await db.execute(shop_query)
+        shop = result.scalar_one_or_none()
+        
+        if not shop:
+            raise HTTPException(
+                status_code=404,
+                detail="Магазин не найден или не принадлежит пользователю"
+            )
+        
+        logger.info(f"📂 Запрос категорий для магазина {shop_id} пользователя {current_user.id}")
+        
+        return []  # Пустой список пока таблица не наполнена
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_api_error("/secure/categories", e, f"user_id:{current_user.id}", request)
+        raise HTTPException(status_code=500, detail="Ошибка получения категорий")
+
+@router.post("/secure/categories", response_model=CategoryResponse)
+async def create_category(
+    category_data: CategoryCreate,
+    request: Request,
+    current_user: User = Depends(get_current_user_by_session),
+    db: AsyncSession = Depends(get_db)
+):
+    """Создать новую категорию"""
+    try:
+        log_request(request, f"user_id:{current_user.id}")
+        
+        # Проверяем что магазин принадлежит пользователю
+        shop_query = select(Shop).where(
+            and_(Shop.id == category_data.shop_id, Shop.user_id == current_user.id)
+        )
+        result = await db.execute(shop_query)
+        shop = result.scalar_one_or_none()
+        
+        if not shop:
+            raise HTTPException(
+                status_code=404,
+                detail="Магазин не найден или не принадлежит пользователю"
+            )
+        
+        logger.info(f"📂 Создание категории для магазина {category_data.shop_id} пользователя {current_user.id}")
+        
+        # Здесь был бы код создания категории в БД
+        raise HTTPException(status_code=501, detail="Создание категорий временно недоступно")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_api_error("/secure/categories", e, f"user_id:{current_user.id}", request)
+        raise HTTPException(status_code=500, detail="Ошибка создания категории")
+
+# ===== ORDERS API =====
+
+class OrderResponse(BaseModel):
+    id: int
+    shop_id: int
+    customer_telegram_id: str
+    total_amount: float
+    status: str
+    created_at: datetime
+    updated_at: datetime
+
+@router.get("/secure/orders", response_model=List[OrderResponse])
+async def get_shop_orders(
+    shop_id: int,
+    request: Request,
+    current_user: User = Depends(get_current_user_by_session),
+    db: AsyncSession = Depends(get_db)
+):
+    """Получить все заказы магазина (бота)"""
+    try:
+        log_request(request, f"user_id:{current_user.id}")
+        
+        # Проверяем что магазин принадлежит пользователю
+        shop_query = select(Shop).where(
+            and_(Shop.id == shop_id, Shop.user_id == current_user.id)
+        )
+        result = await db.execute(shop_query)
+        shop = result.scalar_one_or_none()
+        
+        if not shop:
+            raise HTTPException(
+                status_code=404,
+                detail="Магазин не найден или не принадлежит пользователю"
+            )
+        
+        logger.info(f"🛍️ Запрос заказов для магазина {shop_id} пользователя {current_user.id}")
+        
+        return []  # Пустой список пока таблица не наполнена
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_api_error("/secure/orders", e, f"user_id:{current_user.id}", request)
+        raise HTTPException(status_code=500, detail="Ошибка получения заказов")
+
+# ===== ENHANCED ANALYTICS API =====
+
+@router.get("/secure/analytics")
+async def get_shop_analytics(
+    shop_id: int,
+    request: Request,
+    current_user: User = Depends(get_current_user_by_session),
+    db: AsyncSession = Depends(get_db)
+):
+    """Получить аналитику магазина (бота)"""
+    try:
+        log_request(request, f"user_id:{current_user.id}")
+        
+        # Проверяем что магазин принадлежит пользователю
+        shop_query = select(Shop).where(
+            and_(Shop.id == shop_id, Shop.user_id == current_user.id)
+        )
+        result = await db.execute(shop_query)
+        shop = result.scalar_one_or_none()
+        
+        if not shop:
+            raise HTTPException(
+                status_code=404,
+                detail="Магазин не найден или не принадлежит пользователю"
+            )
+        
+        logger.info(f"📊 Запрос аналитики для магазина {shop_id} пользователя {current_user.id}")
+        
+        # Возвращаем базовую аналитику
+        return {
+            "shop_id": shop_id,
+            "total_orders": 0,
+            "total_revenue": 0.0,
+            "total_customers": 0,
+            "active_products": 0,
+            "orders_today": 0,
+            "revenue_today": 0.0,
+            "last_updated": datetime.now(timezone.utc).isoformat()
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        log_api_error("/secure/analytics", e, f"user_id:{current_user.id}", request)
+        raise HTTPException(status_code=500, detail="Ошибка получения аналитики") 

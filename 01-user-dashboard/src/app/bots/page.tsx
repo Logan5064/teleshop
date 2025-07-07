@@ -17,10 +17,18 @@ export default function BotsPage() {
   const loadBots = async () => {
     try {
       setIsLoading(true)
+      console.log('🔄 Загружаем ботов...')
       const data = await botsApi.getAll()
+      console.log('✅ Боты получены:', data)
       setBots(data)
-    } catch (error) {
-      console.error('Ошибка загрузки ботов:', error)
+    } catch (error: any) {
+      console.error('❌ Ошибка загрузки ботов:', error)
+      console.error('Статус:', error.response?.status)
+      console.error('Данные:', error.response?.data)
+      // Показать пользователю уведомление об ошибке
+      if (error.response?.status === 401) {
+        console.error('🔐 Проблема с авторизацией')
+      }
     } finally {
       setIsLoading(false)
     }

@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useUser } from '@/lib/contexts/UserContext';
 import Sidebar from '@/components/Sidebar';
-import { logout, getUserData } from '@/lib/auth';
+import { StatsCardSkeleton, FormSkeleton, ContentLoader } from '@/components/LoadingStates';
 import {
   UserIcon,
   CreditCardIcon,
@@ -20,49 +21,95 @@ import {
 
 export default function ProfilePage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [pageLoading, setPageLoading] = useState(true);
+  const { user, profile, loading } = useUser();
 
+  // Имитируем загрузку страницы
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const userData = await getUserData();
-        setUser(userData);
-      } catch (error) {
-        console.error('Error loading user:', error);
-        setUser(null);
-      }
-    };
-    loadUser();
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
   }, []);
+
+  if (loading || pageLoading) {
+    return (
+      <div className="ts-page-bg">
+        <div className="flex h-screen">
+          <Sidebar />
+          <main className="ts-main-content">
+            <div className="ts-container">
+              <div className="p-6 w-full">
+                {/* Заголовок скелетон */}
+                <div className="h-9 bg-gray-200 rounded w-32 mb-8 animate-pulse"></div>
+
+                {/* Статистика скелетоны */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 w-full">
+                  {[...Array(4)].map((_, i) => (
+                    <StatsCardSkeleton key={i} />
+                  ))}
+                </div>
+
+                {/* Заголовок тарифных планов скелетон */}
+                <div className="h-7 bg-gray-200 rounded w-40 mb-6 animate-pulse"></div>
+
+                {/* Тарифные планы скелетоны */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/60">
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+                        <div className="h-6 bg-gray-200 rounded w-20 animate-pulse"></div>
+                      </div>
+                      <div className="h-8 bg-gray-200 rounded w-32 mb-4 animate-pulse"></div>
+                      <div className="space-y-3">
+                        {[...Array(4)].map((_, j) => (
+                          <div key={j} className="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
+                        ))}
+                      </div>
+                      <div className="h-10 bg-gray-200 rounded-lg w-full mt-6 animate-pulse"></div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Форма настроек скелетон */}
+                <FormSkeleton />
+
+                {/* Центральный лоадер */}
+                <div className="mt-12">
+                  <ContentLoader text="Загружаем профиль..." />
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   // Статистика пользователя
   const userStats = [
     {
       title: 'Дней в системе',
-      value: '45',
-      change: null,
+      value: '4',
       icon: CalendarIcon,
       color: 'blue'
     },
     {
-      title: 'Созданных магазинов',
-      value: '3',
-      change: null,
+      title: 'Входов в систему',
+      value: '19',
       icon: ShoppingBagIcon,
       color: 'emerald'
     },
     {
       title: 'Активное время',
-      value: '2ч 15м',
-      change: null,
+      value: '1ч 25м',
       icon: ClockIcon,
       color: 'violet'
     },
     {
       title: 'Текущий тариф',
-      value: user?.subscription_plan === 'enterprise' ? 'Enterprise' : 
-             user?.subscription_plan === 'pro' ? 'Pro' : 'Free',
-      change: null,
+      value: 'Free',
       icon: CurrencyDollarIcon,
       color: 'orange'
     }
@@ -73,7 +120,7 @@ export default function ProfilePage() {
       name: 'Free',
       price: 0,
       period: 'навсегда',
-      current: user?.subscription_plan === 'free',
+      current: true,
       features: [
         '1 магазин',
         'До 10 товаров',
@@ -87,7 +134,7 @@ export default function ProfilePage() {
       name: 'Pro',
       price: 990,
       period: 'в месяц',
-      current: user?.subscription_plan === 'pro',
+      current: false,
       features: [
         '5 магазинов',
         'До 500 товаров',
@@ -103,7 +150,7 @@ export default function ProfilePage() {
       name: 'Enterprise',
       price: 2990,
       period: 'в месяц',
-      current: user?.subscription_plan === 'enterprise',
+      current: false,
       features: [
         'Безлимитное количество магазинов',
         'Безлимитное количество товаров',
@@ -117,10 +164,6 @@ export default function ProfilePage() {
       color: 'purple'
     }
   ];
-
-  const handleLogout = () => {
-    logout();
-  };
 
   const handleDeleteAccount = () => {
     console.log('Удаление аккаунта');
@@ -226,28 +269,22 @@ export default function ProfilePage() {
                 <div className="flex items-center space-x-6">
                   <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
                     <span className="text-white text-2xl font-bold">
-                      {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'А'}
+                      {profile?.first_name?.charAt(0) || profile?.username?.charAt(0) || user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'M'}
                     </span>
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold text-gray-900 tracking-wide">
-                      {user?.first_name || user?.username || 'Пользователь'}
+                      {profile?.first_name || profile?.username || user?.first_name || user?.username || 'Max'}
                     </h3>
                     <p className="text-gray-600 font-medium">
-                      @{user?.username || user?.telegram_id || 'username'}
+                      @{profile?.username || user?.username || 'max_5064'}
                     </p>
                     <p className="text-sm text-gray-500 mt-1">
-                      Telegram ID: {user?.telegram_id || 'не указан'}
+                      Telegram ID: {user?.telegram_id || '422752975'}
                     </p>
                     <div className="mt-3">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                        user?.subscription_plan === 'enterprise' ? 'bg-purple-100 text-purple-800' :
-                        user?.subscription_plan === 'pro' ? 'bg-blue-100 text-blue-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {user?.subscription_plan === 'enterprise' ? '👑 Enterprise' :
-                         user?.subscription_plan === 'pro' ? '⭐ Pro' :
-                         '🆓 Free'}
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        🆓 Free
                       </span>
                     </div>
                   </div>
@@ -255,124 +292,92 @@ export default function ProfilePage() {
               </motion.div>
 
               {/* Subscription Plans */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/60 shadow-sm mb-8"
-              >
-                <h2 className="text-2xl font-semibold text-gray-800 tracking-tight mb-6">Тарифные планы</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {plans.map((plan, index) => {
-                    const Icon = plan.icon;
-                    return (
-                      <motion.div
-                        key={plan.name}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6 + index * 0.1 }}
-                        className={`p-6 rounded-xl border-2 transition-all duration-200 ${getColorClasses(plan.color, plan.current)}`}
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center space-x-3">
-                            <Icon className={`w-6 h-6 ${getIconColor(plan.color)}`} />
-                            <h3 className="text-lg font-semibold text-gray-900">{plan.name}</h3>
-                          </div>
-                          {plan.current && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              <CheckIcon className="w-3 h-3 mr-1" />
-                              Текущий
-                            </span>
-                          )}
-                        </div>
-                        <div className="mb-4">
-                          <span className="text-3xl font-bold text-gray-900">{plan.price}₽</span>
-                          <span className="text-gray-600 ml-1">/{plan.period}</span>
-                        </div>
-                        <ul className="space-y-2 mb-6">
-                          {plan.features.map((feature, i) => (
-                            <li key={i} className="flex items-center text-sm text-gray-600">
-                              <CheckIcon className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                        {!plan.current && (
-                          <button className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
-                            plan.color === 'blue' ? 'bg-blue-600 hover:bg-blue-700 text-white' :
-                            plan.color === 'purple' ? 'bg-purple-600 hover:bg-purple-700 text-white' :
-                            'bg-gray-600 hover:bg-gray-700 text-white'
-                          }`}>
-                            Перейти на {plan.name}
-                          </button>
-                        )}
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </motion.div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                {plans.map((plan, index) => (
+                  <motion.div
+                    key={plan.name}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 + index * 0.1 }}
+                    className={`rounded-2xl p-8 border ${getColorClasses(plan.color, plan.current)}`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-xl font-semibold text-gray-900">{plan.name}</h3>
+                      <plan.icon className={`w-6 h-6 ${getIconColor(plan.color)}`} />
+                    </div>
+                    <div className="flex items-baseline mb-4">
+                      <span className="text-4xl font-bold text-gray-900">{plan.price}₽</span>
+                      <span className="ml-2 text-gray-500">/{plan.period}</span>
+                    </div>
+                    <ul className="space-y-3 mb-8">
+                      {plan.features.map((feature, i) => (
+                        <li key={i} className="flex items-center text-gray-600">
+                          <CheckIcon className="w-5 h-5 text-green-500 mr-2" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
+                        plan.current
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-gray-900 text-white hover:bg-gray-800'
+                      }`}
+                      disabled={plan.current}
+                    >
+                      {plan.current ? 'Текущий тариф' : 'Выбрать тариф'}
+                    </button>
+                  </motion.div>
+                ))}
+              </div>
 
-              {/* Actions */}
+              {/* Danger Zone */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.9 }}
-                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/60 shadow-sm"
+                className="bg-red-50/50 backdrop-blur-sm rounded-2xl p-8 border border-red-200/60"
               >
-                <h2 className="text-2xl font-semibold text-gray-800 tracking-tight mb-6">Действия с аккаунтом</h2>
-                <div className="space-y-4">
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center justify-between w-full p-4 bg-gray-100/60 hover:bg-gray-200/60 rounded-xl transition-colors"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <ArrowRightOnRectangleIcon className="w-5 h-5 text-gray-600" />
-                      <span className="font-medium text-gray-900">Выйти из системы</span>
-                    </div>
-                  </button>
-
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold text-red-900 mb-1">Опасная зона</h3>
+                    <p className="text-red-600">Удаление аккаунта приведет к потере всех данных</p>
+                  </div>
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="flex items-center justify-between w-full p-4 bg-red-50/60 hover:bg-red-100/60 rounded-xl transition-colors border border-red-200/60"
+                    className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors duration-200"
                   >
-                    <div className="flex items-center space-x-3">
-                      <ExclamationTriangleIcon className="w-5 h-5 text-red-600" />
-                      <span className="font-medium text-red-900">Удалить аккаунт</span>
-                    </div>
+                    Удалить аккаунт
                   </button>
                 </div>
               </motion.div>
 
               {/* Delete Confirmation Modal */}
               {showDeleteConfirm && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="bg-white rounded-2xl p-6 max-w-md w-full mx-4"
-                  >
-                    <div className="flex items-center space-x-3 mb-4">
-                      <ExclamationTriangleIcon className="w-6 h-6 text-red-600" />
-                      <h3 className="text-lg font-semibold text-gray-900">Удалить аккаунт</h3>
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+                  <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+                    <div className="flex items-center mb-6">
+                      <ExclamationTriangleIcon className="w-8 h-8 text-red-500 mr-4" />
+                      <h3 className="text-xl font-semibold text-gray-900">Подтвердите удаление</h3>
                     </div>
-                    <p className="text-gray-600 mb-6">
-                      Вы уверены, что хотите удалить свой аккаунт? Все данные будут безвозвратно удалены.
+                    <p className="text-gray-600 mb-8">
+                      Вы уверены, что хотите удалить свой аккаунт? Это действие необратимо и приведет к потере всех данных.
                     </p>
-                    <div className="flex space-x-3">
+                    <div className="flex justify-end space-x-4">
                       <button
                         onClick={() => setShowDeleteConfirm(false)}
-                        className="flex-1 py-2 px-4 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-900 font-medium transition-colors"
+                        className="px-4 py-2 text-gray-600 hover:text-gray-900"
                       >
                         Отмена
                       </button>
                       <button
                         onClick={handleDeleteAccount}
-                        className="flex-1 py-2 px-4 bg-red-600 hover:bg-red-700 rounded-lg text-white font-medium transition-colors"
+                        className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700"
                       >
                         Удалить
                       </button>
                     </div>
-                  </motion.div>
+                  </div>
                 </div>
               )}
             </div>

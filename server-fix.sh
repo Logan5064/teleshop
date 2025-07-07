@@ -64,7 +64,7 @@ sleep 10
 # Backend API
 echo "   → Запускаем Backend API..."
 cd /root/sitetest/05-server-launchers/main
-pm2 start python3 --name 'backend' -- main_secure_fixed.py --host 0.0.0.0 --port 8000
+pm2 start python3 --name 'backend' -- api_server.py --host 0.0.0.0 --port 8000
 sleep 5
 
 # Auth Bot

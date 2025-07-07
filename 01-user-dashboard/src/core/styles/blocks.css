@@ -1,0 +1,1435 @@
+/* Общие стили для блоков */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .ts-container {
+    @apply container mx-auto px-4;
+  }
+
+  .ts-title-section {
+    @apply text-2xl font-bold text-gray-900 mb-4;
+  }
+
+  .ts-card-hover {
+    @apply bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  .ts-card {
+    @apply bg-white rounded-lg shadow-sm p-4;
+  }
+
+  .ts-text-body {
+    @apply text-gray-600 leading-relaxed;
+  }
+
+  .ts-input {
+    @apply w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  }
+
+  .ts-btn-primary {
+    @apply px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200;
+  }
+
+  .ts-btn-secondary {
+    @apply bg-gray-100/70 hover:bg-gray-200/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 backdrop-blur-sm px-4 py-2 rounded-xl transition-all duration-200;
+  }
+
+  .ts-btn-outline {
+    @apply px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200;
+  }
+
+  .block-wrapper {
+    @apply relative w-full;
+  }
+
+  .block-content {
+    @apply w-full p-4;
+  }
+
+  /* Telegram блоки */
+  .telegram-banner {
+    @apply bg-blue-50 rounded-lg p-6;
+  }
+
+  .telegram-banner-title {
+    @apply text-2xl font-bold mb-4;
+  }
+
+  .telegram-banner-description {
+    @apply text-gray-600 mb-6;
+  }
+
+  .telegram-banner-button {
+    @apply bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors;
+  }
+
+  .telegram-categories {
+    @apply grid grid-cols-2 gap-4 p-4;
+  }
+
+  .telegram-category-item {
+    @apply flex items-center p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow;
+  }
+
+  /* Базовые блоки */
+  .banner {
+    @apply relative overflow-hidden;
+  }
+
+  .banner-content {
+    @apply container mx-auto px-4 py-12 text-center;
+  }
+
+  .header {
+    @apply bg-white shadow-sm;
+  }
+
+  .header-content {
+    @apply container mx-auto flex items-center justify-between py-4;
+  }
+
+  .button {
+    @apply inline-flex items-center justify-center px-6 py-2 rounded-lg transition-colors;
+  }
+
+  .button-primary {
+    @apply bg-blue-500 text-white hover:bg-blue-600;
+  }
+
+  .button-secondary {
+    @apply bg-gray-500 text-white hover:bg-gray-600;
+  }
+
+  .button-outline {
+    @apply border-2 border-blue-500 text-blue-500 hover:bg-blue-50;
+  }
+
+  /* Коммерция */
+  .product-list {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4;
+  }
+
+  .product-card {
+    @apply bg-white/70 backdrop-blur-sm rounded-xl border border-gray-300/60 overflow-hidden transition-all duration-200 hover:shadow-lg hover:scale-105;
+  }
+
+  /* Контент */
+  .text-block {
+    @apply prose max-w-none;
+  }
+
+  .image-block {
+    @apply relative overflow-hidden rounded-lg;
+  }
+
+  .image-block img {
+    @apply w-full h-auto;
+  }
+
+  /* Формы */
+  .contact-form {
+    @apply max-w-lg mx-auto p-6 bg-white rounded-lg shadow-sm;
+  }
+
+  .subscribe-form {
+    @apply max-w-md mx-auto p-6 bg-blue-50 rounded-lg;
+  }
+
+  .form-field {
+    @apply mb-4;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+
+  .form-input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+
+  /* Шапки */
+  .simple-header {
+    @apply bg-white shadow-sm;
+  }
+
+  .full-header {
+    @apply bg-white shadow-md;
+  }
+
+  /* Интерактив */
+  .carousel {
+    @apply relative overflow-hidden;
+  }
+
+  .carousel-item {
+    @apply relative w-full;
+  }
+
+  .tabs {
+    @apply w-full;
+  }
+
+  .tabs-header {
+    @apply flex border-b border-gray-200;
+  }
+
+  .tab-button {
+    @apply px-4 py-2 text-gray-600 hover:text-gray-800 border-b-2 border-transparent hover:border-gray-300;
+  }
+
+  .tab-button-active {
+    @apply text-blue-600 border-blue-500;
+  }
+
+  .tab-content {
+    @apply p-4;
+  }
+
+  .top-panel {
+    @apply flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200;
+  }
+
+  .top-panel-left {
+    @apply flex items-center space-x-4;
+  }
+
+  .top-panel-center {
+    @apply flex items-center;
+  }
+
+  .top-panel-right {
+    @apply flex items-center space-x-2;
+  }
+
+  .shop-name-input {
+    @apply px-3 py-1.5 text-lg font-medium border-none focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg;
+  }
+
+  .history-buttons {
+    @apply flex items-center space-x-1;
+  }
+
+  .history-button {
+    @apply p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .save-status {
+    @apply text-sm text-gray-600;
+  }
+
+  .save-time {
+    @apply ml-2 text-gray-400;
+  }
+
+  .action-button {
+    @apply px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200;
+  }
+
+  .settings-panel {
+    @apply h-full flex flex-col bg-white;
+  }
+
+  .constructor-panel-header {
+    @apply px-4 py-3 border-b border-gray-200;
+  }
+
+  .panel-title {
+    @apply text-lg font-semibold text-gray-900;
+  }
+
+  .settings-tabs {
+    @apply flex border-b border-gray-200;
+  }
+
+  .settings-tab {
+    @apply flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 focus:outline-none;
+  }
+
+  .settings-tab.active {
+    @apply text-blue-600 border-b-2 border-blue-600;
+  }
+
+  .settings-tab.disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  .settings-tab-icon {
+    @apply mr-2;
+  }
+
+  .settings-tab-count {
+    @apply ml-2 px-2 py-0.5 text-xs bg-gray-100 rounded-full;
+  }
+
+  .constructor-panel-content {
+    @apply flex-1 overflow-y-auto;
+  }
+
+  .tab-content {
+    @apply p-4 space-y-4;
+  }
+
+  .tab-content-header {
+    @apply mb-4;
+  }
+
+  .tab-content-title {
+    @apply text-lg font-semibold text-gray-900;
+  }
+
+  .tab-content-subtitle {
+    @apply text-sm text-gray-500;
+  }
+
+  .blocks-list {
+    @apply space-y-2;
+  }
+
+  .blocks-list-item {
+    @apply flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50;
+  }
+
+  .blocks-list-item.active {
+    @apply border-blue-500 ring-2 ring-blue-200;
+  }
+
+  .blocks-list-item-content {
+    @apply flex-1;
+  }
+
+  .blocks-list-item-name {
+    @apply font-medium text-gray-900;
+  }
+
+  .blocks-list-item-order {
+    @apply text-sm text-gray-500;
+  }
+
+  .blocks-list-item-controls {
+    @apply flex items-center space-x-1;
+  }
+
+  .block-move-btn {
+    @apply p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .empty-state {
+    @apply text-center py-8;
+  }
+
+  .empty-state-icon {
+    @apply mx-auto mb-4 text-gray-400;
+  }
+
+  .empty-state-title {
+    @apply text-lg font-semibold text-gray-900 mb-2;
+  }
+
+  .empty-state-desc {
+    @apply text-sm text-gray-500;
+  }
+
+  .settings-form {
+    @apply space-y-4 p-4;
+  }
+
+  .settings-field {
+    @apply space-y-1;
+  }
+
+  .settings-label {
+    @apply block text-sm font-medium text-gray-700;
+  }
+
+  .settings-input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500;
+  }
+
+  .settings-textarea {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 min-h-[100px];
+  }
+
+  .settings-select {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500;
+  }
+
+  .settings-color {
+    @apply w-full h-10 p-1 rounded-md cursor-pointer;
+  }
+
+  .block-actions {
+    @apply p-4 border-t border-b border-gray-200;
+  }
+
+  .top-panel-btn {
+    @apply flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .top-panel-btn.secondary {
+    @apply text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus:ring-blue-500;
+  }
+}
+
+/* Стили блоков TeleShop Constructor */
+
+/* Базовые блоки */
+.banner-block {
+  @apply relative overflow-hidden rounded-lg;
+}
+
+.banner-content {
+  @apply relative z-10 p-8 text-center;
+}
+
+.banner-title {
+  @apply text-2xl md:text-3xl font-bold mb-4;
+}
+
+.banner-subtitle {
+  @apply text-lg mb-6 opacity-90;
+}
+
+.banner-button {
+  @apply inline-block px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105;
+}
+
+.button-block {
+  @apply inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 hover:scale-105;
+}
+
+.button-block.size-small {
+  @apply px-3 py-2 text-sm;
+}
+
+.button-block.size-medium {
+  @apply px-4 py-2;
+}
+
+.button-block.size-large {
+  @apply px-6 py-3 text-lg;
+}
+
+.text-block {
+  @apply prose max-w-none;
+}
+
+/* Заголовки */
+.header-block {
+  @apply bg-white/95 backdrop-blur-sm border-b border-gray-300/60;
+}
+
+.header-content {
+  @apply ts-container flex items-center justify-between py-4;
+}
+
+.header-logo {
+  @apply flex items-center gap-3;
+}
+
+.header-title {
+  @apply text-xl font-bold text-gray-900;
+}
+
+.header-nav {
+  @apply hidden md:flex items-center gap-6;
+}
+
+.header-nav-item {
+  @apply text-gray-600 hover:text-gray-900 transition-colors duration-200;
+}
+
+.header-actions {
+  @apply flex items-center gap-3;
+}
+
+.header-search {
+  @apply hidden md:block;
+}
+
+.header-cart {
+  @apply relative p-2 rounded-lg hover:bg-gray-100/70 transition-colors duration-200;
+}
+
+.header-cart-badge {
+  @apply absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center;
+}
+
+/* E-commerce блоки */
+.products-block {
+  @apply space-y-6;
+}
+
+.products-header {
+  @apply flex items-center justify-between mb-6;
+}
+
+.products-title {
+  @apply ts-title-section;
+}
+
+.products-grid {
+  @apply grid gap-6;
+}
+
+.products-grid.cols-1 {
+  @apply grid-cols-1;
+}
+
+.products-grid.cols-2 {
+  @apply grid-cols-1 sm:grid-cols-2;
+}
+
+.products-grid.cols-3 {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.products-grid.cols-4 {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+}
+
+.product-card {
+  @apply bg-white/70 backdrop-blur-sm rounded-xl border border-gray-300/60 overflow-hidden transition-all duration-200 hover:shadow-lg hover:scale-105;
+}
+
+.product-image {
+  @apply w-full h-48 bg-gray-100/70 overflow-hidden;
+}
+
+.product-image img {
+  @apply w-full h-full object-cover transition-transform duration-200 hover:scale-110;
+}
+
+.product-info {
+  @apply p-4;
+}
+
+.product-name {
+  @apply font-semibold text-gray-900 mb-2;
+}
+
+.product-price {
+  @apply text-lg font-bold text-blue-600 mb-3;
+}
+
+.product-original-price {
+  @apply text-sm text-gray-500 line-through ml-2;
+}
+
+.product-rating {
+  @apply flex items-center gap-1 mb-3;
+}
+
+.product-features {
+  @apply space-y-1 mb-4;
+}
+
+.product-feature {
+  @apply text-sm text-gray-600 flex items-center gap-2;
+}
+
+.product-actions {
+  @apply flex gap-2;
+}
+
+.add-to-cart-btn {
+  @apply flex-1 bg-gray-700 text-white hover:bg-gray-800 shadow-sm hover:shadow-md px-4 py-2 rounded-xl transition-all duration-200;
+}
+
+/* Утилиты */
+.ts-container {
+  @apply container mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.ts-title-section {
+  @apply text-2xl font-bold text-gray-900 mb-6;
+}
+
+.ts-card {
+  @apply bg-white/70 backdrop-blur-sm rounded-xl border border-gray-300/60 p-6;
+}
+
+.ts-card-hover {
+  @apply ts-card transition-all duration-200 hover:shadow-lg hover:scale-105;
+}
+
+.ts-btn-primary {
+  @apply bg-gray-700 text-white hover:bg-gray-800 shadow-sm hover:shadow-md px-4 py-2 rounded-xl transition-all duration-200;
+}
+
+.ts-btn-secondary {
+  @apply bg-gray-100/70 hover:bg-gray-200/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 backdrop-blur-sm px-4 py-2 rounded-xl transition-all duration-200;
+}
+
+/* Контентные блоки */
+.gallery-block {
+  @apply space-y-6;
+}
+
+.gallery-title {
+  @apply ts-title-section text-center mb-8;
+}
+
+.gallery-grid {
+  @apply grid gap-4;
+}
+
+.gallery-grid.cols-1 {
+  @apply grid-cols-1;
+}
+
+.gallery-grid.cols-2 {
+  @apply grid-cols-1 sm:grid-cols-2;
+}
+
+.gallery-grid.cols-3 {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.gallery-grid.cols-4 {
+  @apply grid-cols-2 sm:grid-cols-3 lg:grid-cols-4;
+}
+
+.gallery-item {
+  @apply relative overflow-hidden rounded-lg cursor-pointer;
+}
+
+.gallery-image {
+  @apply w-full aspect-square object-cover transition-transform duration-200;
+}
+
+.gallery-item:hover .gallery-image {
+  @apply scale-105;
+}
+
+.gallery-overlay {
+  @apply absolute inset-0 bg-black bg-opacity-0 transition-all duration-200 flex items-center justify-center;
+}
+
+.gallery-item:hover .gallery-overlay {
+  @apply bg-opacity-30;
+}
+
+.gallery-info {
+  @apply absolute bottom-0 inset-x-0 p-4 bg-gradient-to-t from-black/70 to-transparent text-white transform translate-y-full transition-transform duration-200;
+}
+
+.gallery-item:hover .gallery-info {
+  @apply translate-y-0;
+}
+
+.video-block {
+  @apply space-y-4;
+}
+
+.video-title {
+  @apply ts-title-section mb-2;
+}
+
+.video-description {
+  @apply ts-text-body mb-6;
+}
+
+.video-container {
+  @apply relative overflow-hidden rounded-lg bg-gray-900;
+}
+
+.video-iframe {
+  @apply w-full h-0 pb-56;
+}
+
+.video-iframe iframe {
+  @apply absolute inset-0 w-full h-full;
+}
+
+.reviews-block {
+  @apply space-y-6;
+}
+
+.reviews-title {
+  @apply ts-title-section text-center mb-8;
+}
+
+.reviews-grid {
+  @apply grid gap-6;
+}
+
+.reviews-grid.layout-list {
+  @apply grid-cols-1;
+}
+
+.reviews-grid.layout-cards {
+  @apply grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
+}
+
+.review-card {
+  @apply ts-card;
+}
+
+.review-header {
+  @apply flex items-center gap-3 mb-3;
+}
+
+.review-avatar {
+  @apply w-12 h-12 bg-gray-200 rounded-full overflow-hidden;
+}
+
+.review-info {
+  @apply flex-1;
+}
+
+.review-name {
+  @apply font-semibold text-gray-900;
+}
+
+.review-rating {
+  @apply flex items-center gap-1;
+}
+
+.review-comment {
+  @apply ts-text-body mb-3;
+}
+
+.review-meta {
+  @apply text-sm text-gray-500 flex items-center gap-4;
+}
+
+/* Формы */
+.form-block {
+  @apply ts-card max-w-2xl mx-auto;
+}
+
+.form-header {
+  @apply text-center mb-8;
+}
+
+.form-title {
+  @apply ts-title-section mb-2;
+}
+
+.form-subtitle {
+  @apply ts-text-body;
+}
+
+.form-fields {
+  @apply space-y-6;
+}
+
+.form-field {
+  @apply space-y-2;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700;
+}
+
+.form-input {
+  @apply ts-input;
+}
+
+.form-textarea {
+  @apply ts-input min-h-24 resize-y;
+}
+
+.form-select {
+  @apply ts-input;
+}
+
+.form-checkbox {
+  @apply h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded;
+}
+
+.form-submit {
+  @apply w-full ts-btn-primary mt-8;
+}
+
+.search-block {
+  @apply ts-card;
+}
+
+.search-input-group {
+  @apply relative;
+}
+
+.search-input {
+  @apply ts-input pl-10 pr-4;
+}
+
+.search-icon {
+  @apply absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400;
+}
+
+.search-filters {
+  @apply mt-4 flex flex-wrap gap-4;
+}
+
+.search-filter {
+  @apply ts-input;
+}
+
+/* Интерактивные блоки */
+.map-block {
+  @apply space-y-6;
+}
+
+.map-title {
+  @apply ts-title-section mb-4;
+}
+
+.map-container {
+  @apply relative overflow-hidden rounded-lg border border-gray-200;
+}
+
+.map-info {
+  @apply absolute top-4 left-4 right-4 ts-card max-w-sm;
+}
+
+.map-info-title {
+  @apply font-semibold text-gray-900 mb-2;
+}
+
+.map-info-details {
+  @apply space-y-1 text-sm text-gray-600;
+}
+
+/* Утилиты */
+.block-empty {
+  @apply flex items-center justify-center min-h-32 text-gray-500 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg;
+}
+
+.block-loading {
+  @apply animate-pulse bg-gray-200 rounded;
+}
+
+.block-error {
+  @apply bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg;
+}
+
+/* Базовые стили блоков */
+.ts-block {
+  @apply relative bg-white/70 backdrop-blur-sm rounded-xl border border-gray-300/60 overflow-hidden transition-all duration-200;
+}
+
+.ts-block:hover {
+  @apply shadow-lg;
+}
+
+/* Заголовки */
+.ts-title-section {
+  @apply py-8 px-6 text-center;
+}
+
+.ts-title {
+  @apply text-3xl font-bold text-gray-900 mb-4;
+}
+
+.ts-subtitle {
+  @apply text-lg text-gray-600;
+}
+
+/* Контейнеры */
+.ts-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.ts-container-sm {
+  @apply max-w-3xl mx-auto px-4 sm:px-6;
+}
+
+/* Карточки */
+.ts-card {
+  @apply bg-white/70 backdrop-blur-sm rounded-xl border border-gray-300/60 overflow-hidden transition-all duration-200;
+}
+
+.ts-card-hover {
+  @apply ts-card transition-all duration-200 hover:shadow-lg hover:scale-105;
+}
+
+/* Кнопки */
+.ts-btn {
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-xl font-medium transition-all duration-200;
+}
+
+.ts-btn-primary {
+  @apply bg-gray-700 text-white hover:bg-gray-800 shadow-sm hover:shadow-md;
+}
+
+.ts-btn-secondary {
+  @apply bg-gray-100/70 hover:bg-gray-200/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 backdrop-blur-sm;
+}
+
+.ts-btn-outline {
+  @apply border border-gray-300 text-gray-700 hover:bg-gray-50;
+}
+
+.ts-btn-link {
+  @apply text-gray-700 hover:text-gray-900 underline;
+}
+
+/* Изображения */
+.ts-img {
+  @apply w-full h-full object-cover;
+}
+
+.ts-img-rounded {
+  @apply rounded-xl overflow-hidden;
+}
+
+/* Сетки */
+.ts-grid {
+  @apply grid gap-6;
+}
+
+.ts-grid-2 {
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-6;
+}
+
+.ts-grid-3 {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.ts-grid-4 {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6;
+}
+
+/* Списки */
+.ts-list {
+  @apply space-y-4;
+}
+
+.ts-list-item {
+  @apply flex items-center gap-4;
+}
+
+/* Формы */
+.ts-form {
+  @apply space-y-6;
+}
+
+.ts-form-group {
+  @apply space-y-2;
+}
+
+.ts-label {
+  @apply block text-sm font-medium text-gray-700;
+}
+
+.ts-input {
+  @apply w-full px-3 py-2 bg-white/70 border border-gray-300/60 rounded-xl text-sm transition-all duration-200 focus:ring-2 focus:ring-gray-900 focus:border-gray-900;
+}
+
+.ts-textarea {
+  @apply ts-input resize-none min-h-[100px];
+}
+
+.ts-select {
+  @apply ts-input appearance-none bg-no-repeat bg-right pr-8;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-size: 1.5em 1.5em;
+}
+
+/* Разделители */
+.ts-divider {
+  @apply h-px bg-gray-200 my-6;
+}
+
+.ts-divider-vertical {
+  @apply w-px h-full bg-gray-200 mx-6;
+}
+
+/* Бейджи */
+.ts-badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.ts-badge-gray {
+  @apply bg-gray-100 text-gray-800;
+}
+
+.ts-badge-red {
+  @apply bg-red-100 text-red-800;
+}
+
+.ts-badge-yellow {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.ts-badge-green {
+  @apply bg-green-100 text-green-800;
+}
+
+.ts-badge-blue {
+  @apply bg-blue-100 text-blue-800;
+}
+
+/* Иконки */
+.ts-icon {
+  @apply w-5 h-5;
+}
+
+.ts-icon-sm {
+  @apply w-4 h-4;
+}
+
+.ts-icon-lg {
+  @apply w-6 h-6;
+}
+
+/* Уведомления */
+.ts-alert {
+  @apply p-4 rounded-xl;
+}
+
+.ts-alert-info {
+  @apply bg-blue-50 text-blue-800;
+}
+
+.ts-alert-success {
+  @apply bg-green-50 text-green-800;
+}
+
+.ts-alert-warning {
+  @apply bg-yellow-50 text-yellow-800;
+}
+
+.ts-alert-error {
+  @apply bg-red-50 text-red-800;
+}
+
+/* Модальные окна */
+.ts-modal {
+  @apply fixed inset-0 z-50 overflow-y-auto;
+}
+
+.ts-modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm;
+}
+
+.ts-modal-container {
+  @apply relative bg-white rounded-2xl shadow-xl max-w-lg mx-auto my-16;
+}
+
+.ts-modal-header {
+  @apply px-6 py-4 border-b border-gray-200;
+}
+
+.ts-modal-body {
+  @apply px-6 py-4;
+}
+
+.ts-modal-footer {
+  @apply px-6 py-4 border-t border-gray-200;
+}
+
+/* Таблицы */
+.ts-table {
+  @apply min-w-full divide-y divide-gray-200;
+}
+
+.ts-table th {
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+.ts-table td {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+}
+
+/* Навигация */
+.ts-nav {
+  @apply space-x-4;
+}
+
+.ts-nav-item {
+  @apply inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200;
+}
+
+.ts-nav-item-active {
+  @apply bg-gray-100 text-gray-900;
+}
+
+/* Вкладки */
+.ts-tabs {
+  @apply border-b border-gray-200;
+}
+
+.ts-tab {
+  @apply px-4 py-2 text-sm font-medium border-b-2 transition-colors duration-200;
+}
+
+.ts-tab-active {
+  @apply border-gray-900 text-gray-900;
+}
+
+/* Аккордеон */
+.ts-accordion {
+  @apply divide-y divide-gray-200;
+}
+
+.ts-accordion-header {
+  @apply py-4 cursor-pointer;
+}
+
+.ts-accordion-content {
+  @apply py-4;
+}
+
+/* Выпадающие меню */
+.ts-dropdown {
+  @apply absolute right-0 mt-2 w-48 rounded-xl bg-white shadow-lg ring-1 ring-black ring-opacity-5;
+}
+
+.ts-dropdown-item {
+  @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100;
+}
+
+/* Пагинация */
+.ts-pagination {
+  @apply flex justify-center space-x-2;
+}
+
+.ts-page-item {
+  @apply inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200;
+}
+
+.ts-page-item-active {
+  @apply bg-gray-900 text-white;
+}
+
+/* Загрузчики */
+.ts-spinner {
+  @apply animate-spin h-5 w-5 text-gray-900;
+}
+
+.ts-skeleton {
+  @apply animate-pulse bg-gray-200 rounded;
+}
+
+/* Тултипы */
+.ts-tooltip {
+  @apply absolute z-10 px-2 py-1 text-xs font-medium text-white bg-gray-900 rounded shadow-sm;
+}
+
+/* Прогресс */
+.ts-progress {
+  @apply h-2 bg-gray-200 rounded-full overflow-hidden;
+}
+
+.ts-progress-bar {
+  @apply h-full bg-gray-900 transition-all duration-200;
+}
+
+/* Слайдеры */
+.ts-slider {
+  @apply relative h-2 bg-gray-200 rounded-full;
+}
+
+.ts-slider-handle {
+  @apply absolute top-1/2 -mt-2 w-4 h-4 bg-white border-2 border-gray-900 rounded-full;
+}
+
+/* Переключатели */
+.ts-switch {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out;
+}
+
+.ts-switch-handle {
+  @apply inline-block h-4 w-4 transform rounded-full bg-white transition duration-200 ease-in-out;
+}
+
+/* Чекбоксы и радио */
+.ts-checkbox {
+  @apply h-4 w-4 text-gray-900 focus:ring-gray-900 border-gray-300 rounded;
+}
+
+.ts-radio {
+  @apply h-4 w-4 text-gray-900 focus:ring-gray-900 border-gray-300;
+}
+
+/* Продуктовые карточки */
+.product-card {
+  @apply bg-white/70 backdrop-blur-sm rounded-xl border border-gray-300/60 overflow-hidden transition-all duration-200 hover:shadow-lg hover:scale-105;
+}
+
+.product-image {
+  @apply aspect-square w-full object-cover;
+}
+
+.product-info {
+  @apply p-4;
+}
+
+.product-name {
+  @apply text-lg font-semibold text-gray-900 mb-1;
+}
+
+.product-description {
+  @apply text-sm text-gray-600 mb-4;
+}
+
+.product-price {
+  @apply text-xl font-bold text-gray-900;
+}
+
+/* Категории */
+.category-card {
+  @apply bg-white/70 backdrop-blur-sm rounded-xl border border-gray-300/60 overflow-hidden transition-all duration-200 hover:shadow-lg;
+}
+
+.category-image {
+  @apply aspect-video w-full object-cover;
+}
+
+.category-info {
+  @apply p-4;
+}
+
+.category-name {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+/* Баннеры */
+.banner-block {
+  @apply relative overflow-hidden rounded-xl;
+  min-height: 300px;
+}
+
+.banner-image {
+  @apply absolute inset-0 w-full h-full object-cover;
+}
+
+.banner-content {
+  @apply relative z-10 p-8 text-center;
+}
+
+.banner-overlay {
+  @apply absolute inset-0 bg-black bg-opacity-40;
+}
+
+/* Галерея */
+.gallery-grid {
+  @apply grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4;
+}
+
+.gallery-item {
+  @apply relative aspect-square rounded-xl overflow-hidden;
+}
+
+.gallery-image {
+  @apply w-full h-full object-cover transition-transform duration-200 hover:scale-110;
+}
+
+/* Отзывы */
+.review-card {
+  @apply bg-white/70 backdrop-blur-sm rounded-xl border border-gray-300/60 p-6;
+}
+
+.review-header {
+  @apply flex items-center gap-4 mb-4;
+}
+
+.review-avatar {
+  @apply w-12 h-12 rounded-full;
+}
+
+.review-author {
+  @apply text-sm font-medium text-gray-900;
+}
+
+.review-date {
+  @apply text-sm text-gray-500;
+}
+
+.review-rating {
+  @apply flex items-center gap-1 text-yellow-400;
+}
+
+.review-content {
+  @apply text-gray-600;
+}
+
+/* Формы заказа */
+.order-form {
+  @apply space-y-8;
+}
+
+.order-section {
+  @apply space-y-4;
+}
+
+.order-summary {
+  @apply bg-gray-50 rounded-xl p-6;
+}
+
+.order-total {
+  @apply flex justify-between items-center text-lg font-semibold;
+}
+
+/* Корзина */
+.cart-item {
+  @apply flex items-center gap-4 py-4;
+}
+
+.cart-image {
+  @apply w-20 h-20 rounded-lg object-cover;
+}
+
+.cart-info {
+  @apply flex-1;
+}
+
+.cart-quantity {
+  @apply flex items-center gap-2;
+}
+
+.cart-remove {
+  @apply text-red-600 hover:text-red-700;
+}
+
+/* Профиль */
+.profile-header {
+  @apply flex items-center gap-6 mb-8;
+}
+
+.profile-avatar {
+  @apply w-24 h-24 rounded-full;
+}
+
+.profile-info {
+  @apply flex-1;
+}
+
+.profile-name {
+  @apply text-2xl font-bold text-gray-900;
+}
+
+.profile-email {
+  @apply text-gray-600;
+}
+
+/* История заказов */
+.order-history {
+  @apply space-y-4;
+}
+
+.order-card {
+  @apply bg-white rounded-xl border border-gray-200 p-6;
+}
+
+.order-header {
+  @apply flex justify-between items-center mb-4;
+}
+
+.order-number {
+  @apply text-lg font-semibold;
+}
+
+.order-status {
+  @apply ts-badge;
+}
+
+/* Настройки */
+.settings-section {
+  @apply space-y-6;
+}
+
+.settings-header {
+  @apply border-b border-gray-200 pb-4 mb-6;
+}
+
+.settings-title {
+  @apply text-lg font-semibold text-gray-900;
+}
+
+.settings-description {
+  @apply text-sm text-gray-600;
+}
+
+/* Уведомления */
+.notification-list {
+  @apply space-y-4;
+}
+
+.notification-item {
+  @apply flex items-start gap-4 p-4 bg-white rounded-xl border border-gray-200;
+}
+
+.notification-icon {
+  @apply w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600;
+}
+
+.notification-content {
+  @apply flex-1;
+}
+
+.notification-title {
+  @apply text-sm font-medium text-gray-900;
+}
+
+.notification-message {
+  @apply text-sm text-gray-600;
+}
+
+.notification-time {
+  @apply text-xs text-gray-500;
+}
+
+/* Мобильная навигация */
+.mobile-nav {
+  @apply fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 z-50;
+}
+
+.mobile-nav-items {
+  @apply grid grid-cols-4 gap-1 p-2;
+}
+
+.mobile-nav-item {
+  @apply flex flex-col items-center justify-center p-2 text-gray-600;
+}
+
+.mobile-nav-icon {
+  @apply w-6 h-6 mb-1;
+}
+
+.mobile-nav-label {
+  @apply text-xs;
+}
+
+/* Адаптивные утилиты */
+@media (max-width: 640px) {
+  .ts-container {
+    @apply px-4;
+  }
+  
+  .ts-grid {
+    @apply gap-4;
+  }
+  
+  .ts-title {
+    @apply text-2xl;
+  }
+  
+  .ts-subtitle {
+    @apply text-base;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .ts-container {
+    @apply px-6;
+  }
+  
+  .ts-grid {
+    @apply gap-6;
+  }
+}
+
+@media (min-width: 1025px) {
+  .ts-container {
+    @apply px-8;
+  }
+  
+  .ts-grid {
+    @apply gap-8;
+  }
+} 

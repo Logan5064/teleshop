@@ -1,8 +1,9 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Bot, ExternalLink, AlertCircle, CheckCircle } from 'lucide-react'
+import { ButtonSpinner } from '@/components/LoadingStates'
 import { botsApi, CreateBotRequest } from '@/services/bots'
 
 interface AddBotModalProps {
@@ -82,10 +83,10 @@ export function AddBotModal({ isOpen, onClose, onSuccess }: AddBotModalProps) {
                     </div>
                     <div>
                       <h2 className="text-xl font-semibold text-gray-900">
-                        Добавить Telegram бота
+                        Создать Telegram бота
                       </h2>
                       <p className="text-sm text-gray-600">
-                        Подключите бота для создания магазина
+                        Настройте бота для вашего магазина
                       </p>
                     </div>
                   </div>
@@ -150,7 +151,7 @@ export function AddBotModal({ isOpen, onClose, onSuccess }: AddBotModalProps) {
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
                     />
                     <p className="text-gray-500 text-xs mt-1">
-                      Необязательно, будет получен автоматически
+                      Опционально, будет получен автоматически
                     </p>
                   </div>
 
@@ -184,7 +185,7 @@ export function AddBotModal({ isOpen, onClose, onSuccess }: AddBotModalProps) {
                       Как создать бота:
                     </h4>
                     <ol className="text-sm text-blue-800 space-y-1 list-decimal list-inside">
-                      <li>Откройте @BotFather в Telegram</li>
+                      <li>Напишите @BotFather в Telegram</li>
                       <li>Отправьте команду /newbot</li>
                       <li>Введите название и username бота</li>
                       <li>Скопируйте полученный токен сюда</li>
@@ -211,11 +212,11 @@ export function AddBotModal({ isOpen, onClose, onSuccess }: AddBotModalProps) {
                     <button
                       type="submit"
                       disabled={!isFormValid || isLoading}
-                      className="flex-1 px-4 py-3 bg-gradient-to-r from-orange-400 to-red-500 text-white rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all"
+                      className="flex-1 px-4 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-medium hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
                       {isLoading ? (
-                        <div className="flex items-center justify-center gap-2">
-                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <div className="flex items-center justify-center gap-3">
+                          <ButtonSpinner size="sm" />
                           Создание...
                         </div>
                       ) : (
@@ -231,7 +232,7 @@ export function AddBotModal({ isOpen, onClose, onSuccess }: AddBotModalProps) {
                   className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 200 }}
+                  transition={{ type: "spring", duration: 0.5 }}
                 >
                   <CheckCircle className="text-green-600" size={32} />
                 </motion.div>
@@ -239,13 +240,21 @@ export function AddBotModal({ isOpen, onClose, onSuccess }: AddBotModalProps) {
                   Бот успешно создан!
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Теперь вы можете настроить дизайн и запустить бота
+                  Ваш Telegram бот готов к работе
                 </p>
                 <motion.div
-                  className="w-6 h-6 border-2 border-orange-300 border-t-orange-500 rounded-full animate-spin mx-auto"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                />
+                  className="w-full bg-gray-200 rounded-full h-2"
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 2 }}
+                >
+                  <motion.div
+                    className="bg-green-500 h-2 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 2 }}
+                  />
+                </motion.div>
               </div>
             )}
           </motion.div>
@@ -254,3 +263,5 @@ export function AddBotModal({ isOpen, onClose, onSuccess }: AddBotModalProps) {
     </AnimatePresence>
   )
 }
+
+export default AddBotModal

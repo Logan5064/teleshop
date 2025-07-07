@@ -1,124 +1,56 @@
-# 🔒 TeleShop Constructor Security & Build Files
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
 
-# ===== КРИТИЧНО: КОНФИДЕНЦИАЛЬНАЯ ИНФОРМАЦИЯ =====
+# Production builds
+.next/
+out/
+dist/
+build/
+
+# Environment variables
 .env
 .env.local
-.env.production
-.env.staging
-*.key
-*.pem
-*.crt
-secrets/
-config/auth_config.env
-config/database.env
+.env.development.local
+.env.test.local
+.env.production.local
 
-# ===== NODE.JS =====
-node_modules/
-**/node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-.pnpm-debug.log*
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
 
-# ===== NEXT.JS =====
-.next/
-**/.next/
-out/
-
-# ===== PRODUCTION =====
-.vercel
-.netlify
-
-# ===== DATABASES =====
+# Database
 *.db
 *.sqlite
 *.sqlite3
-teleshop.db
 
-# ===== LOGS =====
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-
-# ===== CACHE =====
-.cache/
-.parcel-cache/
-.nuxt/
-.vuepress/dist/
-.serverless/
-.fusebox/
-.dynamodb/
-
-# ===== BACKUP & TEMP =====
-*.backup
-*.bak
-*.tmp
-*.temp
-*~
-.DS_Store
-Thumbs.db
-
-# ===== IDE =====
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# ===== PYTHON =====
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-*.egg-info/
-.venv
-venv/
-env/
-ENV/
-
-# ===== LOCK FILES (МОЖНО КОММЕНТИРОВАТЬ ПРИ НЕОБХОДИМОСТИ) =====
-# package-lock.json
-# yarn.lock
-
-# Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-/lib/
-/lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual environments
-venv/
-env/
-ENV/
-
-# Environment variables
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# OS
+.DS_Store
+Thumbs.db
 
 # Logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-logs/
 
 # Runtime data
 pids
@@ -126,54 +58,35 @@ pids
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
-coverage/
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
-.env
-
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Local development
-*.local
-
 # Temporary files
 *.tmp
 *.temp
+.tmp/
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
+# Cache
+.cache/
+.parcel-cache/
 
-# Backup files
-*.bak
-backup/
+# TypeScript
+*.tsbuildinfo
 
-# PM2
-.pm2/ 
+# Next.js
+.next/
+out/
+
+# Vercel
+.vercel
+
+# Deployment specific
+ecosystem.config.js
+ecosystem-server.config.js
+
+# Old directories (ignore legacy folders)
+offconstryktor/
+"Новая папка"/
+auth-bot/venv/
+05-server-launchers/main/venv/
+
+# Exclude specific deployment files
+*.bat
+*.ps1 

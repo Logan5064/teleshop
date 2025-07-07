@@ -6,24 +6,22 @@ import {
   BoltIcon, 
   EyeIcon, 
   UserGroupIcon,
-  ShoppingBagIcon,
-  CurrencyDollarIcon,
   PlayIcon,
-  StopIcon,
   PlusIcon,
   SparklesIcon,
   CubeIcon,
   ChartBarIcon,
-  Cog6ToothIcon,
   GlobeAltIcon
 } from '@heroicons/react/24/outline'
 import { botsApi } from '@/services/bots'
 import { analyticsApi } from '@/services/analytics'
 import Sidebar from '@/components/Sidebar'
 import { AddBotModal } from '@/components/AddBotModal'
-import LoadingAnimation from '@/components/LoadingAnimation'
+import { BotCard } from '@/components/BotCard'
+import { ContentLoader, StatsCardSkeleton, BotCardSkeleton } from '@/components/LoadingStates'
 import Link from 'next/link'
 import { FEATURES, API_CONFIG } from '@/lib/config'
+import { useRouter } from 'next/navigation'
 
 interface DashboardStats {
   totalBots: number
@@ -36,10 +34,13 @@ interface DashboardStats {
 interface BotStatus {
   id: number
   shop_name: string
-  is_active: boolean
-  created_at: string
-  bot_username?: string
   description?: string
+  bot_token: string
+  bot_username?: string
+  is_active: boolean
+  user_id: number
+  created_at: string
+  updated_at: string
 }
 
 // Компонент индикатора туннеля
@@ -93,14 +94,18 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [isAddBotModalOpen, setIsAddBotModalOpen] = useState(false)
+  const router = useRouter()
 
   const loadDashboardData = async () => {
     try {
       setIsLoading(true)
       setError('')
       
+      console.log('🔄 Загружаем данные дашборда...')
+      
       // Загружаем боты только если есть токен
       const botsResponse = await botsApi.getAll()
+      console.log('✅ Боты получены на дашборде:', botsResponse)
       setBots(botsResponse)
       
       // Вычисляем статистику на основе реальных данных
@@ -113,14 +118,19 @@ export default function Dashboard() {
         totalRevenue: activeBots * 1500 // Приблизительно 1500₽ выручки на активного бота
       })
 
+      console.log(`📊 Статистика обновлена: ${botsResponse.length} ботов, ${activeBots} активных`)
+
     } catch (err: any) {
-      console.error('Dashboard load error:', err)
+      console.error('❌ Dashboard load error:', err)
+      console.error('❌ Статус ошибки:', err.response?.status)
+      console.error('❌ Данные ошибки:', err.response?.data)
+      
       // Если ошибка 401 - перенаправляем на авторизацию
       if (err.response?.status === 401) {
         setError('Сессия истекла. Необходима повторная авторизация')
         localStorage.removeItem('admin_token')
       } else {
-        setError('Ошибка загрузки данных дашборда')
+        setError(`Ошибка загрузки данных дашборда: ${err.message}`)
       }
       
       // Показываем пустое состояние при ошибке
@@ -134,35 +144,6 @@ export default function Dashboard() {
       })
     } finally {
       setIsLoading(false)
-    }
-  }
-
-  const toggleBot = async (botId: number, isActive: boolean) => {
-    try {
-      // Реализованный API для запуска/остановки ботов
-      if (isActive) {
-        await botsApi.stop(botId)
-      } else {
-        await botsApi.start(botId)
-      }
-      
-      // Обновляем состояние бота
-      setBots(prev => prev.map(bot => 
-        bot.id === botId ? { ...bot, is_active: !isActive } : bot
-      ))
-      
-      // Пересчитываем статистику
-      const newActiveBots = isActive ? stats.activeBots - 1 : stats.activeBots + 1
-      setStats(prev => ({
-        ...prev,
-        activeBots: newActiveBots,
-        totalUsers: newActiveBots * 15,
-        todayOrders: newActiveBots * 3,
-        totalRevenue: newActiveBots * 1500
-      }))
-    } catch (err: any) {
-      console.error('Bot toggle error:', err)
-      alert(`Ошибка при ${isActive ? 'остановке' : 'запуске'} бота: ${err.message}`)
     }
   }
 
@@ -209,7 +190,7 @@ export default function Dashboard() {
           // Принудительный редирект если middleware не сработал
           setTimeout(() => {
             console.log('🔄 Forcing redirect to login')
-            window.location.href = '/login'
+            router.push('/login')
           }, 1000)
           
           return
@@ -226,10 +207,48 @@ export default function Dashboard() {
     }
 
     checkAuthAndLoad()
-  }, [])
+  }, [router])
 
   if (isLoading) {
-    return <LoadingAnimation />
+    return (
+      <div className="ts-page-bg">
+        <div className="flex h-screen">
+          <Sidebar />
+          <main className="ts-main-content">
+            <div className="ts-container">
+              {/* Скелетоны статистических карточек */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-6 w-full">
+                {[...Array(4)].map((_, i) => (
+                  <StatsCardSkeleton key={i} />
+                ))}
+              </div>
+
+              {/* Основной контент с загрузкой */}
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 w-full max-w-none">
+                {/* Область ботов */}
+                <div className="xl:col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-400/50 w-full shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] h-[calc(100vh-229px)]">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="h-8 bg-gray-200 rounded w-32 animate-pulse"></div>
+                    <div className="h-10 bg-gray-200 rounded-xl w-36 animate-pulse"></div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {[...Array(4)].map((_, i) => (
+                      <BotCardSkeleton key={i} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Боковая панель */}
+                <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-400/50 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] h-[calc(100vh-229px)]">
+                  <ContentLoader text="Загружаем ваши данные..." />
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -270,13 +289,13 @@ export default function Dashboard() {
             <TunnelIndicator />
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-6 w-full">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
                 whileHover={{ y: -2 }}
-                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/60 hover:border-gray-400/70 transition-all duration-300 shadow-sm hover:shadow-md"
+                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-400/50 hover:border-gray-500/90 transition-all duration-300 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] hover:shadow-[0_6px_12px_-2px_rgba(0,0,0,0.15)]"
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -297,7 +316,7 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 whileHover={{ y: -2 }}
-                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/60 hover:border-gray-400/70 transition-all duration-300 shadow-sm hover:shadow-md"
+                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-400/50 hover:border-gray-500/90 transition-all duration-300 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] hover:shadow-[0_6px_12px_-2px_rgba(0,0,0,0.15)]"
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -318,7 +337,7 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
                 whileHover={{ y: -2 }}
-                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/60 hover:border-gray-400/70 transition-all duration-300 shadow-sm hover:shadow-md"
+                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-400/50 hover:border-gray-500/90 transition-all duration-300 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] hover:shadow-[0_6px_12px_-2px_rgba(0,0,0,0.15)]"
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -337,7 +356,7 @@ export default function Dashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
                 whileHover={{ y: -2 }}
-                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/60 hover:border-gray-400/70 transition-all duration-300 shadow-sm hover:shadow-md"
+                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-400/50 hover:border-gray-500/90 transition-all duration-300 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] hover:shadow-[0_6px_12px_-2px_rgba(0,0,0,0.15)]"
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -359,9 +378,9 @@ export default function Dashboard() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 }}
-                className="xl:col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/60 w-full shadow-sm"
+                className="xl:col-span-2 bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-400/50 w-full shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] h-[calc(100vh-229px)]"
               >
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-semibold text-gray-800 tracking-tight">Ваши боты</h2>
                   <button
                     onClick={() => setIsAddBotModalOpen(true)}
@@ -388,42 +407,9 @@ export default function Dashboard() {
                     </button>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {bots.map((bot, index) => (
-                      <motion.div
-                        key={bot.id}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 * index }}
-                        whileHover={{ y: -1 }}
-                        className="flex items-center justify-between p-6 bg-gray-100/70 rounded-2xl border border-gray-300/60 hover:border-gray-400/70 transition-all duration-200 backdrop-blur-sm"
-                      >
-                        <div className="flex items-center gap-4 flex-1">
-                          <div className="relative flex-shrink-0">
-                            <div className={`w-3 h-3 rounded-full ${bot.is_active ? 'bg-emerald-500' : 'bg-gray-400'}`}></div>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-gray-800 truncate text-lg tracking-tight">{bot.shop_name}</h3>
-                            <p className="text-sm text-gray-600 font-medium">
-                              {bot.bot_username ? `@${bot.bot_username}` : 'Настройте username'} • {new Date(bot.created_at).toLocaleDateString('ru-RU')}
-                            </p>
-                            {bot.description && (
-                              <p className="text-xs text-gray-500 mt-1 truncate">{bot.description}</p>
-                            )}
-                          </div>
-                        </div>
-                        
-                        <button
-                          onClick={() => toggleBot(bot.id, bot.is_active)}
-                          className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 flex-shrink-0 ml-4 border ${
-                            bot.is_active
-                              ? 'bg-red-100/80 text-red-700 hover:bg-red-200/80 border-red-300/60'
-                              : 'bg-emerald-100/80 text-emerald-700 hover:bg-emerald-200/80 border-emerald-300/60'
-                          }`}
-                        >
-                          {bot.is_active ? 'Остановить' : 'Запустить'}
-                        </button>
-                      </motion.div>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {bots.map((bot) => (
+                      <BotCard key={bot.id} bot={bot} onUpdate={loadDashboardData} />
                     ))}
                   </div>
                 )}
@@ -434,7 +420,7 @@ export default function Dashboard() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.6 }}
-                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-300/60 shadow-sm"
+                className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-gray-400/50 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] h-[calc(100vh-229px)]"
               >
                 <h2 className="text-2xl font-semibold text-gray-800 mb-8 tracking-tight">Быстрые действия</h2>
                 
@@ -456,16 +442,16 @@ export default function Dashboard() {
                   </Link>
 
                   <Link
-                    href="/bots"
+                    href="/analytics"
                     className="block p-6 bg-gray-100/70 hover:bg-gray-200/80 rounded-2xl transition-all duration-200 border border-gray-300/60 hover:border-gray-400/70 backdrop-blur-sm"
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-blue-100/80 rounded-2xl flex items-center justify-center flex-shrink-0 border border-blue-300/50">
-                        <ShoppingBagIcon className="w-6 h-6 text-blue-600" />
+                        <ChartBarIcon className="w-6 h-6 text-blue-600" />
                       </div>
                       <div className="flex-1">
-                        <div className="font-semibold text-gray-800 text-lg tracking-tight">Управление ботами</div>
-                        <div className="text-sm text-gray-600 font-medium">Полный список и настройки</div>
+                        <div className="font-semibold text-gray-800 text-lg tracking-tight">Аналитика</div>
+                        <div className="text-sm text-gray-600 font-medium">Статистика и отчеты</div>
                       </div>
                     </div>
                   </Link>

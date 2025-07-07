@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { UserProvider } from '@/lib/contexts/UserContext';
+import { BotProvider } from '@/lib/contexts/BotContext';
 
 const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin"],
+  subsets: ["latin", "cyrillic"],
 });
 
 export const metadata: Metadata = {
@@ -18,9 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru">
-      <body className={`${inter.variable} font-sans antialiased bg-gray-50`}>
-        {children}
+    <html lang="ru" suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans antialiased min-h-screen bg-background text-foreground`}>
+        <UserProvider>
+          <BotProvider>
+            {children}
+          </BotProvider>
+        </UserProvider>
       </body>
     </html>
   );

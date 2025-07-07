@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '@/components/Sidebar';
+import { useBot } from '@/lib/contexts/BotContext';
+import { StatsCardSkeleton, TableSkeleton, ContentLoader } from '@/components/LoadingStates';
 import {
   ClipboardDocumentListIcon,
   CheckCircleIcon,
@@ -17,60 +19,50 @@ import {
   CalendarIcon
 } from '@heroicons/react/24/outline';
 
+interface Order {
+  id: number;
+  shop_id: number;
+  customer_telegram_id: string;
+  total_amount: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export default function OrdersPage() {
+  const { selectedBot } = useBot();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const orders = [
-    {
-      id: '#1001',
-      customerName: 'Иван Петров',
-      customerPhone: '+7 (999) 123-45-67',
-      items: ['iPhone 15 Pro', 'AirPods Pro'],
-      total: 114980,
-      status: 'pending',
-      paymentMethod: 'Карта',
-      deliveryAddress: 'Москва, ул. Тверская, 1',
-      createdAt: '2024-01-20T10:30:00',
-      telegram_id: '@ivan_petrov'
-    },
-    {
-      id: '#1002',
-      customerName: 'Мария Сидорова',
-      customerPhone: '+7 (999) 234-56-78',
-      items: ['Nike Air Max'],
-      total: 12990,
-      status: 'completed',
-      paymentMethod: 'Наличные',
-      deliveryAddress: 'СПб, Невский пр., 10',
-      createdAt: '2024-01-19T15:20:00',
-      telegram_id: '@maria_s'
-    },
-    {
-      id: '#1003',
-      customerName: 'Алексей Козлов',
-      customerPhone: '+7 (999) 345-67-89',
-      items: ['iPhone 15 Pro', 'Nike Air Max', 'AirPods Pro'],
-      total: 127970,
-      status: 'processing',
-      paymentMethod: 'Карта',
-      deliveryAddress: 'Екатеринбург, ул. Ленина, 5',
-      createdAt: '2024-01-18T09:15:00',
-      telegram_id: '@alex_kozlov'
-    },
-    {
-      id: '#1004',
-      customerName: 'Елена Новикова',
-      customerPhone: '+7 (999) 456-78-90',
-      items: ['AirPods Pro'],
-      total: 24990,
-      status: 'cancelled',
-      paymentMethod: 'Карта',
-      deliveryAddress: 'Казань, ул. Баумана, 20',
-      createdAt: '2024-01-17T16:45:00',
-      telegram_id: '@elena_n'
-    }
-  ];
+  useEffect(() => {
+    const loadOrders = async () => {
+      if (!selectedBot) {
+        setLoading(false);
+        return;
+      }
+      
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/orders?shop_id=${selectedBot.id}`);
+        if (!response.ok) {
+          throw new Error('Ошибка загрузки заказов');
+        }
+        const data = await response.json();
+        setOrders(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error loading orders:', err);
+        setError('Ошибка загрузки заказов');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOrders();
+  }, [selectedBot]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -93,9 +85,8 @@ export default function OrdersPage() {
   };
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.items.some(item => item.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesSearch = order.customer_telegram_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         order.id.toString().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
@@ -103,8 +94,99 @@ export default function OrdersPage() {
   // Статистика
   const totalOrders = orders.length;
   const completedOrders = orders.filter(o => o.status === 'completed').length;
-  const totalRevenue = orders.filter(o => o.status === 'completed').reduce((sum, o) => sum + o.total, 0);
+  const totalRevenue = orders.filter(o => o.status === 'completed').reduce((sum, o) => sum + o.total_amount, 0);
   const pendingOrders = orders.filter(o => o.status === 'pending').length;
+
+  // Если нет выбранного бота
+  if (!selectedBot) {
+    return (
+      <div className="ts-page-bg">
+        <div className="flex h-screen">
+          <Sidebar />
+          <main className="ts-main-content">
+            <div className="ts-container">
+              <div className="p-6 w-full">
+                <div className="flex items-center justify-between mb-8">
+                  <h1 className="text-3xl font-semibold text-gray-800 tracking-tight">Заказы</h1>
+                </div>
+                <div className="text-center py-12">
+                  <ClipboardDocumentListIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-700 mb-2">Выберите бота</h3>
+                  <p className="text-gray-500">Для просмотра заказов выберите бота в панели управления</p>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="ts-page-bg">
+        <div className="flex h-screen">
+          <Sidebar />
+          <main className="ts-main-content">
+            <div className="ts-container">
+              <div className="p-6 w-full">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="h-9 bg-gray-200 rounded w-24 animate-pulse"></div>
+                  <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+                </div>
+
+                {/* Скелетоны статистических карточек */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 w-full">
+                  {[...Array(4)].map((_, i) => (
+                    <StatsCardSkeleton key={i} />
+                  ))}
+                </div>
+
+                {/* Фильтры и поиск скелетон */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                  <div className="h-10 bg-gray-200 rounded-lg flex-1 animate-pulse"></div>
+                  <div className="h-10 bg-gray-200 rounded-lg w-40 animate-pulse"></div>
+                </div>
+
+                {/* Скелетон таблицы заказов */}
+                <TableSkeleton rows={8} />
+
+                {/* Центральный лоадер */}
+                <div className="mt-8">
+                  <ContentLoader text="Загружаем заказы..." />
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="ts-page-bg">
+        <div className="flex h-screen">
+          <Sidebar />
+          <main className="ts-main-content">
+            <div className="ts-container">
+              <div className="flex items-center justify-center h-full">
+                <div>
+                  <div className="text-red-500 text-xl mb-4">{error}</div>
+                  <button
+                    onClick={() => window.location.reload()}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                  >
+                    Попробовать снова
+                  </button>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="ts-page-bg">
@@ -113,6 +195,11 @@ export default function OrdersPage() {
         <main className="ts-main-content">
           <div className="ts-container">
             <div className="p-6 w-full">
+              <div className="flex items-center justify-between mb-8">
+                <h1 className="text-3xl font-semibold text-gray-800 tracking-tight">Заказы</h1>
+                <p className="text-sm text-gray-500">Бот: {selectedBot.shop_name}</p>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 w-full">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -202,6 +289,16 @@ export default function OrdersPage() {
                 <div className="flex items-center justify-between mb-8">
                   <h2 className="text-2xl font-semibold text-gray-800 tracking-tight">Список заказов</h2>
                   <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="Поиск заказов..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="pl-10 pr-4 py-2 bg-gray-100/70 rounded-xl border border-gray-300/60 focus:border-gray-500 focus:ring-0 text-gray-800 placeholder-gray-500 text-sm"
+                      />
+                    </div>
                     <select
                       value={statusFilter}
                       onChange={(e) => setStatusFilter(e.target.value)}
@@ -213,101 +310,61 @@ export default function OrdersPage() {
                       <option value="completed">Выполнены</option>
                       <option value="cancelled">Отменены</option>
                     </select>
-                    
-                    <div className="relative">
-                      <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="text"
-                        placeholder="Поиск заказов..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10 pr-4 py-2 bg-gray-100/70 rounded-xl border border-gray-300/60 focus:border-gray-500 focus:ring-0 text-gray-800 placeholder-gray-500 text-sm"
-                      />
-                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  {filteredOrders.map((order, index) => (
-                    <motion.div
-                      key={order.id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 * index }}
-                      whileHover={{ y: -1 }}
-                      className="flex items-center justify-between p-6 bg-gray-100/70 rounded-2xl border border-gray-300/60 hover:border-gray-400/70 transition-all duration-200 backdrop-blur-sm"
-                    >
-                      <div className="flex items-center gap-4 flex-1">
-                        <div className="flex flex-col items-center">
-                          <span className="font-bold text-gray-900 text-lg">{order.id}</span>
-                          <span className={`px-2 py-1 rounded-lg text-xs font-medium border ${getStatusColor(order.status)}`}>
-                            {getStatusText(order.status)}
-                          </span>
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-semibold text-gray-800 text-lg tracking-tight">{order.customerName}</h3>
-                            <span className="text-sm text-gray-500">{order.telegram_id}</span>
-                          </div>
-                          
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <PhoneIcon className="w-4 h-4" />
-                              {order.customerPhone}
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <CalendarIcon className="w-4 h-4" />
-                              {new Date(order.createdAt).toLocaleDateString('ru-RU', {
-                                day: 'numeric',
-                                month: 'short',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
-                            </div>
+                  {filteredOrders.length === 0 ? (
+                    <div className="text-center py-12">
+                      <ClipboardDocumentListIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                      <h3 className="text-lg font-medium text-gray-700 mb-2">Нет заказов</h3>
+                      <p className="text-gray-500">Пока нет заказов для этого бота</p>
+                    </div>
+                  ) : (
+                    filteredOrders.map((order, index) => (
+                      <motion.div
+                        key={order.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 * index }}
+                        whileHover={{ y: -1 }}
+                        className="flex items-center justify-between p-6 bg-gray-100/70 rounded-2xl border border-gray-300/60 hover:border-gray-400/70 transition-all duration-200 backdrop-blur-sm"
+                      >
+                        <div className="flex items-center gap-4 flex-1">
+                          <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 border border-gray-200">
+                            📋
                           </div>
 
-                          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-                            <MapPinIcon className="w-4 h-4" />
-                            {order.deliveryAddress}
-                          </div>
-
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-sm text-gray-600">Товары:</span>
-                            <div className="flex flex-wrap gap-1">
-                              {order.items.map((item, i) => (
-                                <span key={i} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-lg">
-                                  {item}
-                                </span>
-                              ))}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-semibold text-gray-800 truncate text-lg tracking-tight">Заказ #{order.id}</h3>
+                              <span className={`px-2 py-1 text-xs rounded-lg border ${getStatusColor(order.status)}`}>
+                                {getStatusText(order.status)}
+                              </span>
                             </div>
-                          </div>
-
-                          <div className="flex items-center gap-4">
-                            <span className="font-bold text-gray-900 text-lg">{order.total.toLocaleString()} ₽</span>
-                            <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-lg">
-                              {order.paymentMethod}
-                            </span>
+                            <div className="flex items-center gap-4 mt-1">
+                              <span className="text-sm text-gray-600">
+                                Клиент: {order.customer_telegram_id}
+                              </span>
+                              <span className="font-bold text-gray-900">
+                                {order.total_amount.toLocaleString()} ₽
+                              </span>
+                              <span className="text-sm text-gray-500">
+                                {new Date(order.created_at).toLocaleString('ru-RU')}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="flex items-center gap-2">
-                        <button className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                          <EyeIcon className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </motion.div>
-                  ))}
+                        <div className="flex items-center gap-2">
+                          <button className="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors">
+                            <EyeIcon className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </motion.div>
+                    ))
+                  )}
                 </div>
-
-                {filteredOrders.length === 0 && (
-                  <div className="text-center py-12">
-                    <ClipboardDocumentListIcon className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Заказы не найдены</h3>
-                    <p className="text-gray-500">Попробуйте изменить критерии поиска</p>
-                  </div>
-                )}
               </motion.div>
             </div>
           </div>

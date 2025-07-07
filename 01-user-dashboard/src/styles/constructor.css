@@ -1,0 +1,768 @@
+/* Стили конструктора TeleShop в стиле основного дашборда */
+
+.constructor-container {
+  @apply flex flex-col h-screen bg-gray-50;
+}
+
+/* Верхняя панель */
+.top-panel {
+  @apply bg-white/95 backdrop-blur-sm border-b border-gray-300/60 shadow-sm;
+  height: 80px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.top-panel-left {
+  @apply flex items-center gap-6;
+}
+
+.top-panel-logo {
+  @apply text-2xl font-bold text-gray-900 tracking-tight;
+}
+
+.top-panel-meta {
+  @apply text-sm text-gray-600 font-medium;
+}
+
+.top-panel-center {
+  @apply flex items-center gap-3;
+}
+
+.top-panel-right {
+  @apply flex items-center gap-4;
+}
+
+.top-panel-btn {
+  @apply inline-flex items-center gap-2 px-4 py-2 font-medium rounded-xl transition-all duration-200;
+}
+
+.top-panel-btn.primary {
+  @apply bg-gray-700 text-white hover:bg-gray-800 shadow-sm hover:shadow-md;
+}
+
+.top-panel-btn.secondary {
+  @apply bg-gray-100/70 hover:bg-gray-200/80 text-gray-700 hover:text-gray-900 border border-gray-300/60 hover:border-gray-400/70 backdrop-blur-sm;
+}
+
+.top-panel-btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.autosave-indicator {
+  @apply text-sm text-gray-500 flex items-center gap-2 font-medium;
+}
+
+.autosave-indicator.saving {
+  @apply text-orange-600;
+}
+
+.autosave-indicator.saved {
+  @apply text-emerald-600;
+}
+
+/* Основной контейнер панелей */
+.constructor-panels {
+  display: flex;
+  height: calc(100vh - 80px);
+}
+
+/* Базовая панель */
+.constructor-panel {
+  @apply bg-white/95 backdrop-blur-sm border-gray-300/60 flex flex-col shadow-sm;
+}
+
+/* Левая панель - блоки */
+.blocks-panel {
+  @apply constructor-panel border-r;
+  width: 320px;
+  min-width: 320px;
+}
+
+.constructor-panel-header {
+  @apply p-6 border-b border-gray-300/60 bg-gray-50/80;
+}
+
+.panel-title {
+  @apply text-xl font-semibold text-gray-900 tracking-tight;
+}
+
+.constructor-panel-content {
+  @apply flex-1 overflow-y-auto p-6;
+}
+
+/* Категории блоков */
+.category-switcher {
+  @apply grid grid-cols-2 gap-3 mb-8;
+}
+
+.category-btn {
+  @apply p-4 text-center rounded-xl border border-gray-300/60 transition-all duration-200 cursor-pointer backdrop-blur-sm;
+}
+
+.category-btn.active {
+  @apply bg-gray-700 text-white border-gray-700 shadow-md;
+}
+
+.category-btn:not(.active) {
+  @apply bg-gray-100/70 hover:bg-gray-200/80 text-gray-700 hover:text-gray-900 hover:border-gray-400/70;
+}
+
+.category-icon {
+  @apply text-base flex items-center justify-center mb-2;
+}
+
+.category-name {
+  @apply text-sm font-medium;
+}
+
+/* Блоки */
+.block-category {
+  @apply mb-8;
+}
+
+.block-category-title {
+  @apply text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3;
+}
+
+.block-items {
+  @apply space-y-3;
+}
+
+.block-item {
+  @apply flex items-center gap-4 p-4 rounded-xl border border-gray-300/60 bg-white/70 hover:bg-gray-50/80 cursor-pointer transition-all duration-200 backdrop-blur-sm;
+}
+
+.block-item:hover {
+  @apply border-gray-400/70 shadow-sm;
+}
+
+.block-item-icon {
+  @apply w-12 h-12 bg-gray-200/80 rounded-xl flex items-center justify-center border border-gray-300/50 text-gray-600;
+}
+
+.block-item-info {
+  @apply flex-1;
+}
+
+.block-item-name {
+  @apply text-sm font-semibold text-gray-900 mb-1;
+}
+
+.block-item-desc {
+  @apply text-xs text-gray-600;
+}
+
+/* Центральная панель - предпросмотр */
+.preview-panel {
+  @apply flex-1 bg-white/70 backdrop-blur-sm border-l border-r border-gray-200/50 flex flex-col;
+  min-width: 0;
+}
+
+.preview-header {
+  @apply p-4 border-b border-gray-200/50 flex items-center justify-between;
+}
+
+.preview-modes {
+  @apply flex gap-2;
+}
+
+.preview-mode-btn {
+  @apply px-3 py-2 text-sm font-medium rounded-lg border transition-all duration-200 flex items-center;
+}
+
+.preview-mode-btn.active {
+  @apply bg-gray-700 text-white border-gray-700;
+}
+
+.preview-mode-btn:not(.active) {
+  @apply bg-white/80 text-gray-700 border-gray-200 hover:bg-gray-50;
+}
+
+.preview-meta {
+  @apply text-sm text-gray-500 font-medium;
+}
+
+.preview-canvas {
+  @apply flex-1 p-6 overflow-hidden;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.preview-device {
+  @apply mx-auto relative overflow-hidden;
+  transition: all 0.3s ease;
+  
+  /* iPhone рамка */
+  background: linear-gradient(145deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  border-radius: 2.5rem;
+  padding: 0.5rem;
+  box-shadow: 
+    0 0 0 2px rgba(255, 255, 255, 0.1),
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1),
+    inset 0 -1px 1px rgba(0, 0, 0, 0.2);
+}
+
+/* Убираем Dynamic Island - он мешает */
+
+/* Кнопка питания */
+.preview-device::after {
+  content: '';
+  position: absolute;
+  top: 80px;
+  right: -3px;
+  width: 4px;
+  height: 40px;
+  background: linear-gradient(90deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  border-radius: 2px 0 0 2px;
+  box-shadow: 
+    inset 1px 0 1px rgba(255, 255, 255, 0.1),
+    inset -1px 0 1px rgba(0, 0, 0, 0.2);
+}
+
+/* Кнопки громкости */
+.preview-device .volume-buttons {
+  position: absolute;
+  left: -3px;
+  top: 100px;
+  z-index: 10;
+}
+
+.preview-device .volume-buttons::before {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(90deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  border-radius: 0 2px 2px 0;
+  box-shadow: 
+    inset -1px 0 1px rgba(255, 255, 255, 0.1),
+    inset 1px 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.preview-device .volume-buttons::after {
+  content: '';
+  position: absolute;
+  top: 30px;
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(90deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+  border-radius: 0 2px 2px 0;
+  box-shadow: 
+    inset -1px 0 1px rgba(255, 255, 255, 0.1),
+    inset 1px 0 1px rgba(0, 0, 0, 0.2);
+}
+
+/* Экран */
+.preview-device .screen {
+  background: #fff;
+  border-radius: 2rem;
+  overflow-y: overlay;
+  position: relative;
+  box-shadow: 
+    inset 0 0 1px rgba(255, 255, 255, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Красивый скроллбар для экрана iPhone */
+.preview-device .screen::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.preview-device .screen:hover::-webkit-scrollbar {
+  width: 3px;
+}
+
+.preview-device .screen::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.preview-device .screen::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.preview-device .screen:hover::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+/* Для Firefox - скрываем скролл */
+.preview-device .screen {
+  scrollbar-width: none;
+}
+
+.preview-device.mobile {
+  width: 320px;
+  height: 640px;
+}
+
+.preview-device.mobile .screen {
+  width: 100%;
+  height: 100%;
+}
+
+.preview-device.tablet {
+  width: 420px;
+  height: 560px;
+}
+
+.preview-device.tablet .screen {
+  width: 100%;
+  height: 100%;
+}
+
+/* Состояние перетаскивания */
+.preview-device.dragging-active {
+  @apply ring-2 ring-blue-400 ring-opacity-50 shadow-2xl;
+}
+
+.preview-device.dragging-active .screen {
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(59, 130, 246, 0.05) 10px,
+    rgba(59, 130, 246, 0.05) 20px
+  );
+}
+
+.blocks-container {
+  @apply p-4 min-h-full;
+  padding-right: 12px;
+}
+
+/* Улучшенные стили для блоков */
+.ts-block-banner {
+  @apply bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6 text-center;
+}
+
+.ts-block-text {
+  @apply bg-white border border-gray-200 rounded-lg p-4;
+}
+
+.ts-block-button {
+  @apply bg-white border border-gray-200 rounded-lg p-4 text-center;
+}
+
+.ts-block-product {
+  @apply bg-white border border-gray-200 rounded-lg p-4;
+}
+
+.ts-block-spacer {
+  @apply bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-500;
+}
+
+/* Улучшения для существующих элементов */
+.blocks-list-item.active {
+  @apply bg-blue-50 border-blue-200 text-blue-900;
+}
+
+.blocks-list-item.active .blocks-list-item-order {
+  @apply text-blue-600;
+}
+
+/* Drop зоны */
+.drop-zone {
+  @apply h-16 rounded-xl border-2 border-dashed border-transparent transition-all duration-200 opacity-0 pointer-events-none;
+  margin: 6px 0;
+}
+
+.drop-zone.visible {
+  @apply opacity-100 pointer-events-auto border-blue-300 bg-blue-50/50;
+}
+
+.drop-zone.active {
+  @apply border-blue-500 bg-blue-100/70 scale-105 shadow-lg;
+  animation: pulse-drop 1s ease-in-out infinite;
+}
+
+.drop-zone-content {
+  @apply h-full flex items-center justify-center gap-3 text-blue-600 font-medium text-base;
+}
+
+.drop-zone-icon {
+  @apply text-2xl opacity-70;
+}
+
+.drop-zone-text {
+  @apply font-medium;
+}
+
+@keyframes pulse-drop {
+  0%, 100% {
+    @apply bg-blue-100/70;
+  }
+  50% {
+    @apply bg-blue-200/70;
+  }
+}
+
+/* Блоки в превью */
+.preview-block {
+  @apply relative bg-white rounded-lg border border-gray-200/50 transition-all duration-200;
+  margin: 4px 0;
+}
+
+.preview-block:hover {
+  @apply shadow-md;
+}
+
+.preview-block.selected {
+  @apply ring-2 ring-blue-400 shadow-lg;
+}
+
+.preview-block.dragging {
+  @apply opacity-50 rotate-2 scale-105 shadow-2xl z-50;
+}
+
+.preview-block.drag-over {
+  @apply ring-2 ring-green-400 shadow-lg;
+}
+
+.drag-handle {
+  @apply absolute left-2 top-1/2 transform -translate-y-1/2 cursor-grab opacity-0 transition-opacity duration-200;
+  z-index: 10;
+}
+
+.preview-block:hover .drag-handle {
+  @apply opacity-100;
+}
+
+.drag-handle:active {
+  @apply cursor-grabbing;
+}
+
+.block-controls {
+  @apply absolute right-2 top-2 flex gap-1 opacity-0 transition-opacity duration-200;
+}
+
+.preview-block:hover .block-controls {
+  @apply opacity-100;
+}
+
+.block-control-btn {
+  @apply w-8 h-8 rounded-lg bg-white/90 backdrop-blur-sm border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 hover:text-gray-800 transition-all duration-200;
+}
+
+.block-control-btn:hover {
+  @apply shadow-md;
+}
+
+/* Индикаторы drop zone */
+.drop-indicator {
+  @apply h-1 bg-blue-500 rounded-full opacity-80 transition-all duration-200;
+}
+
+/* Анимации */
+.scale-102 {
+  transform: scale(1.02);
+}
+
+/* Правая панель - настройки */
+.settings-panel {
+  @apply constructor-panel border-l;
+  width: 350px;
+  min-width: 350px;
+}
+
+.settings-empty {
+  @apply p-8 text-center text-gray-500;
+}
+
+.settings-empty-icon {
+  @apply text-4xl mb-4 text-gray-400;
+}
+
+.settings-empty-title {
+  @apply text-lg font-semibold text-gray-700 mb-2;
+}
+
+.settings-empty-desc {
+  @apply text-sm text-gray-600;
+}
+
+.settings-section {
+  @apply mb-8;
+}
+
+.settings-section-title {
+  @apply text-lg font-semibold text-gray-900 mb-4;
+}
+
+.block-info {
+  @apply p-4 bg-gray-50/80 rounded-xl border border-gray-300/60 mb-6;
+}
+
+.block-type {
+  @apply text-sm font-semibold text-gray-700 mb-1;
+}
+
+.block-id {
+  @apply text-xs text-gray-500 font-mono;
+}
+
+.block-actions {
+  @apply space-y-3 mb-6;
+}
+
+.settings-field {
+  @apply mb-4;
+}
+
+.settings-label {
+  @apply block text-sm font-semibold text-gray-700 mb-2;
+}
+
+.settings-input {
+  @apply w-full px-4 py-2 bg-gray-100/70 rounded-xl border border-gray-300/60 focus:border-gray-500 focus:ring-0 text-gray-800 placeholder-gray-500 text-sm transition-all duration-200;
+}
+
+.settings-textarea {
+  @apply settings-input min-h-20 resize-y;
+}
+
+.settings-select {
+  @apply settings-input;
+}
+
+.settings-checkbox {
+  @apply h-4 w-4 text-gray-700 focus:ring-gray-500 border-gray-300 rounded;
+}
+
+.settings-color {
+  @apply w-12 h-8 border border-gray-300 rounded-lg cursor-pointer;
+}
+
+.blocks-list {
+  @apply space-y-2;
+}
+
+/* Список блоков в настройках */
+.blocks-list-item {
+  @apply p-3 bg-white rounded-lg border border-gray-200 cursor-pointer transition-all duration-200 flex items-center justify-between;
+}
+
+.blocks-list-item:hover {
+  @apply shadow-md border-gray-300;
+}
+
+.blocks-list-item.active {
+  @apply ring-2 ring-blue-400 border-blue-300 bg-blue-50;
+}
+
+.blocks-list-item-content {
+  @apply flex-1;
+}
+
+.blocks-list-item-name {
+  @apply font-medium text-gray-900 text-sm;
+}
+
+.blocks-list-item-order {
+  @apply text-xs text-gray-500 mt-1;
+}
+
+.blocks-list-item-controls {
+  @apply flex flex-col gap-1 ml-2;
+}
+
+.block-move-btn {
+  @apply w-6 h-6 rounded flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed;
+}
+
+.block-move-btn:disabled {
+  @apply hover:text-gray-500 hover:bg-transparent;
+}
+
+/* Модальные окна */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  @apply bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden;
+  animation: slideIn 0.3s ease-out;
+}
+
+.modal-header {
+  @apply flex items-center justify-between p-6 border-b border-gray-200;
+}
+
+.modal-title {
+  @apply text-2xl font-semibold text-gray-900;
+}
+
+.modal-close {
+  @apply text-gray-400 hover:text-gray-600 transition-colors duration-200 w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-200/50;
+}
+
+.modal-body {
+  @apply p-6 overflow-y-auto;
+}
+
+.modal-footer {
+  @apply flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50;
+}
+
+/* Шаблоны */
+.template-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.template-card {
+  @apply bg-white/95 backdrop-blur-sm rounded-2xl border border-gray-300/60 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden;
+}
+
+.template-card:hover {
+  @apply border-gray-400/70;
+}
+
+.template-preview {
+  @apply w-full h-48 bg-gray-100 overflow-hidden;
+}
+
+.template-preview img {
+  @apply w-full h-full object-cover;
+}
+
+.template-info {
+  @apply p-6;
+}
+
+.template-name {
+  @apply text-lg font-semibold text-gray-900 mb-2;
+}
+
+.template-desc {
+  @apply text-sm text-gray-600 mb-4;
+}
+
+.template-meta {
+  @apply flex items-center justify-between;
+}
+
+.template-category {
+  @apply bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full font-medium;
+}
+
+.template-blocks-count {
+  @apply text-xs text-gray-500;
+}
+
+/* Утилиты */
+.loading-spinner {
+  @apply w-6 h-6 border-2 border-gray-700 border-t-transparent rounded-full animate-spin;
+}
+
+/* Вкладки в панели настроек */
+.settings-tabs {
+  @apply flex border-b border-gray-200/50;
+}
+
+.settings-tab {
+  @apply flex-1 flex flex-col items-center gap-1 py-3 px-2 text-xs font-medium transition-all duration-200 border-b-2 border-transparent;
+}
+
+.settings-tab:hover:not(.disabled) {
+  @apply bg-gray-50/50 text-gray-700;
+}
+
+.settings-tab.active {
+  @apply text-blue-600 border-blue-500 bg-blue-50/30;
+}
+
+.settings-tab.disabled {
+  @apply text-gray-400 cursor-not-allowed opacity-50;
+}
+
+.settings-tab-icon {
+  @apply text-base;
+}
+
+.settings-tab-name {
+  @apply text-center leading-tight;
+}
+
+.settings-tab-count {
+  @apply bg-gray-200 text-gray-700 text-xs px-1.5 py-0.5 rounded-full min-w-5 h-5 flex items-center justify-center;
+}
+
+.settings-tab.active .settings-tab-count {
+  @apply bg-blue-200 text-blue-700;
+}
+
+/* Содержимое вкладок */
+.tab-content {
+  @apply h-full;
+}
+
+.tab-content-header {
+  @apply mb-6;
+}
+
+.tab-content-title {
+  @apply text-base font-semibold text-gray-900 mb-1;
+}
+
+.tab-content-subtitle {
+  @apply text-sm text-gray-500;
+}
+
+/* Форма настроек */
+.settings-form {
+  @apply space-y-4;
+}
+
+/* Пустое состояние */
+.empty-state {
+  @apply text-center py-8 text-gray-500;
+}
+
+.empty-state-icon {
+  @apply text-4xl mb-4;
+}
+
+.empty-state-title {
+  @apply text-lg font-semibold mb-2 text-gray-700;
+}
+
+.empty-state-desc {
+  @apply text-sm text-gray-500 leading-relaxed;
+}
+
+/* Улучшения для существующих элементов */
+.blocks-list-item.active {
+  @apply bg-blue-50 border-blue-200 text-blue-900;
+}
+
+.blocks-list-item.active .blocks-list-item-order {
+  @apply text-blue-600;
+}
+
+/* Анимации */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+} 

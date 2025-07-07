@@ -15,18 +15,26 @@ const protectedRoutes = [
   '/users',
   '/categories',
   '/profile',
-  '/settings'
+  '/settings',
+  '/constructor'
 ]
 
 // Публичные маршруты, доступные без авторизации
 const publicRoutes = [
-  '/login'
+  '/login',
+  '/auth'
 ]
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   
   console.log('🛡️ MIDDLEWARE: processing', pathname)
+  
+  // Редирект с /constructor/page на /constructor
+  if (pathname === '/constructor/page') {
+    console.log('🛡️ MIDDLEWARE: redirecting from /constructor/page to /constructor')
+    return NextResponse.redirect(new URL('/constructor', request.url))
+  }
   
   // Пропускаем API маршруты
   if (pathname.startsWith('/api/')) {

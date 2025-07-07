@@ -114,12 +114,9 @@ export class MainPlatformAuth {
    * 🔄 Редирект в конструктор с передачей авторизации
    */
   static redirectToConstructor(path = '/constructor') {
-    const constructorUrl = `${SSO_CONFIG.PLATFORMS.CONSTRUCTOR.url}${path}`
-    
-    console.log('🔄 Redirecting to Constructor:', constructorUrl)
-    
-    // Открываем конструктор в том же окне
-    window.location.href = constructorUrl
+    const constructorUrl = path;
+    console.log('🔄 Redirecting to Constructor:', constructorUrl);
+    window.location.href = constructorUrl;
   }
 
   /**

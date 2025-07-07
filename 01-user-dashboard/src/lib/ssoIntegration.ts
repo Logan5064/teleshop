@@ -52,5 +52,14 @@ export const constructorUtils = {
       console.warn('Error getting user data:', e);
     }
     return 'Пользователь';
+  },
+
+  // Временная заглушка для SSO интеграции
+  async getCurrentUser() {
+    return {
+      id: 'demo_user',
+      name: 'Demo User',
+      email: 'demo@example.com'
+    };
   }
 };

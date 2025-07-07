@@ -1,15 +1,14 @@
 // TeleShop Configuration
 const isProd = process.env.NODE_ENV === 'production';
-const prodHost = '77.73.232.46'; // Production server IP
+const prodHost = '178.236.17.93'; // Production server IP
 
 export const API_CONFIG = {
-  BASE_URL: isProd 
-    ? `http://${prodHost}:8000`
-    : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
-  CONSTRUCTOR_URL: isProd 
-    ? `http://${prodHost}:3001`
-    : process.env.NEXT_PUBLIC_CONSTRUCTOR_URL || 'http://localhost:3001',
-  TIMEOUT: 30000,
+  BASE_URL: isProd ? `http://${prodHost}:8000` : 'http://localhost:8000',
+  AUTH_URL: isProd ? `http://${prodHost}:8000/auth` : 'http://localhost:8000/auth',
+  SECURE_URL: isProd ? `http://${prodHost}:8000/secure` : 'http://localhost:8000/secure',
+  CONSTRUCTOR_URL: isProd ? `http://${prodHost}:8000/constructor` : 'http://localhost:8000/constructor',
+  TIMEOUT: 10000,
+  VERSION: '2.0.0',
   RETRY_ATTEMPTS: 3,
   // Локальные туннели используются только в dev режиме
   IS_TUNNELED: isProd 

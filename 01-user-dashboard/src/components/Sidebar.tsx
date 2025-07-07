@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -15,42 +15,24 @@ import {
   Bars3Icon,
   XMarkIcon,
   WrenchScrewdriverIcon,
-  ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline';
-import { logout, getUserData } from '@/lib/auth';
+import UserCard from './UserCard';
+import SelectedBotCard from './SelectedBotCard';
 
 const navigation = [
   { name: 'Дашборд', href: '/', icon: HomeIcon },
-  { name: 'Конструктор', href: 'http://178.236.17.93:3001/constructor', icon: WrenchScrewdriverIcon, external: true },
+  { name: 'Конструктор', href: '/constructor', icon: WrenchScrewdriverIcon },
   { name: 'Категории', href: '/categories', icon: RectangleGroupIcon },
   { name: 'Товары', href: '/products', icon: CubeIcon },
   { name: 'Заказы', href: '/orders', icon: ClipboardDocumentListIcon },
   { name: 'Пользователи', href: '/users', icon: UsersIcon },
   { name: 'Аналитика', href: '/analytics', icon: ChartBarIcon },
   { name: 'Настройки', href: '/settings', icon: Cog6ToothIcon },
-];
+] as const;
 
 export default function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const pathname = usePathname();
-
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const userData = await getUserData();
-        setUser(userData);
-      } catch (error) {
-        console.error('Error loading user:', error);
-        setUser(null);
-      }
-    };
-    loadUser();
-  }, []);
-
-  const handleLogout = () => {
-    logout()
-  }
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
@@ -81,16 +63,16 @@ export default function Sidebar() {
         {/* Sidebar */}
         <div
           className={cn(
-            'fixed inset-y-0 left-0 z-40 w-72 bg-white/95 backdrop-blur-sm shadow-xl transform transition-transform duration-200 ease-in-out lg:relative lg:inset-auto lg:rounded-2xl lg:border lg:border-gray-300/60 lg:translate-x-0 lg:w-full lg:h-[calc(100vh-3rem)]',
+            'fixed inset-y-0 left-0 z-40 w-72 bg-white/95 backdrop-blur-sm transform transition-transform duration-200 ease-in-out lg:relative lg:inset-auto lg:rounded-2xl lg:border lg:border-gray-400/50 lg:shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] lg:translate-x-0 lg:w-full lg:h-[calc(100vh-3rem)] lg:mt-6',
             isOpen ? 'translate-x-0' : '-translate-x-full'
           )}
         >
-          <div className="flex flex-col h-full lg:h-full">
+          <div className="flex flex-col h-full">
             {/* Logo */}
             <div className="flex items-center h-20 px-8 border-b border-gray-300/60 lg:rounded-t-2xl bg-gradient-to-r from-gray-100/80 to-blue-50/50">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center shadow-sm">
+                  <div className="w-10 h-10 bg-gray-700 rounded-xl flex items-center justify-center">
                     <span className="text-white font-bold text-lg">T</span>
                   </div>
                 </div>
@@ -105,37 +87,6 @@ export default function Sidebar() {
             <nav className="flex-1 px-6 py-8 space-y-2">
               {navigation.map((item) => {
                 const isActive = pathname === item.href;
-                const isExternal = item.external;
-                
-                if (isExternal) {
-                  return (
-                    <button
-                      key={item.name}
-                      onClick={async () => {
-                        setIsOpen(false)
-                        // SSO переход в конструктор
-                        window.open(item.href, '_blank')
-                      }}
-                      className={cn(
-                        'group flex items-center px-4 py-4 text-sm font-medium rounded-xl transition-all duration-200 tracking-wide w-full text-left',
-                        'text-gray-600 hover:bg-gray-100/60 hover:text-gray-900 hover:shadow-sm'
-                      )}
-                    >
-                      <item.icon
-                        className={cn(
-                          'mr-4 h-5 w-5 transition-colors duration-200',
-                          'text-gray-400 group-hover:text-gray-600'
-                        )}
-                      />
-                      <span>{item.name}</span>
-                      <div className="ml-auto flex items-center">
-                        <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                      </div>
-                    </button>
-                  );
-                }
                 
                 return (
                   <Link
@@ -145,8 +96,8 @@ export default function Sidebar() {
                     className={cn(
                       'group flex items-center px-4 py-4 text-sm font-medium rounded-xl transition-all duration-200 tracking-wide',
                       isActive
-                        ? 'bg-gray-200/80 text-gray-900 shadow-sm border border-gray-300/60'
-                        : 'text-gray-600 hover:bg-gray-100/60 hover:text-gray-900 hover:shadow-sm'
+                        ? 'bg-gray-200/80 text-gray-900 border border-gray-300/60'
+                        : 'text-gray-600 hover:bg-gray-100/60 hover:text-gray-900'
                     )}
                   >
                     <item.icon
@@ -164,33 +115,11 @@ export default function Sidebar() {
               })}
             </nav>
 
-            {/* User Card - Fixed at bottom */}
-            <div className="mt-auto p-6 border-t border-gray-300/60 lg:rounded-b-2xl">
-              <Link
-                href="/profile"
-                onClick={() => setIsOpen(false)}
-                className="flex items-center p-4 rounded-xl bg-gray-100/60 border border-gray-300/50 shadow-sm hover:bg-gray-200/60 hover:shadow-md transition-all duration-200 cursor-pointer"
-              >
-                <div className="flex-shrink-0">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-sm">
-                    <span className="text-white text-sm font-bold">
-                      {user?.first_name?.charAt(0) || user?.username?.charAt(0) || 'А'}
-                    </span>
-                  </div>
-                </div>
-                <div className="ml-4 flex-1">
-                  <p className="text-sm font-semibold text-gray-900 tracking-wide">
-                    {user?.first_name || user?.username || 'Админ'}
-                  </p>
-                  <p className="text-xs text-gray-600 font-medium">
-                    @{user?.username || user?.telegram_id || 'admin'}
-                  </p>
-                </div>
-                <div className="ml-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                </div>
-              </Link>
-            </div>
+            {/* User Card */}
+            <UserCard />
+            
+            {/* Selected Bot Card */}
+            <SelectedBotCard />
           </div>
         </div>
       </div>

@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Sidebar from '@/components/Sidebar';
+import { useBot } from '@/lib/contexts/BotContext';
+import { FormSkeleton, ContentLoader } from '@/components/LoadingStates';
 import {
   Cog6ToothIcon,
   CurrencyDollarIcon,
@@ -17,6 +19,7 @@ import {
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('general');
+  const [loading, setLoading] = useState(true);
 
   const settingsSections = [
     {
@@ -68,6 +71,54 @@ export default function SettingsPage() {
       description: 'Опасная зона'
     }
   ];
+
+  // Имитируем загрузку настроек
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="ts-page-bg">
+        <div className="flex h-screen">
+          <Sidebar />
+          <main className="ts-main-content">
+            <div className="ts-container">
+              {/* Заголовок скелетон */}
+              <div className="mb-8">
+                <div className="h-9 bg-gray-200 rounded w-48 mb-2 animate-pulse"></div>
+                <div className="h-4 bg-gray-200 rounded w-96 animate-pulse"></div>
+              </div>
+
+              {/* Сетка карточек настроек скелетон */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 border border-gray-300/60">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-gray-200 rounded-2xl animate-pulse"></div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                        <div className="h-3 bg-gray-200 rounded w-full animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Форма настроек скелетон */}
+              <FormSkeleton />
+
+              {/* Центральный лоадер */}
+              <div className="mt-8">
+                <ContentLoader text="Загружаем настройки..." />
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="ts-page-bg">
