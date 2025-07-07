@@ -173,7 +173,7 @@ export default function ConstructorApp() {
                 data: {
                   ...blocks[selectedBlockIndex].data,
                   ...newData
-                }
+                } as BlockDataType
               }
               handleBlockUpdate(updatedBlock)
             }
