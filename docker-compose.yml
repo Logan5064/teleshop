@@ -1,6 +1,7 @@
 version: '3.8'
 
 # TeleShop Docker Compose - Production Ready
+# Deploy with SSH key authentication
 services:
   # Backend FastAPI сервер
   backend:
