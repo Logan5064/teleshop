@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Sidebar from '@/components/Sidebar';
 import { shopsApi } from '@/lib/api';
-import type { Shop } from '@/types';
 import { formatDate, formatCurrency } from '@/lib/utils';
 import {
   PlusIcon,
@@ -15,18 +14,8 @@ import {
   XCircleIcon
 } from '@heroicons/react/24/outline';
 
-// Расширенный тип магазина для этой страницы
-interface ExtendedShop extends Shop {
-  is_active?: boolean;
-  owner?: {
-    first_name: string;
-    last_name: string;
-    username: string;
-  };
-}
-
 export default function ShopsPage() {
-  const [shops, setShops] = useState<ExtendedShop[]>([]);
+  const [shops, setShops] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,11 +47,11 @@ export default function ShopsPage() {
     }
   };
 
-  const toggleStatus = async (shop: ExtendedShop) => {
+  const toggleStatus = async (shop: any) => {
     try {
       const response = await shopsApi.update(shop.id, {
         is_active: !shop.is_active
-      });
+      } as any);
       setShops(shops.map(s => s.id === shop.id ? { ...s, is_active: !s.is_active } : s));
     } catch (err) {
       alert('Ошибка при изменении статуса');
