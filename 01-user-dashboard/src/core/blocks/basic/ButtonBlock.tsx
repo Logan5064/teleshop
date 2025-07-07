@@ -1,79 +1,36 @@
 'use client'
 
 import React from 'react'
-import { BaseBlockProps } from '@/types/blocks'
-
-interface ButtonData {
-  text: string
-  url?: string
-  backgroundColor: string
-  textColor: string
-  size: 'small' | 'medium' | 'large'
-  style: 'solid' | 'outline' | 'ghost'
-  borderRadius: 'none' | 'small' | 'medium' | 'large' | 'full'
-  fullWidth: boolean
-  icon?: string
-  animation: 'none' | 'hover-lift' | 'hover-scale' | 'pulse'
-}
+import { BaseBlockProps, ButtonData } from '@/types/blocks'
 
 export default function ButtonBlock({ id, data, isEditing, onEdit }: BaseBlockProps) {
   const buttonData = data as ButtonData
 
-  const sizeClasses = {
-    small: 'size-small',
-    medium: 'size-medium',
-    large: 'size-large'
-  }
-
-  const radiusClasses = {
-    none: 'rounded-none',
-    small: 'rounded-sm',
-    medium: 'rounded-md',
-    large: 'rounded-lg',
-    full: 'rounded-full'
-  }
-
-  const animationClasses = {
-    none: '',
-    'hover-lift': 'hover-lift',
-    'hover-scale': 'hover-scale',
-    pulse: 'pulse'
-  }
-
-  const getButtonStyles = () => {
-    const baseStyles = {
-      backgroundColor: buttonData.style === 'solid' ? buttonData.backgroundColor : 'transparent',
-      color: buttonData.style === 'solid' ? buttonData.textColor : buttonData.backgroundColor,
-      border: buttonData.style !== 'ghost' ? `2px solid ${buttonData.backgroundColor}` : 'none'
+  const getButtonClasses = () => {
+    const baseClasses = 'button-block px-6 py-3 rounded-md transition-all duration-200'
+    
+    switch (buttonData.style) {
+      case 'primary':
+        return `${baseClasses} bg-blue-600 text-white hover:bg-blue-700`
+      case 'secondary':
+        return `${baseClasses} bg-gray-600 text-white hover:bg-gray-700`
+      case 'outline':
+        return `${baseClasses} border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white`
+      default:
+        return `${baseClasses} bg-blue-600 text-white hover:bg-blue-700`
     }
-
-    if (buttonData.style === 'ghost') {
-      baseStyles.color = buttonData.backgroundColor
-    }
-
-    return baseStyles
   }
 
   return (
-    <div className={`relative ${buttonData.fullWidth ? 'w-full' : 'inline-block'}`}>
+    <div className="relative inline-block">
       <button
-        className={`
-          button-block 
-          ${sizeClasses[buttonData.size]} 
-          ${radiusClasses[buttonData.borderRadius]}
-          ${animationClasses[buttonData.animation]}
-          ${buttonData.fullWidth ? 'w-full' : ''}
-        `}
-        style={getButtonStyles()}
+        className={getButtonClasses()}
         onClick={() => {
           if (buttonData.url) {
             window.open(buttonData.url, '_blank')
           }
         }}
       >
-        {buttonData.icon && (
-          <span className="text-lg">{buttonData.icon}</span>
-        )}
         {buttonData.text}
       </button>
       

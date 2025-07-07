@@ -1,86 +1,22 @@
 'use client'
 
 import React from 'react'
-import { BaseBlockProps } from '@/types/blocks'
-
-interface TextData {
-  content: string
-  fontSize: 'small' | 'medium' | 'large' | 'xl'
-  textAlign: 'left' | 'center' | 'right' | 'justify'
-  textColor: string
-  backgroundColor: string
-  padding: 'none' | 'small' | 'medium' | 'large'
-  fontWeight: 'normal' | 'medium' | 'semibold' | 'bold'
-  lineHeight: 'tight' | 'normal' | 'relaxed' | 'loose'
-  letterSpacing: 'tighter' | 'tight' | 'normal' | 'wide' | 'wider'
-}
+import { BaseBlockProps, TextData } from '@/types/blocks'
 
 export default function TextBlock({ id, data, isEditing, onEdit }: BaseBlockProps) {
   const textData = data as TextData
 
-  const fontSizeClasses = {
-    small: 'text-sm',
-    medium: 'text-base',
-    large: 'text-lg',
-    xl: 'text-xl'
-  }
-
-  const alignClasses = {
-    left: 'text-left',
-    center: 'text-center',
-    right: 'text-right',
-    justify: 'text-justify'
-  }
-
-  const paddingClasses = {
-    none: 'p-0',
-    small: 'p-3',
-    medium: 'p-6',
-    large: 'p-8'
-  }
-
-  const fontWeightClasses = {
-    normal: 'font-normal',
-    medium: 'font-medium',
-    semibold: 'font-semibold',
-    bold: 'font-bold'
-  }
-
-  const lineHeightClasses = {
-    tight: 'leading-tight',
-    normal: 'leading-normal',
-    relaxed: 'leading-relaxed',
-    loose: 'leading-loose'
-  }
-
-  const letterSpacingClasses = {
-    tighter: 'tracking-tighter',
-    tight: 'tracking-tight',
-    normal: 'tracking-normal',
-    wide: 'tracking-wide',
-    wider: 'tracking-wider'
-  }
-
   return (
-    <div
-      className={`
-        text-block relative
-        ${fontSizeClasses[textData.fontSize]}
-        ${alignClasses[textData.textAlign]}
-        ${paddingClasses[textData.padding]}
-        ${fontWeightClasses[textData.fontWeight]}
-        ${lineHeightClasses[textData.lineHeight]}
-        ${letterSpacingClasses[textData.letterSpacing]}
-      `}
-      style={{
-        color: textData.textColor,
-        backgroundColor: textData.backgroundColor !== 'transparent' ? textData.backgroundColor : undefined
-      }}
-    >
-      <div
-        dangerouslySetInnerHTML={{ __html: textData.content }}
-        className="prose max-w-none"
-      />
+    <div className="text-block">
+      <div 
+        className={`prose max-w-none ${textData.align === 'center' ? 'text-center' : textData.align === 'right' ? 'text-right' : 'text-left'}`}
+        style={{ 
+          fontWeight: textData.style === 'bold' ? 'bold' : 'normal',
+          fontStyle: textData.style === 'italic' ? 'italic' : 'normal'
+        }}
+      >
+        <div dangerouslySetInnerHTML={{ __html: textData.content }} />
+      </div>
       
       {isEditing && (
         <div className="absolute top-2 right-2">

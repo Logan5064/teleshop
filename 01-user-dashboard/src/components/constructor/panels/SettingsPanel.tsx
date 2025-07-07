@@ -10,7 +10,8 @@ import {
   ImageData,
   ProductData,
   FormData,
-  BlockType
+  BlockType,
+  BaseBlockProps
 } from '@/types/blocks'
 import { BiCube, BiText, BiImage, BiBox } from 'react-icons/bi'
 import { motion } from 'framer-motion'

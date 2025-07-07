@@ -85,24 +85,30 @@ export type BlockDataType =
   | ColumnsData;
 
 export interface BannerData {
-  type: 'telegram-banner';
+  type?: 'telegram-banner' | 'banner';
   title: string;
   subtitle?: string;
-  imageUrl: string;
+  imageUrl?: string;
   buttonText?: string;
   buttonUrl?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  backgroundImage?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  padding?: 'small' | 'medium' | 'large';
+  borderRadius?: 'none' | 'small' | 'medium' | 'large';
 }
 
 export interface ProductData {
-  type: 'telegram-product';
+  type?: 'telegram-product' | 'product';
   productId: string;
-  showDescription: boolean;
-  showPrice: boolean;
-  showButton: boolean;
+  showDescription?: boolean;
+  showPrice?: boolean;
+  showButton?: boolean;
 }
 
 export interface CategoriesData {
-  type: 'telegram-categories';
+  type?: 'telegram-categories' | 'categories';
   title: string;
   categories: Array<{
     id: string;
@@ -112,7 +118,7 @@ export interface CategoriesData {
 }
 
 export interface SliderData {
-  type: 'telegram-slider';
+  type?: 'telegram-slider' | 'slider';
   images: Array<{
     url: string;
     alt?: string;
@@ -120,7 +126,7 @@ export interface SliderData {
 }
 
 export interface ContactsData {
-  type: 'telegram-contacts';
+  type?: 'telegram-contacts' | 'contacts';
   title: string;
   contacts: Array<{
     type: 'phone' | 'email' | 'telegram' | 'whatsapp';
@@ -130,40 +136,55 @@ export interface ContactsData {
 }
 
 export interface MapData {
-  type: 'telegram-map';
+  type?: 'telegram-map' | 'map';
   latitude: number;
   longitude: number;
   zoom: number;
 }
 
 export interface TextData {
-  type: 'text';
+  type?: 'text';
   content: string;
   align?: 'left' | 'center' | 'right';
   style?: 'normal' | 'bold' | 'italic';
+  fontSize?: 'small' | 'medium' | 'large' | 'xl';
+  textAlign?: 'left' | 'center' | 'right' | 'justify';
+  textColor?: string;
+  backgroundColor?: string;
+  padding?: 'none' | 'small' | 'medium' | 'large';
+  fontWeight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  lineHeight?: 'tight' | 'normal' | 'relaxed' | 'loose';
+  letterSpacing?: 'tighter' | 'tight' | 'normal' | 'wide' | 'wider';
 }
 
 export interface ImageData {
-  type: 'image';
+  type?: 'image';
   url: string;
   alt?: string;
   fullWidth?: boolean;
 }
 
 export interface ButtonData {
-  type: 'button';
+  type?: 'button';
   text: string;
-  url: string;
-  style?: 'primary' | 'secondary' | 'outline';
+  url?: string;
+  style?: 'primary' | 'secondary' | 'outline' | 'solid' | 'ghost';
+  backgroundColor?: string;
+  textColor?: string;
+  size?: 'small' | 'medium' | 'large';
+  borderRadius?: 'none' | 'small' | 'medium' | 'large' | 'full';
+  fullWidth?: boolean;
+  icon?: string;
+  animation?: 'none' | 'hover-lift' | 'hover-scale' | 'pulse';
 }
 
 export interface SpacerData {
-  type: 'spacer';
+  type?: 'spacer';
   height: number;
 }
 
 export interface TabsData {
-  type: 'tabs';
+  type?: 'tabs';
   tabs: Array<{
     id: string;
     title: string;
@@ -172,7 +193,7 @@ export interface TabsData {
 }
 
 export interface FormData {
-  type: 'form';
+  type?: 'form';
   fields: Array<{
     id: string;
     type: 'text' | 'email' | 'phone' | 'textarea';

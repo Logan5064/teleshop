@@ -1,19 +1,7 @@
 'use client'
 
 import React from 'react'
-import { BaseBlockProps } from '@/types/blocks'
-
-interface TextData {
-  content: string
-  fontSize: 'small' | 'medium' | 'large' | 'xl'
-  textAlign: 'left' | 'center' | 'right' | 'justify'
-  textColor: string
-  backgroundColor: string
-  padding: 'none' | 'small' | 'medium' | 'large'
-  fontWeight: 'normal' | 'medium' | 'semibold' | 'bold'
-  lineHeight: 'tight' | 'normal' | 'relaxed' | 'loose'
-  letterSpacing: 'tighter' | 'tight' | 'normal' | 'wide' | 'wider'
-}
+import { BaseBlockProps, TextData } from '@/types/blocks'
 
 export default function TextBlock({ id, data, isEditing, onEdit }: BaseBlockProps) {
   const textData = data as TextData
@@ -65,12 +53,12 @@ export default function TextBlock({ id, data, isEditing, onEdit }: BaseBlockProp
     <div
       className={`
         text-block relative
-        ${fontSizeClasses[textData.fontSize]}
-        ${alignClasses[textData.textAlign]}
-        ${paddingClasses[textData.padding]}
-        ${fontWeightClasses[textData.fontWeight]}
-        ${lineHeightClasses[textData.lineHeight]}
-        ${letterSpacingClasses[textData.letterSpacing]}
+        ${fontSizeClasses[textData.fontSize || 'medium']}
+        ${alignClasses[textData.textAlign || 'left']}
+        ${paddingClasses[textData.padding || 'medium']}
+        ${fontWeightClasses[textData.fontWeight || 'normal']}
+        ${lineHeightClasses[textData.lineHeight || 'normal']}
+        ${letterSpacingClasses[textData.letterSpacing || 'normal']}
       `}
       style={{
         color: textData.textColor,

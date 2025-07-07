@@ -1,20 +1,7 @@
 'use client'
 
 import React from 'react'
-import { BaseBlockProps } from '@/types/blocks'
-
-interface ButtonData {
-  text: string
-  url?: string
-  backgroundColor: string
-  textColor: string
-  size: 'small' | 'medium' | 'large'
-  style: 'solid' | 'outline' | 'ghost'
-  borderRadius: 'none' | 'small' | 'medium' | 'large' | 'full'
-  fullWidth: boolean
-  icon?: string
-  animation: 'none' | 'hover-lift' | 'hover-scale' | 'pulse'
-}
+import { BaseBlockProps, ButtonData } from '@/types/blocks'
 
 export default function ButtonBlock({ id, data, isEditing, onEdit }: BaseBlockProps) {
   const buttonData = data as ButtonData
@@ -59,9 +46,9 @@ export default function ButtonBlock({ id, data, isEditing, onEdit }: BaseBlockPr
       <button
         className={`
           button-block 
-          ${sizeClasses[buttonData.size]} 
-          ${radiusClasses[buttonData.borderRadius]}
-          ${animationClasses[buttonData.animation]}
+          ${sizeClasses[buttonData.size || 'medium']} 
+          ${radiusClasses[buttonData.borderRadius || 'medium']}
+          ${animationClasses[buttonData.animation || 'none']}
           ${buttonData.fullWidth ? 'w-full' : ''}
         `}
         style={getButtonStyles()}

@@ -1,12 +1,26 @@
 'use client'
 
 import React from 'react'
-import { BlockData, BlockType, BlockDataType, BannerData, ProductData, CategoriesData, SliderData, ContactsData, MapData } from '@/types/blocks'
+import { 
+  BlockData, 
+  BannerData, 
+  ProductData, 
+  CategoriesData, 
+  SliderData, 
+  ContactsData, 
+  MapData 
+} from '@/types/blocks'
+
+interface TelegramBlocksProps {
+  blocks: BlockData[]
+  onBlockClick: (block: BlockData) => void
+  onBlockEdit: (blockId: string, data: any) => void
+}
 
 interface TelegramBlockProps {
   block: BlockData;
   isEditing?: boolean;
-  onEdit?: (id: string, newData: BlockDataType) => void;
+  onEdit?: (id: string, newData: any) => void;
   onDelete?: (id: string) => void;
   onDuplicate?: (id: string) => void;
 }

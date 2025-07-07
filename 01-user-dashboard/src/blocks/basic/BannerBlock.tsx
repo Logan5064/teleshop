@@ -1,20 +1,7 @@
 'use client'
 
 import React from 'react'
-import { BaseBlockProps } from '@/types/blocks'
-
-interface BannerData {
-  title: string
-  subtitle?: string
-  backgroundColor: string
-  textColor: string
-  buttonText?: string
-  buttonUrl?: string
-  backgroundImage?: string
-  textAlign: 'left' | 'center' | 'right'
-  padding: 'small' | 'medium' | 'large'
-  borderRadius: 'none' | 'small' | 'medium' | 'large'
-}
+import { BaseBlockProps, BannerData } from '@/types/blocks'
 
 export default function BannerBlock({ id, data, isEditing, onEdit }: BaseBlockProps) {
   const bannerData = data as BannerData
@@ -40,7 +27,7 @@ export default function BannerBlock({ id, data, isEditing, onEdit }: BaseBlockPr
 
   return (
     <div
-      className={`banner-block ${paddingClasses[bannerData.padding]} ${radiusClasses[bannerData.borderRadius]}`}
+      className={`banner-block ${paddingClasses[bannerData.padding || 'medium']} ${radiusClasses[bannerData.borderRadius || 'medium']}`}
       style={{
         backgroundColor: bannerData.backgroundColor,
         color: bannerData.textColor,
@@ -49,7 +36,7 @@ export default function BannerBlock({ id, data, isEditing, onEdit }: BaseBlockPr
         backgroundPosition: 'center'
       }}
     >
-      <div className={`banner-content ${alignClasses[bannerData.textAlign]}`}>
+      <div className={`banner-content ${alignClasses[bannerData.textAlign || 'center']}`}>
         <h2 className="banner-title">{bannerData.title}</h2>
         
         {bannerData.subtitle && (

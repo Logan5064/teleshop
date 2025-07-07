@@ -1,12 +1,26 @@
 'use client'
 
 import React from 'react'
-import { BlockData, BlockType, BlockDataType, TextData, ImageData, ButtonData, SpacerData, TabsData, FormData } from '@/types/blocks'
+import { 
+  BlockData, 
+  TextData, 
+  ImageData, 
+  ButtonData, 
+  SpacerData, 
+  TabsData, 
+  FormData 
+} from '@/types/blocks'
+
+interface BasicBlocksProps {
+  blocks: BlockData[]
+  onBlockClick: (block: BlockData) => void
+  onBlockEdit: (blockId: string, data: any) => void
+}
 
 interface BasicBlockProps {
   block: BlockData;
   isEditing?: boolean;
-  onEdit?: (id: string, newData: BlockDataType) => void;
+  onEdit?: (id: string, newData: any) => void;
   onDelete?: (id: string) => void;
   onDuplicate?: (id: string) => void;
 }
